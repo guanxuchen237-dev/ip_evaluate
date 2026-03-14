@@ -1,0 +1,109 @@
+{
+  "storyline_summary": "请假设你正在阅读作品《苟在初圣魔门当人材》的最新更新。\n剧情梗概：最新章节：主角和女主角终于发糖了！虽然只有短短几句对话，但那个眼神拉丝的感觉写得太好了。\n请基于你的人设，对这段剧情发表简短、口语化的读后感。",
+  "key_plot_points": [
+    "请假设你正在阅读作品《苟在初圣魔门当人材》的最新更新。\n剧情梗概：最新章节：主角和女主角终于发糖了！虽然只有短短几句对话，但那个眼神拉丝的感觉写得太好了。\n请基于你的人设，对这段剧情发表简短、口语化的读后感。"
+  ],
+  "character_state": [],
+  "conflict_axes": [],
+  "recent_progress": [],
+  "likely_next": [],
+  "confidence": 0.35,
+  "source_refs": [
+    {
+      "ref_id": "C1",
+      "title": "用户提供章节片段",
+      "url": "",
+      "snippet": "请假设你正在阅读作品《苟在初圣魔门当人材》的最新更新。\n剧情梗概：最新章节：主角和女主角终于发糖了！虽然只有短短几句对话，但那个眼神拉丝的感觉写得太好了。\n请基于你的人设，对这段剧情发表简短、口语化的读后感。",
+      "source_type": "chapter_input",
+      "score": 0.9
+    },
+    {
+      "ref_id": "L1",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "这章写的很好，给人意犹未尽之感觉。但章节还是太短了！如果章节再加长一些就更好了！",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L2",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "你这剧情确实感觉跳的有点快 主要是一个地方你构思出来没多少章感觉就又换新地方了 可以稍微丰富一下每个地方的事物 还有就是主角占比 现在男主确实是男主 但是女主了 现在的几个女主 说实话 占比未免太低了 都不叫女主了 都快成女配的感觉了 云冰婉和姜君瑶还好 月姬和露露雅剧情铺垫需要可以理解 但语柔和幽兰未免也太久不露头了吧 祖地外感觉这俩都跟npc差不多了",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L3",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "若真如此，太好了！",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L4",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "画彩璃：这段剧情怎么那么熟悉？这个凌杰和凤仙儿可以复制我与云哥哥的剧情吗？ 凌杰：嫂子不要乱说！ 云澈：咳咳咳…… 云帝城的众帝妃们：偷笑！",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L5",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "几十章不写主角。",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L6",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "我去，还有乌冀的剧情",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L7",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "前期剧情还行，后面太跳跃，东一坨西一坨，而且前面很多铺垫的内容感觉关联也不大，比如红莲说她对你有大用，后面基本没涉及，每个章节扯了太多新人物出来，爽文那种你就写快点这样更好一些哈哈",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L8",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "谁是主角啊？这么大篇幅。写啥呢",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L9",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "今天的两章写的很好，较之前的章节进步了很多，语言也简练了不少，但章节还是太短了！希望作者多听听大家的心声！加油吧！",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L10",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "老黑哥又性情了嗷，敢跟主角逼了",
+      "source_type": "local_corpus",
+      "score": 0.45
+    }
+  ],
+  "meta": {
+    "source_title": "苟在初圣魔门当人材",
+    "source_author": "reader_space",
+    "source_platform": "reader_space",
+    "chapter_title": "实时模拟片段",
+    "retrieved_at": 1771669014,
+    "use_web_search": false
+  }
+}

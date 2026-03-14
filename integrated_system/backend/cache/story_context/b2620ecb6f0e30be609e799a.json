@@ -1,0 +1,109 @@
+{
+  "storyline_summary": "请假设你正在阅读作品《无敌天命》的最新更新。\n剧情梗概：最新章节：主角发现了世界的真相，原来他们一直生活在一个巨大的阵法之中，所有人的命运都是被安排好的。\n请基于你的人设，对这段剧情发表简短、口语化的读后感。",
+  "key_plot_points": [
+    "请假设你正在阅读作品《无敌天命》的最新更新。\n剧情梗概：最新章节：主角发现了世界的真相，原来他们一直生活在一个巨大的阵法之中，所有人的命运都是被安排好的。\n请基于你的人设，对这段剧情发表简短、口语化的读后感。"
+  ],
+  "character_state": [],
+  "conflict_axes": [],
+  "recent_progress": [],
+  "likely_next": [],
+  "confidence": 0.35,
+  "source_refs": [
+    {
+      "ref_id": "C1",
+      "title": "用户提供章节片段",
+      "url": "",
+      "snippet": "请假设你正在阅读作品《无敌天命》的最新更新。\n剧情梗概：最新章节：主角发现了世界的真相，原来他们一直生活在一个巨大的阵法之中，所有人的命运都是被安排好的。\n请基于你的人设，对这段剧情发表简短、口语化的读后感。",
+      "source_type": "chapter_input",
+      "score": 0.9
+    },
+    {
+      "ref_id": "L1",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "叶无名，想要变回叶天命，已经真正的无敌天命。素裙天命、青衫杨叶和白衣逍遥不死不行，三人大战之后都死了，小天命才有机会，能打败概念的只有概念，到目前为止素裙没有真正意义上的出过第二剑，这个概念就相当于一个文曲星到目前为止还是个武夫就已经天下无敌了，没人能让他出计谋这得多恐怖",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L2",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "你确实有点水，剧情推动慢，更新还少",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L3",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "素裙不是能一打二吗 加强那么多应该随便秒吧 这本书又不叫无敌剑域杨家可没天命人了 现在天命人可在曾经的反派身上",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L4",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "不会再充一分钱给天命",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L5",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "我发现四剑都是搞笑人才",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L6",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "对不起叶无天命 我选择剑来",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L7",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "叶天命就是货真价实的草包",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L8",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "35章没看了，不知道叶天明无敌了没",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L9",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "这些章节该多爆，水到不水，就是不够看，加油",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L10",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "水谈不上 就是一天章节少了点 该爆就爆",
+      "source_type": "local_corpus",
+      "score": 0.45
+    }
+  ],
+  "meta": {
+    "source_title": "无敌天命",
+    "source_author": "reader_space",
+    "source_platform": "reader_space",
+    "chapter_title": "实时模拟片段",
+    "retrieved_at": 1772705795,
+    "use_web_search": false
+  }
+}

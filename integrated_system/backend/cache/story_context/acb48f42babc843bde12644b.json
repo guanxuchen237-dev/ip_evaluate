@@ -1,0 +1,109 @@
+{
+  "storyline_summary": "请假设你正在阅读作品《斗破苍穹》的最新更新。\n剧情梗概：最新章节：主角和女主角终于发糖了！虽然只有短短几句对话，但那个眼神拉丝的感觉写得太好了。\n请基于你的人设，对这段剧情发表简短、口语化的读后感。",
+  "key_plot_points": [
+    "请假设你正在阅读作品《斗破苍穹》的最新更新。\n剧情梗概：最新章节：主角和女主角终于发糖了！虽然只有短短几句对话，但那个眼神拉丝的感觉写得太好了。\n请基于你的人设，对这段剧情发表简短、口语化的读后感。"
+  ],
+  "character_state": [],
+  "conflict_axes": [],
+  "recent_progress": [],
+  "likely_next": [],
+  "confidence": 0.35,
+  "source_refs": [
+    {
+      "ref_id": "C1",
+      "title": "用户提供章节片段",
+      "url": "",
+      "snippet": "请假设你正在阅读作品《斗破苍穹》的最新更新。\n剧情梗概：最新章节：主角和女主角终于发糖了！虽然只有短短几句对话，但那个眼神拉丝的感觉写得太好了。\n请基于你的人设，对这段剧情发表简短、口语化的读后感。",
+      "source_type": "chapter_input",
+      "score": 0.9
+    },
+    {
+      "ref_id": "L1",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "你确实有点水，剧情推动慢，更新还少",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L2",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "帮过主角的真是没一个有好下场的啊，这主角也是个霉逼",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L3",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "你觉得，我感觉这个剧情看了无数次了",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L4",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "有没有感觉这个春节没有春节的感觉",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L5",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "你是要让夜凰成为女主吗?如果是，继续搞暧昧。不是的话，描写女配角比你设定的女主还细致深入?这就是你的感情戏?女主下线，女配角上线?啥玩意。",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L6",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "我有三张就是不给你 写得太水了",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L7",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "我瞅一下哈 山君有老大爷的感觉了",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L8",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "这些章节该多爆，水到不水，就是不够看，加油",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L9",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "缴费后能否堤前看后面的章节，谢谢了！",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L10",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "水谈不上 就是一天章节少了点 该爆就爆",
+      "source_type": "local_corpus",
+      "score": 0.45
+    }
+  ],
+  "meta": {
+    "source_title": "斗破苍穹",
+    "source_author": "reader_space",
+    "source_platform": "reader_space",
+    "chapter_title": "实时模拟片段",
+    "retrieved_at": 1772892948,
+    "use_web_search": false
+  }
+}

@@ -1,0 +1,1847 @@
+
+--- Init DataManager ---
+Data Path: d:/analysis-novel/view-analysis/data/cleaned_data.csv
+Exists? True
+
+--- Init DataManager ---
+Data Path: d:/analysis-novel/view-analysis/data/cleaned_data.csv
+Exists? True
+
+--- Init DataManager ---
+Data Path: d:/analysis-novel/view-analysis/data/cleaned_data.csv
+Exists? True
+
+--- Init DataManager ---
+Data Path: d:/analysis-novel/view-analysis/data/cleaned_data.csv
+Exists? True
+
+--- Init DataManager ---
+Data Path: d:/analysis-novel/view-analysis/data/cleaned_data.csv
+Exists? True
+
+[API] Predict Called for: 捞尸人
+[API] Model Loaded? True
+
+--- Predict Request (Immediate) ---
+Input: {'title': '捞尸人', 'category': '都市', 'abstract': '人知鬼恐怖，鬼晓人心毒。\n这是一本传统灵异小说。'}...
+X shape: (1, 30)
+Success: Model Raw Score: 42.347015380859375
+
+--- Init DataManager ---
+Data Path: d:/analysis-novel/view-analysis/data/cleaned_data.csv
+Exists? True
+
+--- Init DataManager ---
+Data Path: d:/analysis-novel/view-analysis/data/cleaned_data.csv
+Exists? True
+
+--- Init DataManager ---
+Data Path: d:/analysis-novel/view-analysis/data/cleaned_data.csv
+Exists? True
+
+[API] Predict Called for: 捞尸人
+[API] Model Loaded? True
+
+--- Predict Request (Immediate) ---
+Input: {'title': '捞尸人', 'category': '都市', 'abstract': '人知鬼恐怖，鬼晓人心毒。\n这是一本传统灵异小说。'}...
+Using Defaults: WC=4474555.8, Int=1131098.0
+X shape: (1, 30)
+Success: Model Raw Score: 70.59581756591797
+
+--- Init DataManager ---
+Data Path: d:/analysis-novel/view-analysis/data/cleaned_data.csv
+Exists? True
+
+--- Init DataManager ---
+Data Path: d:/analysis-novel/view-analysis/data/cleaned_data.csv
+Exists? True
+
+--- Init DataManager ---
+Data Path: d:/analysis-novel/view-analysis/data/cleaned_data.csv
+Exists? True
+
+--- Init DataManager ---
+Data Path: d:/analysis-novel/view-analysis/data/cleaned_data.csv
+Exists? True
+
+--- Init DataManager ---
+Data Path: d:/analysis-novel/view-analysis/data/cleaned_data.csv
+Exists? True
+
+[API] Predict Called for: 捞尸人
+[API] Model Loaded? True
+
+--- Predict Request (Immediate) ---
+Input: {'title': '捞尸人', 'category': '都市', 'abstract': '人知鬼恐怖，鬼晓人心毒。\n这是一本传统灵异小说。'}...
+Source: Database (Real History)
+X shape: (1, 30)
+Success: Raw: 92.2 | Content: 70.5
+
+[API] Predict Called for: 步步高升：从省考状元到权力巅峰
+[API] Model Loaded? True
+
+--- Predict Request (Immediate) ---
+Input: {'title': '步步高升：从省考状元到权力巅峰', 'category': '都市', 'abstract': '唐烨以省考第一的骄人成绩考入汉州市委办，遭遇同学背刺被发配老干部局。\n晦暗蒙尘的人生因一场大火救下“原市委副书记”有所转折……\n面对市委书记秘书或挂职基层的抉择时，他出人意料地选择从乡镇出发。\n问苍茫大地，谁主沉浮？纵横仕途，唯有政绩才是硬通货！\n唐烨凭借超前格局、宽阔视...
+Source: Database (Real History)
+X shape: (1, 30)
+Success: Raw: 73.0 | Content: 70.6
+
+[API] Predict Called for: 步步高升：从省考状元到权力巅峰
+[API] Model Loaded? True
+
+--- Predict Request (Immediate) ---
+Input: {'title': '步步高升：从省考状元到权力巅峰', 'category': '都市', 'abstract': '唐烨以省考第一的骄人成绩考入汉州市委办，遭遇同学背刺被发配老干部局。\n晦暗蒙尘的人生因一场大火救下“原市委副书记”有所转折……\n面对市委书记秘书或挂职基层的抉择时，他出人意料地选择从乡镇出发。\n问苍茫大地，谁主沉浮？纵横仕途，唯有政绩才是硬通货！\n唐烨凭借超前格局、宽阔视...
+Source: Database (Real History)
+X shape: (1, 30)
+Success: Raw: 73.0 | Content: 70.6
+
+--- Init DataManager ---
+Data Path: d:/analysis-novel/view-analysis/data/cleaned_data.csv
+Exists? True
+
+[API] Predict Called for: 无敌天命
+[API] Model Loaded? True
+
+--- Predict Request (Immediate) ---
+Input: {'title': '无敌天命', 'category': '玄幻', 'abstract': '谁言天命天注定？\n我命由我不由天！'}...
+Source: Database (Real History)
+X shape: (1, 30)
+Success: Raw: 87.2 | Content: 70.8
+
+[API] Predict Called for: 捞尸人
+[API] Model Loaded? True
+
+--- Predict Request (Immediate) ---
+Input: {'title': '捞尸人', 'category': '都市', 'abstract': '谁言天命天注定？\n我命由我不由天！'}...
+Source: Database (Real History)
+X shape: (1, 30)
+Success: Raw: 89.3 | Content: 70.6
+
+[API] Predict Called for: 捞尸人
+[API] Model Loaded? True
+
+--- Predict Request (Immediate) ---
+Input: {'title': '捞尸人', 'category': '都市', 'abstract': '人知鬼恐怖，鬼晓人心毒。\n这是一本传统灵异小说。'}...
+Source: Database (Real History)
+X shape: (1, 30)
+Success: Raw: 92.2 | Content: 70.5
+
+[API] Predict Called for: 捞尸人
+[API] Model Loaded? True
+
+--- Predict Request (Immediate) ---
+Input: {'title': '捞尸人', 'category': '都市', 'abstract': '人知鬼恐怖，鬼晓人心毒。\n这是一本传统灵异小说。'}...
+Source: Database (Real History)
+X shape: (1, 30)
+Success: Raw: 92.2 | Content: 70.5
+
+[API] Predict Called for: 苟在初圣魔门当人材
+[API] Model Loaded? True
+
+--- Predict Request (Immediate) ---
+Input: {'title': '苟在初圣魔门当人材', 'category': '玄幻', 'abstract': '吕阳穿越修仙界，却成了魔门初圣宗的弟子。\n幸得异宝【百世书】，死后可以重开一世，让一切从头再来，还能带回前世的宝物，修为，寿命，甚至觉醒特殊的天赋。\n奈何次数有限，并非真的不死不灭。\n眼见修仙界乱世将至，吕阳原本决定先在魔门苟住，一世世苦修，不成仙不出山，奈何魔门凶险异常，遍地都是人材...
+Source: Database (Real History)
+X shape: (1, 30)
+Success: Raw: 85.5 | Content: 70.6
+
+[API] Predict Called for: 谁把遗言落这了？
+[API] Model Loaded? True
+
+--- Predict Request (Immediate) ---
+Input: {'title': '谁把遗言落这了？', 'category': '玄幻', 'abstract': '【伟大远征是弥天大谎！造就十二主神的‘金羊毛’…或许是上位者的脐带？】\n【天国的万肢母体破碎三万年了…那颗以“晨星”为名的卵…恐怕并非飞升的阶梯！】\n【警惕月亮！月面传来了异常信号…源头自称广寒号方舟…疑似来自失落的殷墟文明…】\n【它说…不要回答！】\n寒武纪的冰原，三叠纪的焦土，奥陶纪...
+Source: Simulation (Market Average)
+X shape: (1, 30)
+Success: Raw: 70.8 | Content: 70.8
+
+--- Init DataManager ---
+Data Path: d:/analysis-novel/view-analysis/data/cleaned_data.csv
+Exists? True
+
+--- Init DataManager ---
+Data Path: d:/analysis-novel/view-analysis/data/cleaned_data.csv
+Exists? True
+
+--- Init DataManager ---
+Data Path: d:/analysis-novel/view-analysis/data/cleaned_data.csv
+Exists? True
+
+--- Predict Request (Immediate) ---
+Input: {'title': 'Test1', 'abstract': '【伟大远征是弥天大谎！造就十二星神的‘金羊毛’...】', 'category': '玄幻', 'interaction': 0}...
+Source: Simulation (Market Average)
+X shape: (1, 30)
+Success: Raw: 70.8 | Content: 70.7
+
+--- Predict Request (Immediate) ---
+Input: {'title': 'Test2', 'abstract': 'asdf asdf testing garbage text nothing meaningful bad writing.', 'category': '玄幻', 'interaction': 0}...
+Source: Simulation (Market Average)
+X shape: (1, 30)
+Success: Raw: 70.6 | Content: 70.5
+
+--- Predict Request (Immediate) ---
+Input: {'title': 'Test3', 'abstract': '这里是属于斗气的世界，没有花俏艳丽的魔法，有的，仅仅是繁衍到巅峰的斗气！', 'category': '玄幻', 'interaction': 0}...
+Source: Simulation (Market Average)
+X shape: (1, 30)
+Success: Raw: 70.8 | Content: 70.7
+
+--- Init DataManager ---
+Data Path: d:/analysis-novel/view-analysis/data/cleaned_data.csv
+Exists? True
+
+--- Init DataManager ---
+Data Path: d:/analysis-novel/view-analysis/data/cleaned_data.csv
+Exists? True
+
+--- Init DataManager ---
+Data Path: d:/analysis-novel/view-analysis/data/cleaned_data.csv
+Exists? True
+
+--- Predict Request (Immediate) ---
+Input: {'title': 'Test1', 'abstract': '【伟大远征是弥天大谎！造就十二星神的‘金羊毛’...】', 'category': '玄幻', 'interaction': 0}...
+Content Analysis: Sentiment=0.46, QualityFactor=0.96
+Source: Simulation (Market Average)
+X shape: (1, 30)
+Success: Raw: 69.7 | Content: 69.7
+
+--- Predict Request (Immediate) ---
+Input: {'title': 'Test2', 'abstract': 'asdf asdf testing garbage text nothing meaningful bad writing.', 'category': '玄幻', 'interaction': 0}...
+Content Analysis: Sentiment=0.14, QualityFactor=0.60
+Source: Simulation (Market Average)
+X shape: (1, 30)
+Success: Raw: 66.2 | Content: 66.2
+
+--- Predict Request (Immediate) ---
+Input: {'title': 'Test3', 'abstract': '这里是属于斗气的世界，没有花俏艳丽的魔法，有的，仅仅是繁衍到巅峰的斗气！', 'category': '玄幻', 'interaction': 0}...
+Content Analysis: Sentiment=1.00, QualityFactor=1.50
+Source: Simulation (Market Average)
+X shape: (1, 30)
+Success: Raw: 74.9 | Content: 74.9
+
+--- Init DataManager ---
+Data Path: d:/analysis-novel/view-analysis/data/cleaned_data.csv
+Exists? True
+
+--- Init DataManager ---
+Data Path: d:/analysis-novel/view-analysis/data/cleaned_data.csv
+Exists? True
+
+[API] Predict Called for: 谁把遗言落这了？
+[API] Model Loaded? True
+
+--- Predict Request (Immediate) ---
+Input: {'title': '谁把遗言落这了？', 'category': '玄幻', 'abstract': '【伟大远征是弥天大谎！造就十二主神的‘金羊毛’…或许是上位者的脐带？】\n【天国的万肢母体破碎三万年了…那颗以“晨星”为名的卵…恐怕并非飞升的阶梯！】\n【警惕月亮！月面传来了异常信号…源头自称广寒号方舟…疑似来自失落的殷墟文明…】\n【它说…不要回答！】\n寒武纪的冰原，三叠纪的焦土，奥陶纪...
+Content Analysis: Sentiment=1.00, QualityFactor=1.50
+Source: Simulation (Market Average)
+X shape: (1, 30)
+Success: Raw: 74.9 | Content: 74.9
+
+[API] Predict Called for: 无敌天命
+[API] Model Loaded? True
+
+--- Predict Request (Immediate) ---
+Input: {'title': '无敌天命', 'category': '玄幻', 'abstract': '谁言天命天注定？\n我命由我不由天！'}...
+Content Analysis: Sentiment=0.97, QualityFactor=1.50
+Source: Database (Real History)
+X shape: (1, 30)
+Success: Raw: 87.2 | Content: 74.8
+
+--- Init DataManager ---
+Data Path: d:/analysis-novel/view-analysis/data/cleaned_data.csv
+Exists? True
+
+[API] Predict Called for: 我真没想重生啊
+[API] Model Loaded? True
+
+--- Predict Request (Immediate) ---
+Input: {'title': '我真没想重生啊', 'category': '玄幻', 'abstract': '本文的男主，正真的大渣男，火箭101的创始人，财院学生会主席，心思缜密，虽然渣但是是护妻狂魔。\n性格：痞、混不吝；遇到正事的时候其实是最靠谱的有担当；情商高，有自己独特处理方式的特点，能替人着想。'}...
+Content Analysis: Sentiment=1.00, QualityFactor=1.50
+Source: Database (Real History)
+X shape: (1, 30)
+Success: Raw: 73.8 | Content: 74.8
+
+[API] Predict Called for: 无敌天命
+[API] Model Loaded? True
+
+--- Predict Request (Immediate) ---
+Input: {'title': '无敌天命', 'category': '玄幻', 'abstract': '谁言天命天注定？\n我命由我不由天！'}...
+Content Analysis: Sentiment=0.97, QualityFactor=1.50
+Source: Database (Real History)
+X shape: (1, 30)
+Success: Raw: 87.2 | Content: 74.8
+
+[API] Predict Called for: 无敌天命
+[API] Model Loaded? True
+
+--- Predict Request (Immediate) ---
+Input: {'title': '无敌天命', 'category': '玄幻', 'abstract': '谁言天命天注定？\n我命由我不由天！'}...
+Content Analysis: Sentiment=0.97, QualityFactor=1.50
+Source: Database (Real History)
+X shape: (1, 30)
+Success: Raw: 87.2 | Content: 74.8
+
+--- Init DataManager ---
+Data Path: d:/analysis-novel/view-analysis/data/cleaned_data.csv
+Exists? True
+
+--- Init DataManager ---
+Data Path: d:/analysis-novel/view-analysis/data/cleaned_data.csv
+Exists? True
+
+--- Init DataManager ---
+Data Path: d:/analysis-novel/view-analysis/data/cleaned_data.csv
+Exists? True
+
+[API] Predict Called for: 捞尸人
+[API] Model Loaded? True
+
+--- Predict Request (Immediate) ---
+Input: {'title': '捞尸人', 'category': '都市', 'abstract': '人知鬼恐怖，鬼晓人心毒。\n这是一本传统灵异小说。'}...
+Content Analysis: Sentiment=0.97, QualityFactor=1.50
+Source: Database (Real History)
+X shape: (1, 30)
+Success: Raw: 92.2 | Content: 74.7
+
+[API] Predict Called for: 没钱当什么乱臣贼子
+[API] Model Loaded? True
+
+--- Predict Request (Immediate) ---
+Input: {'title': '没钱当什么乱臣贼子', 'category': '历史', 'abstract': '（高订两万，均订大精品历史文）袭职锦衣卫百户的裴元，才刚刚上任，就不幸在围捕乱贼时，失身于一位江湖侠女。本以为要在屈辱的回忆中度过此生，谁想紧随其后的一宗大案，却为裴百户打开了全新的世界。'}...
+Content Analysis: Sentiment=1.00, QualityFactor=1.50
+Source: Simulation (Market Average)
+X shape: (1, 30)
+Success: Raw: 74.7 | Content: 74.7
+
+[API] Predict Called for: 借剑
+[API] Model Loaded? True
+
+--- Predict Request (Immediate) ---
+Input: {'title': '借剑', 'category': '仙侠', 'abstract': '“就在刚才，我的剑被一声【万剑归宗】给叫走了，怎么办？”\n“在线等，挺急的，也不知道还不还……”'}...
+Content Analysis: Sentiment=0.21, QualityFactor=0.65
+Source: Database (Real History)
+X shape: (1, 30)
+Success: Raw: 76.7 | Content: 67.1
+
+--- Init DataManager ---
+Data Path: d:/analysis-novel/view-analysis/data/cleaned_data.csv
+Exists? True
+
+--- Init DataManager ---
+Data Path: d:/analysis-novel/view-analysis/data/cleaned_data.csv
+Exists? True
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': 'Test1', 'category': '玄幻', 'word_count': 100000, 'interaction': 0, 'finance': 0, 'popularity': 0}...
+
+--- Predict Request ---
+Input: {'title': 'Test2', 'category': '玄幻', 'word_count': 500000, 'interaction': 5000, 'finance': 100, 'popularity': 2000}...
+
+--- Predict Request ---
+Input: {'title': 'Test3', 'category': '玄幻', 'word_count': 2000000, 'interaction': 500000, 'finance': 10000, 'popularity': 100000}...
+
+--- Predict Request ---
+Input: {'title': 'Test4', 'category': '玄幻', 'word_count': 5000000, 'interaction': 3000000, 'finance': 150000, 'popularity': 800000}...
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': 'Test1', 'category': '玄幻', 'word_count': 100000, 'interaction': 0, 'finance': 0, 'popularity': 0}...
+
+--- Predict Request ---
+Input: {'title': 'Test2', 'category': '玄幻', 'word_count': 500000, 'interaction': 5000, 'finance': 100, 'popularity': 2000}...
+
+--- Predict Request ---
+Input: {'title': 'Test3', 'category': '玄幻', 'word_count': 2000000, 'interaction': 500000, 'finance': 10000, 'popularity': 100000}...
+
+--- Predict Request ---
+Input: {'title': 'Test4', 'category': '玄幻', 'word_count': 5000000, 'interaction': 3000000, 'finance': 150000, 'popularity': 800000}...
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'finance': 0, 'interaction': 0, 'word_count': 100000, 'category': '玄幻', 'popularity': 0}...
+
+--- Predict Request ---
+Input: {'finance': 100, 'interaction': 5000, 'word_count': 500000, 'category': '玄幻', 'popularity': 0}...
+
+--- Predict Request ---
+Input: {'finance': 10000, 'interaction': 500000, 'word_count': 2000000, 'category': '玄幻', 'popularity': 0}...
+
+--- Predict Request ---
+Input: {'finance': 150000, 'interaction': 3000000, 'word_count': 5000000, 'category': '玄幻', 'popularity': 0}...
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻', 'word_count': 3864000, 'finance': 12841, 'interaction': 87050000, 'popularity': 134590000}...
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 4450076, 'popularity': 890015}...
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.20000000001}...
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.2}...
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻', 'word_count': 3864000, 'finance': 12841, 'interaction': 87050000, 'popularity': 134590000}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.2}...
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻', 'word_count': 3864000, 'finance': 12841, 'interaction': 87050000, 'popularity': 134590000}...
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻', 'word_count': 3864000, 'finance': 12841, 'interaction': 87050000, 'popularity': 134590000, 'status': ''}...
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻', 'word_count': 3864000, 'finance': 12841, 'interaction': 87050000, 'popularity': 134590000, 'status': ''}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻', 'word_count': 3864000, 'finance': 12841, 'interaction': 87050000, 'popularity': 134590000, 'status': ''}...
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻', 'word_count': 3864000, 'finance': 12841, 'interaction': 87050000, 'popularity': 134590000, 'status': ''}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻', 'word_count': 3864000, 'finance': 12841, 'interaction': 87050000, 'popularity': 134590000, 'status': ''}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.2, 'status': ''}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.2, 'status': ''}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.20000000001}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.20000000001}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.20000000001}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.20000000001}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.20000000001}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.20000000001}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.20000000001}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.20000000001}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.20000000001}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.20000000001}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.20000000001}...
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'word_count': 13160146, 'finance': 35568, 'interaction': 18806086, 'popularity': 3761217.2}...
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'finance': 33900, 'interaction': 450000, 'popularity': 500000, 'word_count': 3800000, 'abstract': '测试摘要'}...
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'finance': 33900, 'interaction': 450000, 'popularity': 500000, 'word_count': 3800000, 'abstract': '测试摘要'}...
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'finance': 43337, 'interaction': 450000, 'popularity': 500000, 'word_count': 3860000, 'abstract': '测试摘要'}...
+
+--- Init DataManager ---
+
+[API] Predict Called for: ????
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '????', 'category': '??', 'abstract': 'test'}...
+
+[API] Predict Called for: 无敌天命
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'abstract': '谁言天命天注定？我命由我不由天！', 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'word_count': 3864367}...
+
+[API] Predict Called for: A Brand New Novel XYZ
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': 'A Brand New Novel XYZ', 'category': '都市', 'abstract': 'A compelling urban story with deep character development, intricate plot twists, and emotional depth that explores themes of loyalty a...
+
+[API] Predict Called for: Another Novel 123
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': 'Another Novel 123', 'category': '都市', 'abstract': 'test'}...
+
+[API] Predict Called for: Wudi Tianming
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': 'Wudi Tianming', 'category': '科幻', 'abstract': 'This is a test. AI value prediction evaluation.'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+[API] Predict Called for: Wudi Tianming
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': 'Wudi Tianming', 'category': '仙侠', 'abstract': 'This is a test abstract to verify prediction results and dynamic badges.'}...
+
+--- Init DataManager ---
+
+[API] Predict Called for: 无敌天命
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'abstract': '谁言天命天注定？我命由我不由天！', 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'word_count': 3864367}...
+
+[API] Predict Called for: 诡秘之主
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '诡秘之主', 'category': '玄幻', 'word_count': 4467700, 'finance': 28709, 'interaction': 36003200, 'popularity': 17574105, 'abstract': '诡秘之主动画已经在腾讯视频上播出，欢迎大家前去观看！蒸汽与机械的浪潮中，谁能触及非凡？历史和黑暗的迷雾里，又是谁在耳语？我...
+
+--- Predict Request ---
+Input: {'title': '诡秘之主', 'category': '玄幻', 'abstract': '诡秘之主动画已经在腾讯视频上播出，欢迎大家前去观看！蒸汽与机械的浪潮中，谁能触及非凡？历史和黑暗的迷雾里，又是谁在耳语？我从诡秘中醒来，睁眼看见这个世界：枪械，大炮，巨舰，飞空艇，差分机；魔药，占卜，诅咒，倒吊人，封印物……光明依旧照耀，神秘从未远离，这是一段“愚者”的传说。', 'finance':...
+
+[API] Predict Called for: 诡秘之主
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '诡秘之主', 'category': '玄幻', 'word_count': 4467700, 'finance': 28709, 'interaction': 36003200, 'popularity': 17574105, 'abstract': '诡秘之主动画已经在腾讯视频上播出，欢迎大家前去观看！蒸汽与机械的浪潮中，谁能触及非凡？历史和黑暗的迷雾里，又是谁在耳语？我...
+
+--- Predict Request ---
+Input: {'title': '诡秘之主', 'category': '玄幻', 'abstract': '诡秘之主动画已经在腾讯视频上播出，欢迎大家前去观看！蒸汽与机械的浪潮中，谁能触及非凡？历史和黑暗的迷雾里，又是谁在耳语？我从诡秘中醒来，睁眼看见这个世界：枪械，大炮，巨舰，飞空艇，差分机；魔药，占卜，诅咒，倒吊人，封印物……光明依旧照耀，神秘从未远离，这是一段“愚者”的传说。', 'finance':...
+
+[API] Predict Called for: 无敌天命
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'abstract': '谁言天命天注定？我命由我不由天！', 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'word_count': 3864367}...
+
+[API] Predict Called for: 无敌天命
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'abstract': '谁言天命天注定？我命由我不由天！', 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'word_count': 3864367}...
+
+--- Init DataManager ---
+
+[API] Predict Called for: 无敌天命
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'abstract': '谁言天命天注定？我命由我不由天！', 'finance': 192615, 'interaction': 2002842, 'popularity': 134590499, 'word_count': 3864367}...
+
+[API] Predict Called for: 诡秘之主
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '诡秘之主', 'category': '玄幻', 'word_count': 4467700, 'finance': 28709, 'interaction': 36003200, 'popularity': 17574105, 'abstract': '诡秘之主动画已经在腾讯视频上播出，欢迎大家前去观看！蒸汽与机械的浪潮中，谁能触及非凡？历史和黑暗的迷雾里，又是谁在耳语？我...
+
+--- Predict Request ---
+Input: {'title': '诡秘之主', 'category': '玄幻', 'abstract': '诡秘之主动画已经在腾讯视频上播出，欢迎大家前去观看！蒸汽与机械的浪潮中，谁能触及非凡？历史和黑暗的迷雾里，又是谁在耳语？我从诡秘中醒来，睁眼看见这个世界：枪械，大炮，巨舰，飞空艇，差分机；魔药，占卜，诅咒，倒吊人，封印物……光明依旧照耀，神秘从未远离，这是一段“愚者”的传说。', 'finance':...
+
+--- Init DataManager ---
+
+[API] Predict Called for: 无敌天命
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'abstract': '谁言天命天注定？我命由我不由天！', 'finance': 192615, 'interaction': 2002842, 'popularity': 134590499, 'word_count': 3864367}...
+
+[API] Predict Called for: 诡秘之主
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '诡秘之主', 'category': '玄幻', 'word_count': 4467700, 'finance': 28709, 'interaction': 36003200, 'popularity': 17574105, 'abstract': '诡秘之主动画已经在腾讯视频上播出，欢迎大家前去观看！蒸汽与机械的浪潮中，谁能触及非凡？历史和黑暗的迷雾里，又是谁在耳语？我...
+
+--- Predict Request ---
+Input: {'title': '诡秘之主', 'category': '玄幻', 'abstract': '诡秘之主动画已经在腾讯视频上播出，欢迎大家前去观看！蒸汽与机械的浪潮中，谁能触及非凡？历史和黑暗的迷雾里，又是谁在耳语？我从诡秘中醒来，睁眼看见这个世界：枪械，大炮，巨舰，飞空艇，差分机；魔药，占卜，诅咒，倒吊人，封印物……光明依旧照耀，神秘从未远离，这是一段“愚者”的传说。', 'finance':...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.20000000001}...
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'word_count': 13160146, 'finance': 2195, 'interaction': 18806086, 'popularity': 357637764, 'abstract': '大千世界，无奇不有。我陈平安，唯有一剑，可搬山，倒海，降妖，镇魔，敕神，摘星，断江，摧城，开天！我叫陈平安，平平安安的平...
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'word_count': 13160146, 'finance': 2195, 'interaction': 18806086, 'popularity': 357637764, 'abstract': '大千世界，无奇不有。我陈平安，唯有一剑，可搬山，倒海，降妖，镇魔，敕神，摘星，断江，摧城，开天！我叫陈平安，平平安安的平...
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'word_count': 13160146, 'finance': 2195, 'interaction': 18806086, 'popularity': 357637764, 'abstract': '大千世界，无奇不有。我陈平安，唯有一剑，可搬山，倒海，降妖，镇魔，敕神，摘星，断江，摧城，开天！我叫陈平安，平平安安的平...
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'word_count': 13160146, 'finance': 35568, 'interaction': 18806086, 'popularity': 3761217.2}...
+
+--- Predict Request ---
+Input: {'title': '捞尸人', 'category': '都市', 'word_count': 4772800, 'finance': 198723, 'interaction': 5208800, 'popularity': 6900124, 'abstract': '人知鬼恐怖，鬼晓人心毒。这是一本传统灵异小说。'}...
+
+--- Predict Request ---
+Input: {'title': '捞尸人', 'category': '都市', 'word_count': 4772800, 'finance': 198723, 'interaction': 5208800, 'popularity': 6900124, 'abstract': '人知鬼恐怖，鬼晓人心毒。这是一本传统灵异小说。'}...
+
+--- Predict Request ---
+Input: {'title': '捞尸人', 'category': '都市', 'word_count': 4772800, 'finance': 198723, 'interaction': 5208800, 'popularity': 6900124, 'abstract': '人知鬼恐怖，鬼晓人心毒。这是一本传统灵异小说。'}...
+
+--- Predict Request ---
+Input: {'title': '捞尸人', 'category': '都市', 'word_count': 4772800, 'finance': 627877, 'interaction': 5208800, 'popularity': 1041760.0}...
+
+--- Predict Request ---
+Input: {'title': '玄鉴仙族', 'category': '仙侠', 'word_count': 5113000, 'finance': 100417, 'interaction': 4537900, 'popularity': 7732104, 'abstract': '陆江仙熬夜猝死，残魂却附在了一面满是裂痕的青灰色铜镜上，飘落到了浩瀚无垠的修仙世界。凶险难测的大黎山，眉尺河旁小小的村落，一...
+
+--- Predict Request ---
+Input: {'title': '玄鉴仙族', 'category': '仙侠', 'word_count': 5113000, 'finance': 100417, 'interaction': 4537900, 'popularity': 7732104, 'abstract': '陆江仙熬夜猝死，残魂却附在了一面满是裂痕的青灰色铜镜上，飘落到了浩瀚无垠的修仙世界。凶险难测的大黎山，眉尺河旁小小的村落，一...
+
+--- Predict Request ---
+Input: {'title': '玄鉴仙族', 'category': '仙侠', 'word_count': 5113000, 'finance': 100417, 'interaction': 4537900, 'popularity': 7732104, 'abstract': '陆江仙熬夜猝死，残魂却附在了一面满是裂痕的青灰色铜镜上，飘落到了浩瀚无垠的修仙世界。凶险难测的大黎山，眉尺河旁小小的村落，一...
+
+--- Predict Request ---
+Input: {'title': '玄鉴仙族', 'category': '仙侠', 'word_count': 5113000, 'finance': 218464, 'interaction': 4537900, 'popularity': 907580.0}...
+
+--- Predict Request ---
+Input: {'title': '赤心巡天', 'category': '仙侠', 'word_count': 10427800, 'finance': 29571, 'interaction': 7446300, 'popularity': 3871039, 'abstract': '（《赤心巡天》实体书已在全网发售。）上古时代，妖族绝迹。近古时代，龙族消失。神道大昌的时代已经如烟，飞剑绝巅的时代终究沉沦…...
+
+--- Predict Request ---
+Input: {'title': '赤心巡天', 'category': '仙侠', 'word_count': 10427800, 'finance': 29571, 'interaction': 7446300, 'popularity': 3871039, 'abstract': '（《赤心巡天》实体书已在全网发售。）上古时代，妖族绝迹。近古时代，龙族消失。神道大昌的时代已经如烟，飞剑绝巅的时代终究沉沦…...
+
+--- Predict Request ---
+Input: {'title': '赤心巡天', 'category': '仙侠', 'word_count': 10427800, 'finance': 29571, 'interaction': 7446300, 'popularity': 3871039, 'abstract': '（《赤心巡天》实体书已在全网发售。）上古时代，妖族绝迹。近古时代，龙族消失。神道大昌的时代已经如烟，飞剑绝巅的时代终究沉沦…...
+
+--- Predict Request ---
+Input: {'title': '赤心巡天', 'category': '仙侠', 'word_count': 10625000, 'finance': 218613, 'interaction': 7624600, 'popularity': 1524920.0}...
+
+--- Predict Request ---
+Input: {'title': '隐动仙魔', 'category': '玄幻奇幻', 'word_count': 847639, 'finance': 22, 'interaction': 15115, 'popularity': 18111, 'abstract': '本书架构壮观且宏伟，风格凝重且深沉，故事妖娆且绚烂，人物鲜明且逼真，为了贯彻人世间最初的本真，通过仙侠修真的故事背景，谱写一曲刻骨铭心的爱...
+
+--- Predict Request ---
+Input: {'title': '隐动仙魔', 'category': '玄幻奇幻', 'word_count': 847639, 'finance': 22, 'interaction': 15115, 'popularity': 18111, 'abstract': '本书架构壮观且宏伟，风格凝重且深沉，故事妖娆且绚烂，人物鲜明且逼真，为了贯彻人世间最初的本真，通过仙侠修真的故事背景，谱写一曲刻骨铭心的爱...
+
+--- Predict Request ---
+Input: {'title': '隐动仙魔', 'category': '玄幻奇幻', 'word_count': 847639, 'finance': 22, 'interaction': 15115, 'popularity': 18111, 'abstract': '本书架构壮观且宏伟，风格凝重且深沉，故事妖娆且绚烂，人物鲜明且逼真，为了贯彻人世间最初的本真，通过仙侠修真的故事背景，谱写一曲刻骨铭心的爱...
+
+--- Predict Request ---
+Input: {'title': '隐动仙魔', 'category': '玄幻奇幻', 'word_count': 847639, 'finance': 251, 'interaction': 15115, 'popularity': 3023.0}...
+
+--- Predict Request ---
+Input: {'title': '九劫生晖', 'category': '武侠仙侠', 'word_count': 216997, 'finance': 30, 'interaction': 1820, 'popularity': 8134, 'abstract': '这里其实是个巨大的牢狱，人因为怀恶念所以被流放于此，接受生死，命，劫的审判，开始了不知所谓的赎罪之途。但外面的人还是在向往着，拼命的想要挤进来...
+
+--- Predict Request ---
+Input: {'title': '九劫生晖', 'category': '武侠仙侠', 'word_count': 216997, 'finance': 30, 'interaction': 1820, 'popularity': 8134, 'abstract': '这里其实是个巨大的牢狱，人因为怀恶念所以被流放于此，接受生死，命，劫的审判，开始了不知所谓的赎罪之途。但外面的人还是在向往着，拼命的想要挤进来...
+
+--- Predict Request ---
+Input: {'title': '九劫生晖', 'category': '武侠仙侠', 'word_count': 216997, 'finance': 30, 'interaction': 1820, 'popularity': 8134, 'abstract': '这里其实是个巨大的牢狱，人因为怀恶念所以被流放于此，接受生死，命，劫的审判，开始了不知所谓的赎罪之途。但外面的人还是在向往着，拼命的想要挤进来...
+
+--- Predict Request ---
+Input: {'title': '这个魔神明明很强却过分多疑', 'category': '玄幻奇幻', 'word_count': 569307, 'finance': 29, 'interaction': 116, 'popularity': 5309, 'abstract': '顶级杀手林晓被女神召唤到了异界。\n成为勇者打败魔王？\n等等，外面太危险，让我先练个级。\n一不小心练成了灭界魔神的林晓终于...
+
+--- Predict Request ---
+Input: {'title': '这个魔神明明很强却过分多疑', 'category': '玄幻奇幻', 'word_count': 569307, 'finance': 29, 'interaction': 116, 'popularity': 5309, 'abstract': '顶级杀手林晓被女神召唤到了异界。\n成为勇者打败魔王？\n等等，外面太危险，让我先练个级。\n一不小心练成了灭界魔神的林晓终于...
+
+--- Predict Request ---
+Input: {'title': '这个魔神明明很强却过分多疑', 'category': '玄幻奇幻', 'word_count': 569307, 'finance': 29, 'interaction': 116, 'popularity': 5309, 'abstract': '顶级杀手林晓被女神召唤到了异界。\n成为勇者打败魔王？\n等等，外面太危险，让我先练个级。\n一不小心练成了灭界魔神的林晓终于...
+
+--- Predict Request ---
+Input: {'title': '这个魔神明明很强却过分多疑', 'category': '玄幻奇幻', 'word_count': 569307, 'finance': 29, 'interaction': 116, 'popularity': 23.200000000000003}...
+
+--- Init DataManager ---
+
+[API] Predict Called for: 剑来
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'word_count': 13160146, 'finance': 2195, 'interaction': 18806086, 'popularity': 357637764, 'abstract': '大千世界，无奇不有。我陈平安，唯有一剑，可搬山，倒海，降妖，镇魔，敕神，摘星，断江，摧城，开天！我叫陈平安，平平安安的平...
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'abstract': '大千世界，无奇不有。我陈平安，唯有一剑，可搬山，倒海，降妖，镇魔，敕神，摘星，断江，摧城，开天！我叫陈平安，平平安安的平安。我是一名剑客。', 'finance': 32925, 'interaction': 84627387, 'popularity': 357637764, 'word_count...
+
+[API] Predict Called for: 玄鉴仙族
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '玄鉴仙族', 'category': '仙侠', 'word_count': 5113000, 'finance': 100417, 'interaction': 4537900, 'popularity': 7732104, 'abstract': '陆江仙熬夜猝死，残魂却附在了一面满是裂痕的青灰色铜镜上，飘落到了浩瀚无垠的修仙世界。凶险难测的大黎山，眉尺河旁小小的村落，一...
+
+--- Predict Request ---
+Input: {'title': '玄鉴仙族', 'category': '仙侠', 'abstract': '陆江仙熬夜猝死，残魂却附在了一面满是裂痕的青灰色铜镜上，飘落到了浩瀚无垠的修仙世界。凶险难测的大黎山，眉尺河旁小小的村落，一个小家族拾到了这枚镜子，于是传仙道授仙法，开启波澜壮阔的新时代。(家族修仙，不圣母，种田，无系统，群像文)', 'finance': 100417, 'interaction':...
+
+[API] Predict Called for: 无敌天命
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'abstract': '谁言天命天注定？我命由我不由天！', 'finance': 192615, 'interaction': 2002842, 'popularity': 134590499, 'word_count': 3864367, 'db_ip_score': 93.4}...
+
+[API] Predict Called for: 赤心巡天
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '赤心巡天', 'category': '仙侠', 'word_count': 10427800, 'finance': 29571, 'interaction': 7446300, 'popularity': 3871039, 'abstract': '（《赤心巡天》实体书已在全网发售。）上古时代，妖族绝迹。近古时代，龙族消失。神道大昌的时代已经如烟，飞剑绝巅的时代终究沉沦…...
+
+--- Predict Request ---
+Input: {'title': '赤心巡天', 'category': '仙侠', 'abstract': '（《赤心巡天》实体书已在全网发售。）上古时代，妖族绝迹。近古时代，龙族消失。神道大昌的时代已经如烟，飞剑绝巅的时代终究沉沦……这个世界发生了什么？那埋葬于时间长河里的历史真相，谁来聆听？山河千里写伏尸，乾坤百年描饿虎。天地至公如无情，我有赤心一颗、以巡天！——————欢迎来到，情何以甚的仙侠世界。',...
+
+[API] Predict Called for: 剑来
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'word_count': 13160146, 'finance': 2195, 'interaction': 18806086, 'popularity': 357637764, 'abstract': '大千世界，无奇不有。我陈平安，唯有一剑，可搬山，倒海，降妖，镇魔，敕神，摘星，断江，摧城，开天！我叫陈平安，平平安安的平...
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'abstract': '大千世界，无奇不有。我陈平安，唯有一剑，可搬山，倒海，降妖，镇魔，敕神，摘星，断江，摧城，开天！我叫陈平安，平平安安的平安。我是一名剑客。', 'finance': 32925, 'interaction': 84627387, 'popularity': 357637764, 'word_count...
+
+[API] Predict Called for: 玄鉴仙族
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '玄鉴仙族', 'category': '仙侠', 'word_count': 5113000, 'finance': 100417, 'interaction': 4537900, 'popularity': 7732104, 'abstract': '陆江仙熬夜猝死，残魂却附在了一面满是裂痕的青灰色铜镜上，飘落到了浩瀚无垠的修仙世界。凶险难测的大黎山，眉尺河旁小小的村落，一...
+
+--- Predict Request ---
+Input: {'title': '玄鉴仙族', 'category': '仙侠', 'abstract': '陆江仙熬夜猝死，残魂却附在了一面满是裂痕的青灰色铜镜上，飘落到了浩瀚无垠的修仙世界。凶险难测的大黎山，眉尺河旁小小的村落，一个小家族拾到了这枚镜子，于是传仙道授仙法，开启波澜壮阔的新时代。(家族修仙，不圣母，种田，无系统，群像文)', 'finance': 100417, 'interaction':...
+
+[API] Predict Called for: 剑来
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'word_count': 13160146, 'finance': 2195, 'interaction': 18806086, 'popularity': 357637764, 'abstract': '大千世界，无奇不有。我陈平安，唯有一剑，可搬山，倒海，降妖，镇魔，敕神，摘星，断江，摧城，开天！我叫陈平安，平平安安的平...
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'abstract': '大千世界，无奇不有。我陈平安，唯有一剑，可搬山，倒海，降妖，镇魔，敕神，摘星，断江，摧城，开天！我叫陈平安，平平安安的平安。我是一名剑客。', 'finance': 32925, 'interaction': 84627387, 'popularity': 357637764, 'word_count...
+
+--- Init DataManager ---
+
+[API] Predict Called for: 剑来
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'word_count': 13160146, 'finance': 2195, 'interaction': 18806086, 'popularity': 357637764, 'abstract': '大千世界，无奇不有。我陈平安，唯有一剑，可搬山，倒海，降妖，镇魔，敕神，摘星，断江，摧城，开天！我叫陈平安，平平安安的平...
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'abstract': '大千世界，无奇不有。我陈平安，唯有一剑，可搬山，倒海，降妖，镇魔，敕神，摘星，断江，摧城，开天！我叫陈平安，平平安安的平安。我是一名剑客。', 'finance': 32925, 'interaction': 84627387, 'popularity': 357637764, 'word_count...
+
+[API] Predict Called for: 玄鉴仙族
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '玄鉴仙族', 'category': '仙侠', 'word_count': 5113000, 'finance': 100417, 'interaction': 4537900, 'popularity': 7732104, 'abstract': '陆江仙熬夜猝死，残魂却附在了一面满是裂痕的青灰色铜镜上，飘落到了浩瀚无垠的修仙世界。凶险难测的大黎山，眉尺河旁小小的村落，一...
+
+--- Predict Request ---
+Input: {'title': '玄鉴仙族', 'category': '仙侠', 'abstract': '陆江仙熬夜猝死，残魂却附在了一面满是裂痕的青灰色铜镜上，飘落到了浩瀚无垠的修仙世界。凶险难测的大黎山，眉尺河旁小小的村落，一个小家族拾到了这枚镜子，于是传仙道授仙法，开启波澜壮阔的新时代。(家族修仙，不圣母，种田，无系统，群像文)', 'finance': 100417, 'interaction':...
+
+[API] Predict Called for: 无敌天命
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'abstract': '谁言天命天注定？我命由我不由天！', 'finance': 192615, 'interaction': 2002842, 'popularity': 134590499, 'word_count': 3864367, 'db_ip_score': 93.4}...
+
+[API] Predict Called for: 赤心巡天
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '赤心巡天', 'category': '仙侠', 'word_count': 10427800, 'finance': 29571, 'interaction': 7446300, 'popularity': 3871039, 'abstract': '（《赤心巡天》实体书已在全网发售。）上古时代，妖族绝迹。近古时代，龙族消失。神道大昌的时代已经如烟，飞剑绝巅的时代终究沉沦…...
+
+--- Predict Request ---
+Input: {'title': '赤心巡天', 'category': '仙侠', 'abstract': '（《赤心巡天》实体书已在全网发售。）上古时代，妖族绝迹。近古时代，龙族消失。神道大昌的时代已经如烟，飞剑绝巅的时代终究沉沦……这个世界发生了什么？那埋葬于时间长河里的历史真相，谁来聆听？山河千里写伏尸，乾坤百年描饿虎。天地至公如无情，我有赤心一颗、以巡天！——————欢迎来到，情何以甚的仙侠世界。',...
+
+[API] Predict Called for: 这个魔神明明很强却过分多疑
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '这个魔神明明很强却过分多疑', 'category': '玄幻奇幻', 'word_count': 569307, 'finance': 29, 'interaction': 116, 'popularity': 5309, 'abstract': '顶级杀手林晓被女神召唤到了异界。\n成为勇者打败魔王？\n等等，外面太危险，让我先练个级。\n一不小心练成了灭界魔神的林晓终于...
+
+--- Predict Request ---
+Input: {'title': '这个魔神明明很强却过分多疑', 'category': '玄幻奇幻', 'abstract': '顶级杀手林晓被女神召唤到了异界。\n成为勇者打败魔王？\n等等，外面太危险，让我先练个级。\n一不小心练成了灭界魔神的林晓终于开始了他的勇者之旅。\n就很离谱……', 'finance': 435, 'interaction': 522, 'popularity': 5309, ...
+
+[API] Predict Called for: 剑来
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'word_count': 13160146, 'finance': 2195, 'interaction': 18806086, 'popularity': 357637764, 'abstract': '大千世界，无奇不有。我陈平安，唯有一剑，可搬山，倒海，降妖，镇魔，敕神，摘星，断江，摧城，开天！我叫陈平安，平平安安的平...
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'abstract': '大千世界，无奇不有。我陈平安，唯有一剑，可搬山，倒海，降妖，镇魔，敕神，摘星，断江，摧城，开天！我叫陈平安，平平安安的平安。我是一名剑客。', 'finance': 32925, 'interaction': 84627387, 'popularity': 357637764, 'word_count...
+
+[API] Predict Called for: 玄鉴仙族
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '玄鉴仙族', 'category': '仙侠', 'word_count': 5113000, 'finance': 100417, 'interaction': 4537900, 'popularity': 7732104, 'abstract': '陆江仙熬夜猝死，残魂却附在了一面满是裂痕的青灰色铜镜上，飘落到了浩瀚无垠的修仙世界。凶险难测的大黎山，眉尺河旁小小的村落，一...
+
+--- Predict Request ---
+Input: {'title': '玄鉴仙族', 'category': '仙侠', 'abstract': '陆江仙熬夜猝死，残魂却附在了一面满是裂痕的青灰色铜镜上，飘落到了浩瀚无垠的修仙世界。凶险难测的大黎山，眉尺河旁小小的村落，一个小家族拾到了这枚镜子，于是传仙道授仙法，开启波澜壮阔的新时代。(家族修仙，不圣母，种田，无系统，群像文)', 'finance': 100417, 'interaction':...
+
+[API] Predict Called for: 无敌天命
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'abstract': '谁言天命天注定？我命由我不由天！', 'finance': 192615, 'interaction': 2002842, 'popularity': 134590499, 'word_count': 3864367, 'db_ip_score': 93.4}...
+
+[API] Predict Called for: 赤心巡天
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '赤心巡天', 'category': '仙侠', 'word_count': 10427800, 'finance': 29571, 'interaction': 7446300, 'popularity': 3871039, 'abstract': '（《赤心巡天》实体书已在全网发售。）上古时代，妖族绝迹。近古时代，龙族消失。神道大昌的时代已经如烟，飞剑绝巅的时代终究沉沦…...
+
+--- Predict Request ---
+Input: {'title': '赤心巡天', 'category': '仙侠', 'abstract': '（《赤心巡天》实体书已在全网发售。）上古时代，妖族绝迹。近古时代，龙族消失。神道大昌的时代已经如烟，飞剑绝巅的时代终究沉沦……这个世界发生了什么？那埋葬于时间长河里的历史真相，谁来聆听？山河千里写伏尸，乾坤百年描饿虎。天地至公如无情，我有赤心一颗、以巡天！——————欢迎来到，情何以甚的仙侠世界。',...
+
+[API] Predict Called for: 这个魔神明明很强却过分多疑
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '这个魔神明明很强却过分多疑', 'category': '玄幻奇幻', 'word_count': 569307, 'finance': 29, 'interaction': 116, 'popularity': 5309, 'abstract': '顶级杀手林晓被女神召唤到了异界。\n成为勇者打败魔王？\n等等，外面太危险，让我先练个级。\n一不小心练成了灭界魔神的林晓终于...
+
+--- Predict Request ---
+Input: {'title': '这个魔神明明很强却过分多疑', 'category': '玄幻奇幻', 'abstract': '顶级杀手林晓被女神召唤到了异界。\n成为勇者打败魔王？\n等等，外面太危险，让我先练个级。\n一不小心练成了灭界魔神的林晓终于开始了他的勇者之旅。\n就很离谱……', 'finance': 435, 'interaction': 522, 'popularity': 5309, ...
+
+--- Init DataManager ---
+
+[API] Predict Called for: 剑来
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'word_count': 13160146, 'finance': 2195, 'interaction': 18806086, 'popularity': 357637764, 'abstract': '大千世界，无奇不有。我陈平安，唯有一剑，可搬山，倒海，降妖，镇魔，敕神，摘星，断江，摧城，开天！我叫陈平安，平平安安的平...
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'abstract': '大千世界，无奇不有。我陈平安，唯有一剑，可搬山，倒海，降妖，镇魔，敕神，摘星，断江，摧城，开天！我叫陈平安，平平安安的平安。我是一名剑客。', 'finance': 32925, 'interaction': 84627387, 'popularity': 357637764, 'word_count...
+
+[API] Predict Called for: 玄鉴仙族
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '玄鉴仙族', 'category': '仙侠', 'word_count': 5113000, 'finance': 100417, 'interaction': 4537900, 'popularity': 7732104, 'abstract': '陆江仙熬夜猝死，残魂却附在了一面满是裂痕的青灰色铜镜上，飘落到了浩瀚无垠的修仙世界。凶险难测的大黎山，眉尺河旁小小的村落，一...
+
+--- Predict Request ---
+Input: {'title': '玄鉴仙族', 'category': '仙侠', 'abstract': '陆江仙熬夜猝死，残魂却附在了一面满是裂痕的青灰色铜镜上，飘落到了浩瀚无垠的修仙世界。凶险难测的大黎山，眉尺河旁小小的村落，一个小家族拾到了这枚镜子，于是传仙道授仙法，开启波澜壮阔的新时代。(家族修仙，不圣母，种田，无系统，群像文)', 'finance': 100417, 'interaction':...
+
+[API] Predict Called for: 无敌天命
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'abstract': '谁言天命天注定？我命由我不由天！', 'finance': 192615, 'interaction': 2002842, 'popularity': 134590499, 'word_count': 3864367, 'db_ip_score': 93.4}...
+
+[API] Predict Called for: 赤心巡天
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '赤心巡天', 'category': '仙侠', 'word_count': 10427800, 'finance': 29571, 'interaction': 7446300, 'popularity': 3871039, 'abstract': '（《赤心巡天》实体书已在全网发售。）上古时代，妖族绝迹。近古时代，龙族消失。神道大昌的时代已经如烟，飞剑绝巅的时代终究沉沦…...
+
+--- Predict Request ---
+Input: {'title': '赤心巡天', 'category': '仙侠', 'abstract': '（《赤心巡天》实体书已在全网发售。）上古时代，妖族绝迹。近古时代，龙族消失。神道大昌的时代已经如烟，飞剑绝巅的时代终究沉沦……这个世界发生了什么？那埋葬于时间长河里的历史真相，谁来聆听？山河千里写伏尸，乾坤百年描饿虎。天地至公如无情，我有赤心一颗、以巡天！——————欢迎来到，情何以甚的仙侠世界。',...
+
+[API] Predict Called for: 这个魔神明明很强却过分多疑
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '这个魔神明明很强却过分多疑', 'category': '玄幻奇幻', 'word_count': 569307, 'finance': 29, 'interaction': 116, 'popularity': 5309, 'abstract': '顶级杀手林晓被女神召唤到了异界。\n成为勇者打败魔王？\n等等，外面太危险，让我先练个级。\n一不小心练成了灭界魔神的林晓终于...
+
+--- Predict Request ---
+Input: {'title': '这个魔神明明很强却过分多疑', 'category': '玄幻奇幻', 'abstract': '顶级杀手林晓被女神召唤到了异界。\n成为勇者打败魔王？\n等等，外面太危险，让我先练个级。\n一不小心练成了灭界魔神的林晓终于开始了他的勇者之旅。\n就很离谱……', 'finance': 435, 'interaction': 522, 'popularity': 5309, ...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.20000000001}...
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'word_count': 13160146, 'finance': 2195, 'interaction': 18806086, 'popularity': 357637764, 'abstract': '大千世界，无奇不有。我陈平安，唯有一剑，可搬山，倒海，降妖，镇魔，敕神，摘星，断江，摧城，开天！我叫陈平安，平平安安的平...
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'word_count': 13160146, 'finance': 2195, 'interaction': 18806086, 'popularity': 357637764, 'abstract': '大千世界，无奇不有。我陈平安，唯有一剑，可搬山，倒海，降妖，镇魔，敕神，摘星，断江，摧城，开天！我叫陈平安，平平安安的平...
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'word_count': 13160146, 'finance': 2195, 'interaction': 18806086, 'popularity': 357637764, 'abstract': '大千世界，无奇不有。我陈平安，唯有一剑，可搬山，倒海，降妖，镇魔，敕神，摘星，断江，摧城，开天！我叫陈平安，平平安安的平...
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'word_count': 13160146, 'finance': 35568, 'interaction': 18806086, 'popularity': 3761217.2}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.20000000001}...
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'word_count': 13160146, 'finance': 35568, 'interaction': 18806086, 'popularity': 3761217.2}...
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'word_count': 13160146, 'finance': 35568, 'interaction': 18806086, 'popularity': 3761217.2}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '逆天邪神', 'category': '玄幻奇幻', 'word_count': 7866492, 'finance': 6905, 'interaction': 3867004, 'popularity': 339929091, 'abstract': '掌天毒之珠，承邪神之血，修逆天之力，一代邪神，君临天下！【添加微信公众号：火星引力】&quot;'}...
+
+--- Predict Request ---
+Input: {'title': '捞尸人', 'category': '都市', 'word_count': 4772800, 'finance': 198723, 'interaction': 5208800, 'popularity': 6900124, 'abstract': '人知鬼恐怖，鬼晓人心毒。这是一本传统灵异小说。'}...
+
+--- Predict Request ---
+Input: {'title': '捞尸人', 'category': '都市', 'word_count': 4772800, 'finance': 198723, 'interaction': 5208800, 'popularity': 6900124, 'abstract': '人知鬼恐怖，鬼晓人心毒。这是一本传统灵异小说。'}...
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.20000000001}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.20000000001}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.20000000001}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.20000000001}...
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.20000000001}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.20000000001}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.20000000001}...
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---

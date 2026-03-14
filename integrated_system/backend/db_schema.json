@@ -1,0 +1,253 @@
+{
+  "zh_tables": {
+    "zongheng_book_comments": {
+      "columns": [
+        "thread_id",
+        "book_id",
+        "book_title",
+        "user_id",
+        "nickname",
+        "content",
+        "content_length",
+        "create_time",
+        "comment_date",
+        "data_source_ym",
+        "ip_region",
+        "crawl_time"
+      ],
+      "rows": 110587
+    },
+    "zongheng_book_ranks": {
+      "columns": [
+        "year",
+        "month",
+        "book_id",
+        "title",
+        "author",
+        "category",
+        "word_count",
+        "monthly_ticket",
+        "rank_num",
+        "month_donate",
+        "total_click",
+        "total_rec",
+        "week_rec",
+        "post_count",
+        "fan_count",
+        "is_signed",
+        "status",
+        "book_url",
+        "forum_id",
+        "crawl_time",
+        "update_frequency",
+        "chapter_interval",
+        "cover_url",
+        "abstract",
+        "latest_chapter"
+      ],
+      "rows": 7787
+    },
+    "zongheng_realtime_tracking": {
+      "columns": [
+        "id",
+        "novel_id",
+        "title",
+        "record_year",
+        "record_month",
+        "monthly_tickets",
+        "total_recommend",
+        "monthly_ticket_rank",
+        "platform",
+        "crawl_time",
+        "record_day"
+      ],
+      "rows": 101
+    }
+  },
+  "zh_comment_samples": [
+    {
+      "thread_id": "604051",
+      "book_id": "551399",
+      "book_title": "生物骇客",
+      "user_id": "16270797",
+      "nickname": "微笑牵动伤口@百度",
+      "content": " 我看了3章 里边的设定很好 就是很烧脑啊 本来脑细胞就不多 一看这本书就直接没了",
+      "content_length": "41",
+      "create_time": "1488280945000",
+      "comment_date": "2017-02-28 19:22:25",
+      "data_source_ym": "2023-03",
+      "ip_region": "山东",
+      "crawl_time": "2025-12-26 03:35:04"
+    },
+    {
+      "thread_id": "621475",
+      "book_id": "551399",
+      "book_title": "生物骇客",
+      "user_id": "25666409",
+      "nickname": "Soul零樱",
+      "content": "科技感十足啊，厉害，很久没见过这样的作品了",
+      "content_length": "21",
+      "create_time": "1488590258000",
+      "comment_date": "2017-03-04 09:17:38",
+      "data_source_ym": "2023-03",
+      "ip_region": "内蒙古",
+      "crawl_time": "2025-12-26 03:35:04"
+    }
+  ],
+  "zh_top10": [
+    {
+      "title": "无敌天命",
+      "monthly_tickets": "200592",
+      "crawl_time": "2026-02-23 14:49:04"
+    },
+    {
+      "title": "太荒吞天诀",
+      "monthly_tickets": "51768",
+      "crawl_time": "2026-02-23 14:49:05"
+    },
+    {
+      "title": "剑来",
+      "monthly_tickets": "42797",
+      "crawl_time": "2026-02-23 14:49:07"
+    },
+    {
+      "title": "屠狗之辈",
+      "monthly_tickets": "40165",
+      "crawl_time": "2026-02-23 14:49:09"
+    },
+    {
+      "title": "星辰大道",
+      "monthly_tickets": "28089",
+      "crawl_time": "2026-02-23 14:49:10"
+    },
+    {
+      "title": "最强狂兵Ⅱ：黑暗荣耀",
+      "monthly_tickets": "21773",
+      "crawl_time": "2026-02-23 14:49:13"
+    },
+    {
+      "title": "齐天",
+      "monthly_tickets": "20078",
+      "crawl_time": "2026-02-23 14:49:15"
+    },
+    {
+      "title": "有帝族背景还开挂，我无敌了！",
+      "monthly_tickets": "17503",
+      "crawl_time": "2026-02-23 14:49:17"
+    },
+    {
+      "title": "逍遥四公子",
+      "monthly_tickets": "16597",
+      "crawl_time": "2026-02-23 14:49:19"
+    },
+    {
+      "title": "圣殊",
+      "monthly_tickets": "16179",
+      "crawl_time": "2026-02-23 14:49:21"
+    }
+  ],
+  "qd_tables": {
+    "novel_monthly_stats": {
+      "columns": [
+        "id",
+        "year",
+        "month",
+        "novel_id",
+        "source",
+        "title",
+        "rank_on_list",
+        "monthly_tickets_on_list",
+        "author",
+        "category",
+        "sub_category",
+        "status",
+        "word_count",
+        "collection_count",
+        "collection_rank",
+        "monthly_ticket_count",
+        "monthly_ticket_rank",
+        "recommendation_count",
+        "reward_count",
+        "is_vip",
+        "is_sign",
+        "synopsis",
+        "crawl_time",
+        "book_url",
+        "week_recommendation_count",
+        "adaptations",
+        "cover_url",
+        "latest_chapter",
+        "abstract"
+      ],
+      "rows": 3469
+    },
+    "novel_realtime_tracking": {
+      "columns": [
+        "id",
+        "novel_id",
+        "title",
+        "record_year",
+        "record_month",
+        "monthly_tickets",
+        "collection_count",
+        "monthly_ticket_rank",
+        "crawl_time",
+        "platform",
+        "record_day"
+      ],
+      "rows": 100
+    }
+  },
+  "qd_top10": [
+    {
+      "title": "捞尸人",
+      "monthly_tickets": "134497",
+      "crawl_time": "2026-02-23 20:39:54"
+    },
+    {
+      "title": "玄鉴仙族",
+      "monthly_tickets": "88551",
+      "crawl_time": "2026-02-23 20:40:00"
+    },
+    {
+      "title": "夜无疆",
+      "monthly_tickets": "74128",
+      "crawl_time": "2026-02-23 20:40:06"
+    },
+    {
+      "title": "没钱修什么仙？",
+      "monthly_tickets": "60219",
+      "crawl_time": "2026-02-23 20:40:11"
+    },
+    {
+      "title": "苟在初圣魔门当人材",
+      "monthly_tickets": "50500",
+      "crawl_time": "2026-02-23 20:40:17"
+    },
+    {
+      "title": "苟在武道世界成圣",
+      "monthly_tickets": "47503",
+      "crawl_time": "2026-02-23 20:40:25"
+    },
+    {
+      "title": "以一龙之力打倒整个世界！",
+      "monthly_tickets": "39766",
+      "crawl_time": "2026-02-23 20:40:35"
+    },
+    {
+      "title": "青山",
+      "monthly_tickets": "38808",
+      "crawl_time": "2026-02-23 20:40:39"
+    },
+    {
+      "title": "山河稷",
+      "monthly_tickets": "33093",
+      "crawl_time": "2026-02-23 20:40:45"
+    },
+    {
+      "title": "从魔法少女开始独断万古",
+      "monthly_tickets": "29537",
+      "crawl_time": "2026-02-23 20:40:52"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+flask
+flask-cors
+pandas
+joblib
+scikit-learn
+xgboost
+gensim
+jieba
+snownlp
+pymysql
+PyJWT

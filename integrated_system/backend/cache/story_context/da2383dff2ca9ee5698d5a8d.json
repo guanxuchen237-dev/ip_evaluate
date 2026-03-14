@@ -1,0 +1,109 @@
+{
+  "storyline_summary": "请假设你正在阅读作品《捞尸人》的最新更新。\n剧情梗概：最新章节：配角为了掩护主角撤退，独自一人挡在千军万马前，那句“虽千万人吾往矣”太燃了，也太刀了。\n请基于你的人设，对这段剧情发表简短、口语化的读后感。",
+  "key_plot_points": [
+    "请假设你正在阅读作品《捞尸人》的最新更新。\n剧情梗概：最新章节：配角为了掩护主角撤退，独自一人挡在千军万马前，那句“虽千万人吾往矣”太燃了，也太刀了。\n请基于你的人设，对这段剧情发表简短、口语化的读后感。"
+  ],
+  "character_state": [],
+  "conflict_axes": [],
+  "recent_progress": [],
+  "likely_next": [],
+  "confidence": 0.35,
+  "source_refs": [
+    {
+      "ref_id": "C1",
+      "title": "用户提供章节片段",
+      "url": "",
+      "snippet": "请假设你正在阅读作品《捞尸人》的最新更新。\n剧情梗概：最新章节：配角为了掩护主角撤退，独自一人挡在千军万马前，那句“虽千万人吾往矣”太燃了，也太刀了。\n请基于你的人设，对这段剧情发表简短、口语化的读后感。",
+      "source_type": "chapter_input",
+      "score": 0.9
+    },
+    {
+      "ref_id": "L1",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "这也太扯了吧，祖师上身的人他们敢这么说话",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L2",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "和主角差不多，主角吸肉升级，最多就留个人皮",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L3",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "命运之锁断之前倾月不可能和晕车真正在一起，他身边的人都会遭受厄运，这一切都是为了晕车，所以命运不允许他们在一起",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L4",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "我方水晶正在被攻击",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L5",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "“特殊人类”应该挺多种类的，但源血承载着一定是最特殊的那类，至于其余的写不写，那就要根据剧情了哈哈",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L6",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "给你又投了2张月票，因为白天更新了",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L7",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "进化了1000章，依旧像小脑没开智的人",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L8",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "这写的也太少了，没几个字就完事了",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L9",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "晚一个小时四十分钟也太离谱了",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L10",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "纵横小说也是个大网，铁马飞桥写作也比较出名，《太荒吞天诀》这本书就这样无水平的写下去还要收钱？你把爱你的读者和书友当成傻子玩，你好意思吗？",
+      "source_type": "local_corpus",
+      "score": 0.45
+    }
+  ],
+  "meta": {
+    "source_title": "捞尸人",
+    "source_author": "reader_space",
+    "source_platform": "reader_space",
+    "chapter_title": "实时模拟片段",
+    "retrieved_at": 1771845183,
+    "use_web_search": false
+  }
+}

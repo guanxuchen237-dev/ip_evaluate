@@ -1,0 +1,101 @@
+{
+  "storyline_summary": "你让读者高兴读者也会支持你，一天一点点，值得给你票和大赏么",
+  "key_plot_points": [
+    "你让读者高兴读者也会支持你，一天一点点，值得给你票和大赏么"
+  ],
+  "character_state": [],
+  "conflict_axes": [],
+  "recent_progress": [],
+  "likely_next": [],
+  "confidence": 0.35,
+  "source_refs": [
+    {
+      "ref_id": "L1",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "你让读者高兴读者也会支持你，一天一点点，值得给你票和大赏么",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L2",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "这章写的很好，给人意犹未尽之感觉。但章节还是太短了！如果章节再加长一些就更好了！",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L3",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "能更就更，不能更就烂尾得了，在这里搞心态呢？读者对你够包容了吧？你就这样对读者？",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L4",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "今天的两章写的很好，较之前的章节进步了很多，语言也简练了不少，但章节还是太短了！希望作者多听听大家的心声！加油吧！",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L5",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "钱宰，每个读者都在看着你了，你懂的。",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L6",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "与神曦母女正式相聚的章节还有多久",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L7",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "内容一集一集的减少，周未了多更点吧",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L8",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "不是，这你还要等他完事，直接割以永治，读者支持你",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L9",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "前期剧情还行，后面太跳跃，东一坨西一坨，而且前面很多铺垫的内容感觉关联也不大，比如红莲说她对你有大用，后面基本没涉及，每个章节扯了太多新人物出来，爽文那种你就写快点这样更好一些哈哈",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L10",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "觉者这一套其实是格式塔的变形吧？格式塔里的学生，工程师对体系的正反馈作用极大，但他们基本是自愿进入体系的。觉者这一套尽是搞死人进来或者夺舍。两套体系的区别像神主手段和魔主手段的区别",
+      "source_type": "local_corpus",
+      "score": 0.45
+    }
+  ],
+  "meta": {
+    "source_title": "遮天",
+    "source_author": null,
+    "source_platform": null,
+    "chapter_title": "实时模拟片段",
+    "retrieved_at": 1770461933,
+    "use_web_search": false
+  }
+}

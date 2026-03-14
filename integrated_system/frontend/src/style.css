@@ -1,0 +1,153 @@
+@import "tailwindcss";
+
+/* Cloud Dancer Design System - Calm Tech 2026 */
+
+@layer base {
+  :root {
+    /* Warm off-white background - like quality paper */
+    --background: 40 20% 97%;
+    --foreground: 215 25% 20%;
+
+    /* Glassmorphism cards */
+    --card: 0 0% 100%;
+    --card-foreground: 215 25% 20%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 25% 20%;
+
+    /* Soft sage green accent */
+    --primary: 160 30% 45%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Hazy blue secondary */
+    --secondary: 210 40% 94%;
+    --secondary-foreground: 215 25% 30%;
+
+    --muted: 210 20% 94%;
+    --muted-foreground: 215 15% 50%;
+
+    /* Soft blue accent */
+    --accent: 210 60% 55%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 70% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Soft borders */
+    --border: 210 20% 90%;
+    --input: 210 20% 92%;
+    --ring: 160 30% 45%;
+
+    --radius: 1rem;
+
+    /* Sidebar - slightly transparent */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 215 25% 30%;
+    --sidebar-primary: 160 30% 45%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 40% 96%;
+    --sidebar-accent-foreground: 215 25% 20%;
+    --sidebar-border: 210 20% 92%;
+    --sidebar-ring: 160 30% 45%;
+
+    /* Custom tokens for glassmorphism */
+    --glass-bg: 0 0% 100%;
+    --glass-border: 0 0% 100%;
+
+    /* Chart colors */
+    --chart-blue: 210 70% 55%;
+    --chart-green: 160 50% 50%;
+    --chart-yellow: 45 90% 55%;
+    --chart-red: 0 70% 55%;
+    --chart-purple: 270 50% 60%;
+    --chart-cyan: 190 70% 50%;
+  }
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+
+  /* Glassmorphism card */
+  .glass-card {
+    background-color: rgb(255 255 255 / 0.7);
+    backdrop-filter: blur(24px);
+    border: 1px solid rgb(255 255 255 / 0.3);
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  }
+
+  /* Editorial glass card - more refined */
+  .editorial-card {
+    background-color: rgb(255 255 255 / 0.6);
+    backdrop-filter: blur(40px);
+    border: 1px solid rgb(255 255 255 / 0.2);
+    box-shadow:
+      0 4px 32px -8px rgba(0, 0, 0, 0.06),
+      0 24px 64px -16px rgba(0, 0, 0, 0.08),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.8);
+  }
+
+  /* Soft floating effect */
+  .float-shadow {
+    box-shadow:
+      0 4px 20px -4px rgba(0, 0, 0, 0.05),
+      0 12px 40px -8px rgba(0, 0, 0, 0.08);
+  }
+
+  /* Premium shadow for hero elements */
+  .hero-shadow {
+    box-shadow:
+      0 8px 40px -12px rgba(0, 0, 0, 0.15),
+      0 24px 80px -24px rgba(0, 0, 0, 0.12);
+  }
+
+  /* Pill tag style */
+  .pill-tag {
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    background-color: rgb(255 255 255 / 0.8);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgb(255 255 255 / 0.4);
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  }
+
+  .pill-tag:hover {
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    transform: scale(1.05);
+  }
+
+  /* Gradient text */
+  .gradient-text {
+    background: linear-gradient(to right, hsl(var(--primary)), hsl(var(--accent)));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Editorial serif headline */
+  .editorial-headline {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+  }
+}

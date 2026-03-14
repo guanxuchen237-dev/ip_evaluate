@@ -1,0 +1,26 @@
+KEY: id || VAL: 5862
+KEY: year || VAL: 2025
+KEY: month || VAL: 1
+KEY: novel_id || VAL: 1041637443
+KEY: source || VAL: qidian
+KEY: title || VAL: 捞尸人
+KEY: rank_on_list || VAL: 1
+KEY: monthly_tickets_on_list || VAL: 376301
+KEY: author || VAL: 纯洁滴小龙
+KEY: category || VAL: 都市
+KEY: sub_category || VAL: 异术超能
+KEY: status || VAL: 连载
+KEY: word_count || VAL: 4772800
+KEY: collection_count || VAL: 6900124
+KEY: collection_rank || VAL: 12
+KEY: monthly_ticket_count || VAL: 198660
+KEY: monthly_ticket_rank || VAL: 1
+KEY: recommendation_count || VAL: 5208600
+KEY: reward_count || VAL: 145
+KEY: is_vip || VAL: VIP
+KEY: is_sign || VAL: 签约
+KEY: synopsis || VAL: 人知鬼恐怖，鬼晓人心毒。
+KEY: crawl_time || VAL: 2025-12-25 16:38:48
+KEY: book_url || VAL: https://book.qidian.com/info/1041637443
+KEY: week_recommendation_count || VAL: 35600
+KEY: adaptations || VAL: 影视,出版

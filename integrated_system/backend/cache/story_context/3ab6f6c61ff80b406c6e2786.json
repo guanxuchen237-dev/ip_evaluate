@@ -1,0 +1,123 @@
+{
+  "storyline_summary": "最新章节中，宗门大比开始，主角作为不起眼的外门弟子，一招击败夺冠热门，引发全场震惊。",
+  "key_plot_points": [
+    "宗门大比开始",
+    "外门弟子主角一招击败夺冠热门"
+  ],
+  "character_state": [
+    "主角身份为不起眼的外门弟子",
+    "主角展现出远超预期的实力"
+  ],
+  "conflict_axes": [
+    "主角（外门弟子）与宗门内其他强者（夺冠热门）的实力冲突",
+    "主角低调身份与突然展现的实力引发的关注与潜在冲突"
+  ],
+  "recent_progress": [
+    "宗门大比拉开序幕",
+    "主角在比试中瞬间击败强敌"
+  ],
+  "likely_next": [
+    "主角的胜利引发宗门高层或他人的关注与调查",
+    "后续比试中可能面临更强大的对手或质疑",
+    "主角的真实身份或实力来源可能逐渐揭露"
+  ],
+  "confidence": 0.8,
+  "source_refs": [
+    {
+      "ref_id": "C1",
+      "title": "用户提供章节片段",
+      "url": "",
+      "snippet": "请假设你正在阅读作品《遮天》的最新更新。\n剧情梗概：最新章节：宗门大比开始，主角作为一个不起眼的外门弟子，竟然一招击败了夺冠热门，全场鸦雀无声。\n请基于你的人设，对这段剧情发表简短、口语化的读后感。",
+      "source_type": "chapter_input",
+      "score": 0.9
+    },
+    {
+      "ref_id": "L1",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "你确实有点水，剧情推动慢，更新还少",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L2",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "帮过主角的真是没一个有好下场的啊，这主角也是个霉逼",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L3",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "这些章节该多爆，水到不水，就是不够看，加油",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L4",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "缴费后能否堤前看后面的章节，谢谢了！",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L5",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "水谈不上 就是一天章节少了点 该爆就爆",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L6",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "你觉得，我感觉这个剧情看了无数次了",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L7",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "似曾相识的剧情，很好很好，票投给隔壁了",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L8",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "月票给你，但还是要说一句，篇幅太短章节太少了....",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L9",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "《如一个死人般》",
+      "source_type": "local_corpus",
+      "score": 0.45
+    },
+    {
+      "ref_id": "L10",
+      "title": "本地评论语料",
+      "url": "",
+      "snippet": "叶老六当年和叶灵儿不就是这剧情嘛，叶灵儿被收走了，叶老六师父给他一顿忽悠，结果到宗门就三个人",
+      "source_type": "local_corpus",
+      "score": 0.45
+    }
+  ],
+  "meta": {
+    "source_title": "遮天",
+    "source_author": "reader_space",
+    "source_platform": "reader_space",
+    "chapter_title": "实时模拟片段",
+    "retrieved_at": 1772794494,
+    "use_web_search": false
+  }
+}

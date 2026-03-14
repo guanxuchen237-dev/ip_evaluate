@@ -1,0 +1,13 @@
+{
+    "primary_chat_id": "default_legacy_model",
+    "primary_logic_id": "default_legacy_model",
+    "models": [
+        {
+            "id": "default_legacy_model",
+            "provider": "deepseek",
+            "model_name": "deepseek-chat",
+            "base_url": "https://api.deepseek.com/v1",
+            "api_key": "sk-d1cc86c1f4604cf69f13b1e6db7bf72b"
+        }
+    ]
+}

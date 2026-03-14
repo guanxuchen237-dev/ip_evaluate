@@ -1,0 +1,115 @@
+{
+  "qidian_err": "(1146, \"Table 'qidian_data.ip_ai_evaluation' doesn't exist\")",
+  "zongheng": [
+    {
+      "title": "无敌天命",
+      "tickets": 23739,
+      "wc": 3462127,
+      "pop": 120796682,
+      "ir": 397252,
+      "ai_score": 96.7,
+      "comm_score": 87.9,
+      "story_score": 62.7,
+      "method": "xgboost"
+    },
+    {
+      "title": "逆天邪神",
+      "tickets": 6905,
+      "wc": 7866492,
+      "pop": 339929091,
+      "ir": 3867004,
+      "ai_score": 99.2,
+      "comm_score": 67.9,
+      "story_score": 76.6,
+      "method": "xgboost"
+    },
+    {
+      "title": "最强狂兵Ⅱ：黑暗荣耀",
+      "tickets": 6747,
+      "wc": 2942800,
+      "pop": 19106352,
+      "ir": 379025,
+      "ai_score": 91.3,
+      "comm_score": 77.3,
+      "story_score": 82.2,
+      "method": "xgboost"
+    },
+    {
+      "title": "齐天",
+      "tickets": 6706,
+      "wc": 1335194,
+      "pop": 1314534,
+      "ir": 8368,
+      "ai_score": 96.8,
+      "comm_score": 86.6,
+      "story_score": 52.5,
+      "method": "xgboost"
+    },
+    {
+      "title": "雪魔刀",
+      "tickets": 6648,
+      "wc": 563018,
+      "pop": 257677,
+      "ir": 14259,
+      "ai_score": 83.8,
+      "comm_score": 69.8,
+      "story_score": 23.8,
+      "method": "xgboost"
+    },
+    {
+      "title": "太荒吞天诀",
+      "tickets": 6106,
+      "wc": 14787195,
+      "pop": 91331455,
+      "ir": 204856,
+      "ai_score": 96.1,
+      "comm_score": 77.3,
+      "story_score": 86.3,
+      "method": "xgboost"
+    },
+    {
+      "title": "星辰大道",
+      "tickets": 5946,
+      "wc": 2495233,
+      "pop": 9941538,
+      "ir": 243802,
+      "ai_score": 94.7,
+      "comm_score": 84.0,
+      "story_score": 60.3,
+      "method": "xgboost"
+    },
+    {
+      "title": "重生1983：从不做接盘侠开始",
+      "tickets": 5803,
+      "wc": 329950,
+      "pop": 29005,
+      "ir": 368,
+      "ai_score": 66.8,
+      "comm_score": 46.1,
+      "story_score": 58.2,
+      "method": "kmeans_trend_cluster"
+    },
+    {
+      "title": "修仙：我在云疆养仙蚕",
+      "tickets": 4891,
+      "wc": 1516580,
+      "pop": 52454,
+      "ir": 4961,
+      "ai_score": 99.6,
+      "comm_score": 98.0,
+      "story_score": 50.3,
+      "method": "xgboost"
+    },
+    {
+      "title": "重生09：我为财富之王",
+      "tickets": 4591,
+      "wc": 1540819,
+      "pop": 53650,
+      "ir": 1001,
+      "ai_score": 97.5,
+      "comm_score": 90.5,
+      "story_score": 54.1,
+      "method": "xgboost"
+    }
+  ]
+}
