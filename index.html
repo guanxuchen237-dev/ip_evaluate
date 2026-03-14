@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Novel IP Analysis</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f0f4f8;
+      color: #2d3748;
+    }
+
+    header {
+      background: linear-gradient(135deg, #2b6cb0, #3182ce);
+      color: #fff;
+      padding: 1.5rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,.2);
+    }
+    header h1 { font-size: 1.6rem; font-weight: 700; }
+    header span { font-size: 0.9rem; opacity: .8; }
+
+    main {
+      max-width: 1100px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    /* ── Summary cards ── */
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .card {
+      background: #fff;
+      border-radius: 10px;
+      padding: 1.2rem 1.5rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,.1);
+    }
+    .card .label { font-size: .8rem; color: #718096; text-transform: uppercase; letter-spacing: .05em; }
+    .card .value { font-size: 2rem; font-weight: 700; margin-top: .25rem; }
+    .card.blue   .value { color: #3182ce; }
+    .card.green  .value { color: #38a169; }
+    .card.orange .value { color: #dd6b20; }
+    .card.purple .value { color: #805ad5; }
+
+    /* ── Controls ── */
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .75rem;
+      margin-bottom: 1.25rem;
+      align-items: center;
+    }
+    .controls input {
+      flex: 1 1 220px;
+      padding: .5rem .75rem;
+      border: 1px solid #cbd5e0;
+      border-radius: 6px;
+      font-size: .9rem;
+      outline: none;
+      transition: border-color .2s;
+    }
+    .controls input:focus { border-color: #3182ce; }
+    .controls select {
+      padding: .5rem .75rem;
+      border: 1px solid #cbd5e0;
+      border-radius: 6px;
+      font-size: .9rem;
+      background: #fff;
+      cursor: pointer;
+    }
+
+    /* ── Table ── */
+    .table-wrap {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.1);
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .9rem;
+    }
+    thead th {
+      background: #ebf4ff;
+      color: #2b6cb0;
+      font-weight: 600;
+      text-align: left;
+      padding: .85rem 1rem;
+      white-space: nowrap;
+      cursor: pointer;
+      user-select: none;
+    }
+    thead th:hover { background: #bee3f8; }
+    thead th .sort-icon { margin-left: .3rem; opacity: .5; }
+    thead th.sorted .sort-icon { opacity: 1; }
+
+    tbody tr { border-top: 1px solid #e2e8f0; transition: background .15s; }
+    tbody tr:hover { background: #f7fafc; }
+    td { padding: .8rem 1rem; }
+
+    .badge {
+      display: inline-block;
+      padding: .2rem .65rem;
+      border-radius: 999px;
+      font-size: .75rem;
+      font-weight: 600;
+    }
+    .badge-high   { background: #fed7d7; color: #c53030; }
+    .badge-medium { background: #fefcbf; color: #b7791f; }
+    .badge-low    { background: #c6f6d5; color: #276749; }
+    .badge-pending   { background: #e9d8fd; color: #6b46c1; }
+    .badge-approved  { background: #c6f6d5; color: #276749; }
+    .badge-rejected  { background: #fed7d7; color: #c53030; }
+    .badge-review    { background: #bee3f8; color: #2b6cb0; }
+
+    .progress-bar {
+      background: #e2e8f0;
+      border-radius: 999px;
+      height: 8px;
+      width: 100px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #3182ce, #63b3ed);
+    }
+
+    /* ── Pagination ── */
+    .pagination {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: .5rem;
+      padding: .75rem 1rem;
+      border-top: 1px solid #e2e8f0;
+    }
+    .pagination button {
+      padding: .3rem .7rem;
+      border: 1px solid #cbd5e0;
+      border-radius: 6px;
+      background: #fff;
+      cursor: pointer;
+      font-size: .85rem;
+      transition: background .15s;
+    }
+    .pagination button:hover:not(:disabled) { background: #ebf4ff; }
+    .pagination button:disabled { opacity: .4; cursor: default; }
+    .pagination .page-info { font-size: .85rem; color: #718096; }
+
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      font-size: .8rem;
+      color: #a0aec0;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Novel IP Analysis</h1>
+    <span>Intellectual Property Evaluation Dashboard</span>
+  </div>
+</header>
+
+<main>
+  <!-- Summary Cards -->
+  <div class="summary" id="summary"></div>
+
+  <!-- Table Controls -->
+  <div class="controls">
+    <input type="text" id="search" placeholder="Search by title, owner, or category…" />
+    <select id="filterStatus">
+      <option value="">All Statuses</option>
+      <option value="Pending">Pending</option>
+      <option value="Approved">Approved</option>
+      <option value="Rejected">Rejected</option>
+      <option value="Under Review">Under Review</option>
+    </select>
+    <select id="filterRisk">
+      <option value="">All Risk Levels</option>
+      <option value="High">High</option>
+      <option value="Medium">Medium</option>
+      <option value="Low">Low</option>
+    </select>
+  </div>
+
+  <!-- Data Table -->
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th data-col="id">ID <span class="sort-icon">↕</span></th>
+          <th data-col="title">Title <span class="sort-icon">↕</span></th>
+          <th data-col="owner">Owner <span class="sort-icon">↕</span></th>
+          <th data-col="category">Category <span class="sort-icon">↕</span></th>
+          <th data-col="filingDate">Filing Date <span class="sort-icon">↕</span></th>
+          <th data-col="noveltyScore">Novelty Score <span class="sort-icon">↕</span></th>
+          <th data-col="riskLevel">Risk Level <span class="sort-icon">↕</span></th>
+          <th data-col="status">Status <span class="sort-icon">↕</span></th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+    <div class="pagination">
+      <button id="btnPrev">‹ Prev</button>
+      <span class="page-info" id="pageInfo"></span>
+      <button id="btnNext">Next ›</button>
+    </div>
+  </div>
+</main>
+
+<footer>Novel IP Analysis — ip_evaluate &copy; 2026</footer>
+
+<script>
+  // ── Sample dataset ────────────────────────────────────────────────────────
+  const DATA = [
+    { id:"IP-001", title:"Self-healing Polymer Coating", owner:"Alice Chen",    category:"Materials",    filingDate:"2025-02-10", noveltyScore:92, riskLevel:"Low",    status:"Approved"     },
+    { id:"IP-002", title:"Quantum Key Distribution Module",  owner:"Bob Liu",     category:"Security",     filingDate:"2025-03-22", noveltyScore:88, riskLevel:"Medium", status:"Under Review" },
+    { id:"IP-003", title:"Adaptive Neural Compiler",         owner:"Carol Park",  category:"Software",     filingDate:"2025-01-05", noveltyScore:79, riskLevel:"Low",    status:"Approved"     },
+    { id:"IP-004", title:"Biodegradable Microchip Substrate",owner:"David Kim",   category:"Electronics",  filingDate:"2025-04-18", noveltyScore:95, riskLevel:"Low",    status:"Pending"      },
+    { id:"IP-005", title:"Haptic Feedback Glove System",     owner:"Eva Torres",  category:"Wearables",    filingDate:"2024-11-30", noveltyScore:67, riskLevel:"Medium", status:"Approved"     },
+    { id:"IP-006", title:"Smart Grid Load Balancer",         owner:"Frank Osei",  category:"Energy",       filingDate:"2025-05-01", noveltyScore:83, riskLevel:"Low",    status:"Under Review" },
+    { id:"IP-007", title:"Genomic Data Compression Algo",    owner:"Grace Yun",   category:"Biotech",      filingDate:"2025-06-14", noveltyScore:91, riskLevel:"Medium", status:"Pending"      },
+    { id:"IP-008", title:"Aerial Swarm Coordination Protocol",owner:"Han Zhou",   category:"Robotics",     filingDate:"2024-09-07", noveltyScore:74, riskLevel:"High",   status:"Rejected"     },
+    { id:"IP-009", title:"Carbon Nanotube Battery Cell",     owner:"Iris Nkosi",  category:"Energy",       filingDate:"2025-07-23", noveltyScore:97, riskLevel:"Low",    status:"Approved"     },
+    { id:"IP-010", title:"Zero-trust Network Proxy",         owner:"Jake Martin", category:"Security",     filingDate:"2025-08-03", noveltyScore:62, riskLevel:"High",   status:"Rejected"     },
+    { id:"IP-011", title:"Photonic Signal Processor",        owner:"Karen Patel", category:"Electronics",  filingDate:"2025-09-15", noveltyScore:86, riskLevel:"Low",    status:"Under Review" },
+    { id:"IP-012", title:"Bio-inspired Adhesive Patch",      owner:"Leo Ferreira",category:"Materials",    filingDate:"2025-10-02", noveltyScore:78, riskLevel:"Medium", status:"Pending"      },
+    { id:"IP-013", title:"Decentralized Clinical Trial Ledger",owner:"Mia Russo", category:"Biotech",      filingDate:"2024-12-19", noveltyScore:85, riskLevel:"Medium", status:"Approved"     },
+    { id:"IP-014", title:"Liquid Metal Antenna Array",       owner:"Noah Sato",   category:"Electronics",  filingDate:"2025-11-08", noveltyScore:90, riskLevel:"Low",    status:"Pending"      },
+    { id:"IP-015", title:"Emotion-aware Tutoring Engine",    owner:"Olivia Wang", category:"Software",     filingDate:"2025-04-29", noveltyScore:71, riskLevel:"Medium", status:"Under Review" },
+  ];
+
+  // ── State ─────────────────────────────────────────────────────────────────
+  let filtered = [...DATA];
+  let sortCol = "id";
+  let sortAsc = true;
+  let page = 1;
+  const PAGE_SIZE = 8;
+
+  // ── Helpers ───────────────────────────────────────────────────────────────
+  function riskBadge(r) {
+    const cls = { High:"badge-high", Medium:"badge-medium", Low:"badge-low" }[r] || "";
+    return `<span class="badge ${cls}">${r}</span>`;
+  }
+  function statusBadge(s) {
+    const cls = { Pending:"badge-pending", Approved:"badge-approved", Rejected:"badge-rejected", "Under Review":"badge-review" }[s] || "";
+    return `<span class="badge ${cls}">${s}</span>`;
+  }
+  function progressBar(v) {
+    return `<div style="display:flex;align-items:center;gap:.5rem">
+      <div class="progress-bar"><div class="progress-fill" style="width:${v}%"></div></div>
+      <span>${v}</span>
+    </div>`;
+  }
+
+  // ── Summary cards ─────────────────────────────────────────────────────────
+  function renderSummary() {
+    const total    = DATA.length;
+    const approved = DATA.filter(d => d.status === "Approved").length;
+    const avgScore = Math.round(DATA.reduce((s,d) => s + d.noveltyScore, 0) / total);
+    const highRisk = DATA.filter(d => d.riskLevel === "High").length;
+
+    document.getElementById("summary").innerHTML = `
+      <div class="card blue">  <div class="label">Total IPs</div>      <div class="value">${total}</div>    </div>
+      <div class="card green"> <div class="label">Approved</div>        <div class="value">${approved}</div>  </div>
+      <div class="card purple"><div class="label">Avg Novelty Score</div><div class="value">${avgScore}</div></div>
+      <div class="card orange"><div class="label">High Risk</div>        <div class="value">${highRisk}</div> </div>
+    `;
+  }
+
+  // ── Table ─────────────────────────────────────────────────────────────────
+  function applyFilters() {
+    const q       = document.getElementById("search").value.toLowerCase();
+    const status  = document.getElementById("filterStatus").value;
+    const risk    = document.getElementById("filterRisk").value;
+
+    filtered = DATA.filter(d => {
+      const matchText   = !q || [d.id, d.title, d.owner, d.category].some(f => f.toLowerCase().includes(q));
+      const matchStatus = !status || d.status === status;
+      const matchRisk   = !risk   || d.riskLevel === risk;
+      return matchText && matchStatus && matchRisk;
+    });
+
+    // sort
+    filtered.sort((a, b) => {
+      let av = a[sortCol], bv = b[sortCol];
+      if (typeof av === "number") return sortAsc ? av - bv : bv - av;
+      av = String(av).toLowerCase(); bv = String(bv).toLowerCase();
+      return sortAsc ? av.localeCompare(bv) : bv.localeCompare(av);
+    });
+
+    page = 1;
+    renderTable();
+  }
+
+  function renderTable() {
+    const total   = filtered.length;
+    const pages   = Math.max(1, Math.ceil(total / PAGE_SIZE));
+    page = Math.min(page, pages);
+    const slice   = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+    document.getElementById("tableBody").innerHTML = slice.length
+      ? slice.map(d => `
+        <tr>
+          <td><code>${d.id}</code></td>
+          <td>${d.title}</td>
+          <td>${d.owner}</td>
+          <td>${d.category}</td>
+          <td>${d.filingDate}</td>
+          <td>${progressBar(d.noveltyScore)}</td>
+          <td>${riskBadge(d.riskLevel)}</td>
+          <td>${statusBadge(d.status)}</td>
+        </tr>`).join("")
+      : `<tr><td colspan="8" style="text-align:center;padding:2rem;color:#a0aec0;">No results found.</td></tr>`;
+
+    document.getElementById("pageInfo").textContent = `Page ${page} of ${pages} (${total} records)`;
+    document.getElementById("btnPrev").disabled = page <= 1;
+    document.getElementById("btnNext").disabled = page >= pages;
+
+    // highlight sorted column
+    document.querySelectorAll("thead th").forEach(th => {
+      th.classList.toggle("sorted", th.dataset.col === sortCol);
+      const icon = th.querySelector(".sort-icon");
+      if (th.dataset.col === sortCol) icon.textContent = sortAsc ? " ↑" : " ↓";
+      else icon.textContent = " ↕";
+    });
+  }
+
+  // ── Events ────────────────────────────────────────────────────────────────
+  document.getElementById("search").addEventListener("input", applyFilters);
+  document.getElementById("filterStatus").addEventListener("change", applyFilters);
+  document.getElementById("filterRisk").addEventListener("change", applyFilters);
+
+  document.querySelectorAll("thead th[data-col]").forEach(th => {
+    th.addEventListener("click", () => {
+      if (sortCol === th.dataset.col) sortAsc = !sortAsc;
+      else { sortCol = th.dataset.col; sortAsc = true; }
+      applyFilters();
+    });
+  });
+
+  document.getElementById("btnPrev").addEventListener("click", () => { page--; renderTable(); });
+  document.getElementById("btnNext").addEventListener("click", () => { page++; renderTable(); });
+
+  // ── Init ──────────────────────────────────────────────────────────────────
+  renderSummary();
+  applyFilters();
+</script>
+</body>
+</html>
