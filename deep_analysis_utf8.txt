@@ -1,0 +1,90 @@
+--- Table Columns ---
+{'Field': 'id', 'Type': 'int', 'Null': 'NO', 'Key': 'PRI', 'Default': None, 'Extra': 'auto_increment'}
+{'Field': 'year', 'Type': 'int', 'Null': 'NO', 'Key': '', 'Default': None, 'Extra': ''}
+{'Field': 'month', 'Type': 'int', 'Null': 'NO', 'Key': '', 'Default': None, 'Extra': ''}
+{'Field': 'novel_id', 'Type': 'varchar(32)', 'Null': 'NO', 'Key': 'MUL', 'Default': None, 'Extra': ''}
+{'Field': 'source', 'Type': 'varchar(20)', 'Null': 'NO', 'Key': '', 'Default': None, 'Extra': ''}
+{'Field': 'title', 'Type': 'varchar(255)', 'Null': 'YES', 'Key': '', 'Default': None, 'Extra': ''}
+{'Field': 'rank_on_list', 'Type': 'int', 'Null': 'YES', 'Key': '', 'Default': '0', 'Extra': ''}
+{'Field': 'monthly_tickets_on_list', 'Type': 'int', 'Null': 'YES', 'Key': '', 'Default': '0', 'Extra': ''}
+{'Field': 'author', 'Type': 'varchar(255)', 'Null': 'YES', 'Key': '', 'Default': None, 'Extra': ''}
+{'Field': 'category', 'Type': 'varchar(100)', 'Null': 'YES', 'Key': '', 'Default': None, 'Extra': ''}
+{'Field': 'sub_category', 'Type': 'varchar(100)', 'Null': 'YES', 'Key': '', 'Default': None, 'Extra': ''}
+{'Field': 'status', 'Type': 'varchar(50)', 'Null': 'YES', 'Key': '', 'Default': None, 'Extra': ''}
+{'Field': 'word_count', 'Type': 'bigint', 'Null': 'YES', 'Key': '', 'Default': '0', 'Extra': ''}
+{'Field': 'collection_count', 'Type': 'int', 'Null': 'YES', 'Key': '', 'Default': '0', 'Extra': ''}
+{'Field': 'collection_rank', 'Type': 'int', 'Null': 'YES', 'Key': '', 'Default': '0', 'Extra': ''}
+{'Field': 'monthly_ticket_count', 'Type': 'int', 'Null': 'YES', 'Key': '', 'Default': '0', 'Extra': ''}
+{'Field': 'monthly_ticket_rank', 'Type': 'int', 'Null': 'YES', 'Key': '', 'Default': '0', 'Extra': ''}
+{'Field': 'recommendation_count', 'Type': 'int', 'Null': 'YES', 'Key': '', 'Default': '0', 'Extra': ''}
+{'Field': 'reward_count', 'Type': 'int', 'Null': 'YES', 'Key': '', 'Default': '0', 'Extra': ''}
+{'Field': 'is_vip', 'Type': 'varchar(20)', 'Null': 'YES', 'Key': '', 'Default': None, 'Extra': ''}
+{'Field': 'is_sign', 'Type': 'varchar(20)', 'Null': 'YES', 'Key': '', 'Default': None, 'Extra': ''}
+{'Field': 'synopsis', 'Type': 'text', 'Null': 'YES', 'Key': '', 'Default': None, 'Extra': ''}
+{'Field': 'crawl_time', 'Type': 'datetime', 'Null': 'YES', 'Key': '', 'Default': None, 'Extra': ''}
+{'Field': 'book_url', 'Type': 'varchar(255)', 'Null': 'YES', 'Key': '', 'Default': None, 'Extra': ''}
+{'Field': 'week_recommendation_count', 'Type': 'int', 'Null': 'YES', 'Key': '', 'Default': '0', 'Extra': ''}
+{'Field': 'adaptations', 'Type': 'text', 'Null': 'YES', 'Key': '', 'Default': None, 'Extra': ''}
+{'Field': 'cover_url', 'Type': 'varchar(255)', 'Null': 'YES', 'Key': '', 'Default': None, 'Extra': ''}
+{'Field': 'latest_chapter', 'Type': 'varchar(255)', 'Null': 'YES', 'Key': '', 'Default': None, 'Extra': ''}
+{'Field': 'abstract', 'Type': 'text', 'Null': 'YES', 'Key': '', 'Default': None, 'Extra': ''}
+{'Field': 'updated_at', 'Type': 'varchar(50)', 'Null': 'YES', 'Key': '', 'Default': None, 'Extra': ''}
+
+--- '诡秘之主' Data Samples ---
+{'year': 2020, 'month': 1, 'monthly_tickets_on_list': 0, 'monthly_ticket_count': 85867}
+{'year': 2020, 'month': 2, 'monthly_tickets_on_list': 0, 'monthly_ticket_count': 117918}
+{'year': 2020, 'month': 3, 'monthly_tickets_on_list': 0, 'monthly_ticket_count': 187303}
+{'year': 2020, 'month': 4, 'monthly_tickets_on_list': 0, 'monthly_ticket_count': 185568}
+{'year': 2020, 'month': 5, 'monthly_tickets_on_list': 0, 'monthly_ticket_count': 160857}
+{'year': 2020, 'month': 6, 'monthly_tickets_on_list': 0, 'monthly_ticket_count': 17140}
+{'year': 2020, 'month': 7, 'monthly_tickets_on_list': 0, 'monthly_ticket_count': 11658}
+{'year': 2020, 'month': 8, 'monthly_tickets_on_list': 0, 'monthly_ticket_count': 8350}
+{'year': 2020, 'month': 9, 'monthly_tickets_on_list': 0, 'monthly_ticket_count': 8578}
+{'year': 2020, 'month': 10, 'monthly_tickets_on_list': 0, 'monthly_ticket_count': 4721}
+
+--- Gaps analysis ---
+Book '天启预报' missing 37 months. First few: ['2021-9', '2021-10', '2022-8']
+Book '宿命之环' missing 39 months. First few: ['2020-1', '2020-2', '2020-3']
+Book '国民法医' missing 40 months. First few: ['2020-1', '2020-2', '2020-3']
+Book '玄鉴仙族' missing 44 months. First few: ['2020-1', '2020-2', '2020-3']
+Book '这游戏也太真实了' missing 44 months. First few: ['2020-1', '2020-2', '2020-3']
+Book '光阴之外' missing 45 months. First few: ['2020-1', '2020-2', '2020-3']
+Book '重回1982小渔村' missing 47 months. First few: ['2020-1', '2020-2', '2020-3']
+Book '黎明之剑' missing 47 months. First few: ['2020-3', '2021-9', '2022-3']
+Book '深空彼岸' missing 49 months. First few: ['2020-1', '2020-2', '2020-3']
+Book '灵境行者' missing 49 months. First few: ['2020-1', '2020-2', '2020-3']
+Book '神秘复苏' missing 49 months. First few: ['2020-1', '2020-3', '2020-4']
+Book '东晋北府一丘八' missing 49 months. First few: ['2020-1', '2020-2', '2021-9']
+Book '深海余烬' missing 50 months. First few: ['2020-1', '2020-2', '2020-3']
+Book '谁让他修仙的！' missing 50 months. First few: ['2020-1', '2020-2', '2020-3']
+Book '夜的命名术' missing 51 months. First few: ['2020-1', '2020-2', '2020-3']
+Book '从水猴子开始成神' missing 51 months. First few: ['2020-1', '2020-2', '2020-3']
+Book '唐人的餐桌' missing 51 months. First few: ['2020-1', '2020-2', '2020-3']
+Book '天人图谱' missing 52 months. First few: ['2020-1', '2020-2', '2020-3']
+Book '大梦主' missing 52 months. First few: ['2020-1', '2020-2', '2020-3']
+Book '亏成首富从游戏开始' missing 52 months. First few: ['2021-9', '2021-10', '2021-11']
+Book '我的公公叫康熙' missing 52 months. First few: ['2020-1', '2020-2', '2020-3']
+Book '不科学御兽' missing 53 months. First few: ['2020-1', '2020-2', '2020-3']
+Book '青山' missing 53 months. First few: ['2020-1', '2020-2', '2020-3']
+Book '我的治愈系游戏' missing 53 months. First few: ['2020-1', '2020-2', '2020-3']
+Book '禁区之狐' missing 53 months. First few: ['2020-1', '2020-2', '2020-3']
+Book '宇宙职业选手' missing 53 months. First few: ['2020-1', '2020-2', '2020-3']
+Book '全职艺术家' missing 53 months. First few: ['2020-1', '2020-2', '2020-3']
+Book '天命之上' missing 53 months. First few: ['2020-1', '2020-2', '2020-3']
+Book '明克街13号' missing 53 months. First few: ['2020-1', '2020-2', '2020-3']
+Book '红楼之挽天倾' missing 54 months. First few: ['2020-1', '2020-2', '2020-3']
+Book '择日飞升' missing 54 months. First few: ['2020-1', '2020-2', '2020-3']
+Book '黜龙' missing 54 months. First few: ['2020-1', '2020-2', '2020-3']
+Book '我是导演，我不比烂' missing 54 months. First few: ['2020-1', '2020-2', '2020-3']
+Book '魔临' missing 55 months. First few: ['2020-2', '2020-6', '2021-8']
+Book '绍宋' missing 55 months. First few: ['2020-1', '2020-2', '2021-8']
+Book '1979黄金时代' missing 55 months. First few: ['2020-1', '2020-2', '2020-3']
+Book '晋末长剑' missing 56 months. First few: ['2020-1', '2020-2', '2020-3']
+Book '重生之我要冲浪' missing 56 months. First few: ['2020-1', '2020-2', '2020-3']
+Book '高天之上' missing 56 months. First few: ['2020-1', '2020-2', '2020-3']
+Book '我用闲书成圣人' missing 56 months. First few: ['2020-1', '2020-2', '2020-3']
+Book '镇妖博物馆' missing 56 months. First few: ['2020-1', '2020-2', '2020-3']
+Book '都重生了谁考公务员啊' missing 57 months. First few: ['2020-1', '2020-2', '2020-3']
+Book '女侠且慢' missing 57 months. First few: ['2020-1', '2020-2', '2020-3']
+Book '沧元图' missing 57 months. First few: ['2021-4', '2021-5', '2021-6']
+Book '普罗之主' missing 57 months. First few: ['2020-1', '2020-2', '2020-3']

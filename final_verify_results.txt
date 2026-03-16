@@ -1,0 +1,10 @@
+--- Processed Book Detail ---
+Title: 柯学验尸官
+Status: 完结
+Finance: 25
+Interaction: 845699
+Updated At: 2021-10-18 00:57:54
+
+Predicted IP Score: 53.1
+Method used: AI Ensemble Model (Smooth Weight Fusion)
+Details: {'status': '完结'}

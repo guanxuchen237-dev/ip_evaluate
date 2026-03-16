@@ -43,7 +43,6 @@ interface MenuItem {
 // 用户端功能 — 所有用户可见
 const userMenuItems: MenuItem[] = [
   { title: "仪表盘", titleEn: "Dashboard", url: "/", icon: LayoutDashboard },
-  { title: "IP评估", titleEn: "Analysis", url: "/analysis", icon: FileSearch },
   { title: "AI预测", titleEn: "Prediction", url: "/prediction", icon: Brain },
   { title: "作品库", titleEn: "Library", url: "/library", icon: Library },
   { title: "虚拟读者", titleEn: "Reader Space", url: "/reader-space", icon: Users },

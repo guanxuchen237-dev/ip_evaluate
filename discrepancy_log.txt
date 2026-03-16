@@ -1,0 +1,15 @@
+Total rows in raw DF: 11234
+Dashboard Count (Unique Titles): 1904
+Library Count (Unique Title+Author+Platform): 1907
+Difference: 3
+
+Items causing discrepancy (Same Title, Different Platform/Author):
+ - Title: 斗罗大陆V重生唐三
+   * Platform: Qidian, Author: 唐家三少
+   * Platform: Zongheng, Author: 唐家三少
+ - Title: 造化图
+   * Platform: Qidian, Author: 横扫天涯
+   * Platform: Zongheng, Author: 辰燃
+ - Title: 问道红尘
+   * Platform: Qidian, Author: 姬叉
+   * Platform: Zongheng, Author: 见秋

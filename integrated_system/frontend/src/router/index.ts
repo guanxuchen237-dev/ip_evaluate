@@ -1,7 +1,6 @@
 ﻿import { createRouter, createWebHistory } from 'vue-router'
 import Dashboard from '../views/Dashboard.vue'
 import RealtimeView from '../views/RealtimeView.vue'
-import AnalysisView from '../views/AnalysisView.vue'
 import SearchView from '../views/SearchView.vue'
 import PrivateView from '../views/PrivateView.vue'
 import SettingsView from '../views/SettingsView.vue'
@@ -47,12 +46,6 @@ const router = createRouter({
             name: 'library',
             component: LibraryView,
             meta: { requiresAuth: false }
-        },
-        {
-            path: '/analysis',
-            name: 'analysis',
-            component: AnalysisView,
-            meta: { requiresAuth: true }
         },
         {
             path: '/search',

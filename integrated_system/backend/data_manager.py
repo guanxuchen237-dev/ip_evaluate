@@ -25,6 +25,7 @@ class DataManager:
         # Using forward slashes for safety checks
         base_dir = os.path.dirname(os.path.abspath(__file__))
         self.models_dir = os.path.join(base_dir, 'resources/models')
+        self.model_path = os.path.join(self.models_dir, 'xgboost_model.pkl')
         
         # 尝试加载新训练的机器学习模型和相关的工具
         try:

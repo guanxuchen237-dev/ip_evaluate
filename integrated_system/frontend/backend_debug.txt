@@ -1,0 +1,15 @@
+
+--- Init DataManager ---
+
+[API] Predict Called for: 山海提灯
+[API] Model Loaded? True
+
+--- Init DataManager ---
+
+[API] Predict Called for: 重生之浪王之王
+[API] Model Loaded? True
+
+--- Init DataManager ---
+
+[API] Predict Called for: 重生之浪王之王
+[API] Model Loaded? True

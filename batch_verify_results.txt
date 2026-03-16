@@ -1,0 +1,29 @@
+--- Batch Consistency Verification report ---
+
+Title                | Year  | Tickets  | Score  | Status
+------------------------------------------------------------
+神机道士在大唐              | 2020  | 140      | 47.0   | 完结    
+十修                   | 2020  | 2175     | 53.4   | 完结    
+赘婿出山                 | 2021  | 2229     | 70.6   | 完结    
+日月风华                 | 2020  | 8127     | 76.8   | 完结    
+娱乐王朝                 | 2023  | 118      | 54.0   | 完结    
+大造化剑主                | 2022  | 188      | 57.8   | 完结    
+大明杀神                 | 2024  | 53       | 49.1   | 完结    
+万界守门人                | 2024  | 113      | 61.4   | 完结    
+过河卒                  | 2025  | 165      | 58.9   | 完结    
+重生就要对自己狠一点           | 2021  | 4        | 49.2   | 完结    
+
+--- Checking for potential anomalies (High Finance in Old Books) ---
+Found 430 old records with finance > 5000 (Expected if they were peak snapshots, but should be rare now)
+Anomaly candidate: 剑来 (2020-1) Finance: 16591
+Anomaly candidate: 一剑独尊 (2020-1) Finance: 6332
+Anomaly candidate: 医流武神 (2020-1) Finance: 13068
+Anomaly candidate: 万象天劫 (2020-1) Finance: 10159
+Anomaly candidate: 神级负二代 (2020-1) Finance: 6547
+Anomaly candidate: 剑仙在此 (2020-1) Finance: 11800
+Anomaly candidate: 剑来 (2020-2) Finance: 11271
+Anomaly candidate: 长宁帝军 (2020-2) Finance: 9217
+Anomaly candidate: 大厨小婿 (2020-2) Finance: 6202
+Anomaly candidate: 剑仙在此 (2020-2) Finance: 18964
+
+Verification Complete.

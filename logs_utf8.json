@@ -1,0 +1,50 @@
+﻿{
+    "data":  [
+                 {
+                     "book_author":  "reader_space",
+                     "book_title":  "遮天",
+                     "content_snippet":  "在【实时模拟片段】检测到大规模争议/负面情绪(Angry=33.3%)",
+                     "created_at":  "2026-03-06T18:56:28",
+                     "id":  3,
+                     "markdown_report":  null,
+                     "platform":  "reader_space",
+                     "risk_level":  "High",
+                     "risk_type":  "PLOT_TOXIC",
+                     "score":  4.33333,
+                     "status":  "PENDING",
+                     "trigger_source":  "virtual_reader"
+                 },
+                 {
+                     "book_author":  "reader_space",
+                     "book_title":  "遮天",
+                     "content_snippet":  "在【实时模拟片段】检测到大规模争议/负面情绪(Angry=33.3%)",
+                     "created_at":  "2026-03-06T18:56:05",
+                     "id":  2,
+                     "markdown_report":  null,
+                     "platform":  "reader_space",
+                     "risk_level":  "High",
+                     "risk_type":  "PLOT_TOXIC",
+                     "score":  4.16667,
+                     "status":  "PENDING",
+                     "trigger_source":  "virtual_reader"
+                 },
+                 {
+                     "book_author":  "reader_space",
+                     "book_title":  "遮天",
+                     "content_snippet":  "在【实时模拟片段】检测到大规模争议/负面情绪(Angry=33.3%)",
+                     "created_at":  "2026-03-06T18:55:02",
+                     "id":  1,
+                     "markdown_report":  null,
+                     "platform":  "reader_space",
+                     "risk_level":  "High",
+                     "risk_type":  "PLOT_TOXIC",
+                     "score":  3.83333,
+                     "status":  "PENDING",
+                     "trigger_source":  "virtual_reader"
+                 }
+             ],
+    "limit":  5,
+    "offset":  0,
+    "status":  "success",
+    "total":  3
+}

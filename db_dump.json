@@ -1,0 +1,39 @@
+{
+  "zongheng_realtime_tracking_cols": [
+    "id",
+    "novel_id",
+    "title",
+    "record_year",
+    "record_month",
+    "monthly_tickets",
+    "total_recommend",
+    "monthly_ticket_rank",
+    "platform",
+    "crawl_time",
+    "record_day"
+  ],
+  "z_err": "(1054, \"Unknown column 'record_time' in 'order clause'\")",
+  "novel_realtime_tracking_cols": [
+    "id",
+    "novel_id",
+    "title",
+    "record_year",
+    "record_month",
+    "monthly_tickets",
+    "collection_count",
+    "monthly_ticket_rank",
+    "crawl_time",
+    "platform",
+    "record_day"
+  ],
+  "vr_comment_cols": [
+    "id",
+    "task_id",
+    "reader_id",
+    "reader_name",
+    "score",
+    "emotion",
+    "comment",
+    "created_at"
+  ]
+}

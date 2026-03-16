@@ -1,0 +1,247 @@
+
+================================================================================
+文件: Business-and-government-applications-of-text-mining--amp--Natu_2022_Decision.pdf
+页数: 2
+================================================================================
+Decision Support Systems 162 (2022) 113867
+Available online 1 September 2022
+0167-9236/© 2022 Published by Elsevier B.V.Business and government applications of text mining & Natural Language Processing (NLP) for 
+societal benefit: Introduction to the special issue on “text mining & NLP” 
+Natural Language Processing (NLP) is a branch of artificial intelli -
+gence (AI) that helps computers to understand, process, and analyze 
+large amounts of natural human language data [4]. The concepts of AI, 
+machine learning (ML), and human-to-machine interactions have been 
+prevalent for several decades. A growing number of businesses have 
+used advanced analytics and ML methods for resolving their business 
+concerns, and NLP is emerging as one of the most popular and indis-
+pensable technologies for organizations today. Given the complexities of 
+NLP and other AI models, explainable AI has also become more impor -
+tant in both research and practice domains [6]. 
+NLP includes natural human communication variables including 
+text, audio, and video, and its modeling, interpretations and applica -
+tions. Text mining, a component of NLP, deals with the analysis of tex-
+tual datasets to discover novel and useful patterns and trends, while 
+speech models can capture, interpret, translate, and transcribe speech, 
+and perform other emerging functions. Different components of NLP can 
+be used synchronously for achieving different goals, such as using audio 
+and video together to classify and categorize videos on social media 
+sites. Common business applications that use text mining include social 
+media monitoring, where businesses rely on these technologies to un-
+derstand the sentiments (i.e., mood and the emotions) of customers by 
+analyzing user generated data [4]. Smart use of NLP empowers busi-
+nesses to gain a competitive edge over their rivals in modern market 
+spaces. According to a recent estimate, around 80% of business data is 
+non-actionable due to being unstructured in natur
+
+
+================================================================================
+文件: Mining-longitudinal-user-sessions-with-deep-learning-to-_2022_Decision-Suppo.pdf
+页数: 12
+================================================================================
+Decision Support Systems 162 (2022) 113864
+Available online 6 September 2022
+0167-9236/© 2022 Elsevier B.V. All rights reserved.Mining longitudinal user sessions with deep learning to extend the 
+boundary of consumer priming 
+Li-Chen Chenga,*, Kuanchin Chenb,c 
+aDepartment of Information and Finance Management, National Taipei University of Technology, Taipei 106, Taiwan, ROC 
+bDepartment of Business Information Systems, Western Michigan University, Kalamazoo, MI, USA 
+cCenter for Business Analytics, Western Michigan University, Kalamazoo, MI, USA   
+ARTICLE INFO  
+Keywords: 
+Text mining 
+Session-based recommendation 
+Priming theory 
+E-commerce ABSTRACT  
+Priming is challenging when consumers start shortlisting products before the final purchase. This is because this 
+shortlisting process is performed in multiple user sessions online across time, the shortlist does not stay as a static 
+list, and product comparison in this stage uses the heuristics internal to individual consumers. The goal of this 
+study is two folds: (1) to approximate user heuristics after B&B product shortlisting using NLP and deep learning 
+techniques, and (2) to identify optimized deep learning models for the representation of key elements of con-
+sumer heuristics. This offers an extension of the priming theory into product comparison and shortlisting stages 
+that were traditionally difficult for marketers to tap into. By analyzing the B&B product information repeated 
+visited in user sessions, the formation of shortlists is identified and products in the shortlists can then be 
+compared. Subsequent priming and promotions can therefore be performed closer to the actual purchase. Our 
+study also provides marketers keywords and their associated activated words relevant for crafting marketing 
+messages. As these activation words are extracted from the B&B sites and product reviews that the users had 
+visited repeatedly in long-term tracking sessions, they are analogous to effects produced from us
+
+
+================================================================================
+文件: Mining-voices-from-self-expressed-messages-on-social-media_2022_Decision-Sup.pdf
+页数: 13
+================================================================================
+Decision Support Systems 162 (2022) 113792
+Available online 6 May 2022
+0167-9236/© 2022 Elsevier B.V. All rights reserved.Mining voices from self-expressed messages on social-media: Diagnostics of 
+mental distress during COVID-19 
+Rahul Kumara, Shubhadeep Mukherjeeb, Tsan-Ming Choic,*, Lalitha Dhamotharand 
+aInformation Systems, Indian Institute of Management (IIM) Sambalpur, Odisha, India 
+bOperations Management and Decision Sciences, Xavier Institute of Management, XIM University, Bhubaneswar, Odisha, India 
+cDepartment and Graduate Institute of Business Administration, College of Management, National Taiwan University, Roosevelt Road, Taipei 10617, Taiwan 
+dUniversity of Exeter Business School, Exeter, United Kingdom   
+ARTICLE INFO  
+Keywords: 
+Mental health 
+Depression 
+Suicidal ideation 
+Natural language processing 
+Social-media 
+COVID-19 
+Pandemic ABSTRACT  
+The COVID-19 pandemic has had a severe impact on mankind, causing physical suffering and deaths across the 
+globe. Even those who have not contracted the virus have experienced its far-reaching impacts, particularly on 
+their mental health. The increased incidences of psychological problems, anxiety associated with the infection, 
+social restrictions, economic downturn, etc., are likely to aggravate with the virus spread and leave a longer 
+impact on humankind. These reasons in aggregation have raised concerns on mental health and created a need to 
+identify novel precursors of depression and suicidal tendencies during COVID-19. Identifying factors affecting 
+mental health and causing suicidal ideation is of paramount importance for timely intervention and suicide 
+prevention. This study, thus, bridges this gap by utilizing computational intelligence and Natural Language 
+Processing (NLP) to unveil the factors underlying mental health issues. We observed that the pandemic and 
+subsequent lockdown anxiety emerged as significant factors leading to poor mental health outcomes after the 
+onset of COVID-19. Co
+
+
+================================================================================
+文件: Understanding-consumer-engagement-in-social-media--The_2022_Decision-Support.pdf
+页数: 13
+================================================================================
+Decision Support Systems 162 (2022) 113707
+Available online 30 November 2021
+0167-9236/© 2021 The Authors. Published by Elsevier B.V. This is an open access article under the CC BY-NC-ND license ( http://creativecommons.org/licenses/by-
+nc-nd/4.0/ ).Understanding consumer engagement in social media: The role of 
+product lifecycle 
+Seyed Pouyan Eslamia,*, Maryam Ghasemaghaeib, Khaled Hassaneinb 
+aCalifornia State University Northridge, Los Angeles, CA, USA 
+bMcMaster University, Hamilton, ON, Canada   
+ARTICLE INFO  
+Keywords: 
+Customer engagement 
+Social media 
+Product lifecycle 
+Discourse logic 
+Argument frame 
+Popularity ABSTRACT  
+More than 4 billion unique users are now using different social media platforms. This provides firms with a new 
+avenue to connect and converse with their targeted customers in a dialogue fashion and create better customer 
+engagement. Although customer engagement has been studied, no study to date has focused on the concept of 
+customer engagement in social media through the lens of users' participation in (co)creation of content on social 
+media. To that end, this study strives to conceptualize and validate the concept of customer engagement with a 
+social media post, proposing a research model which investigates the effects of popularity, discourse logic and 
+argument frame on customer engagement with a social media post. This study also investigates to what extent 
+those effects vary by the product lifecycle stage and social media platform type, using secondary data extracted 
+from Instagram and Twitter on a group of products (i.e., vehicles) at different lifecycle stages to address its 
+research objective. This study's findings would help firms make better decisions on enhancing their customer 
+engagement on social media platforms.   
+1.Introduction 
+Social media platforms enable their users to build their virtual 
+communities while sharing their ideas or thoughts [1]. These abilities 
+have motivated billions of individuals across 
+
+
+================================================================================
+文件: Walking-on-air-or-hopping-mad--Understanding-the-impact-of-em_2022_Decision-.pdf
+页数: 12
+================================================================================
+Decision Support Systems 162 (2022) 113769
+Available online 9 March 2022
+0167-9236/© 2022 Elsevier B.V. All rights reserved.Walking on air or hopping mad? Understanding the impact of emotions, 
+sentiments and reactions on ratings in online customer reviews of 
+mobile apps 
+Suparna Dhara, Indranil Boseb,* 
+aNSHM Knowledge Campus, 124, Basanta Lal Saha Rd, Tara Park, Behala, Kolkata 700053, West Bengal, India 
+bNEOMA Business School, 59 Rue Pierre Taittinger, Reims, 51100 Reims, France   
+ARTICLE INFO  
+Keywords: 
+Online customer reviews 
+Emoji analysis 
+Emotion mining 
+Sentiment analysis 
+Mobile apps ABSTRACT  
+Online customer reviews (OCR) are an established source of competitive intelligence. Since OCR reflect per-
+ceptions of past users about product features and performance, prospective customers of mobile apps often resort 
+to OCR before they decide to download an app. In addition to the textual content of the OCR, potential users of 
+the app often consult the star ratings provided by the reviewers. In this paper, we determine if the star rating of 
+mobile payment apps suitably captures the appropriate customer perception reflected in the textual content of 
+the OCR for the payment apps. We conduct a three-dimensional analysis of 146,914 reviews from two popular 
+mobile payment apps and uncover the sentiment and emotions captured in the review text, and the reactions in 
+the emojis. Our analysis shows that the consolidated sentiment and the happiness emotion obtained from the 
+OCR of mobile payment apps impacts the star ratings more strongly, than other emotions embedded in the text, 
+and reactions in the emojis. The findings also hold good during the Covid-19 pandemic. We propose a novel 
+perception score that captures the nuances in the OCR more effectively and suggest how mobile app providers 
+can use it to arrange the OCR for better compatibility with content. The results of this research will be useful for 
+mobile app providers that depend on OCR for popula
+
+
+================================================================================
+文件: Impact-of-information-timeliness-and-richness-on-public-engage_2022_Decision.pdf
+页数: 13
+================================================================================
+Decision Support Systems 162 (2022) 113752
+Available online 12 February 2022
+0167-9236/© 2022 Elsevier B.V. All rights reserved.Impact of information timeliness and richness on public engagement on 
+social media during COVID-19 pandemic: An empirical investigation based 
+on NLP and machine learning 
+Kai Lia, Cheng Zhoua, Xin (Robert) Luob, Jose Benitezc,*, Qinyu Liaod 
+aNankai University Business School, Tianjin, China 
+bUniversity of New Mexico, Albuquerque, USA 
+cEDHEC Business School, France 
+dUniversity of Texas Rio Grande Valley, Brownsville, USA   
+ARTICLE INFO  
+Keywords: 
+Natural language processing (NLP) for societal 
+benefit 
+Information timeliness 
+Information richness 
+Public engagement 
+Social media 
+Health emergencies ABSTRACT  
+This paper investigates how information timeliness and richness affect public engagement using text data from 
+China ’s largest social media platform during times of the COVID-19 pandemic. We utilize a similarity calculation 
+method based on natural language processing (NLP) and text mining to evaluate three dimensions of information 
+timeliness: retrospectiveness, immediateness, and prospectiveness. Public engagement is divided into breadth 
+and depth. The empirical results show that information retrospectiveness is negatively associated with public 
+engagement breadth but positively with depth. Both information immediateness and prospectiveness improved 
+the breadth and depth of public engagement. Interestingly, information richness has a positive moderating effect 
+on the relationships between information retrospectiveness, prospectiveness, and public engagement breadth but 
+no significant effects on immediateness; meanwhile, it has a negative moderating effect on the relationship 
+between retrospectiveness and depth but a positive effect on immediateness, prospectiveness. In the extension 
+analysis, we constructed a supervised NLP model to identify and classify health emergency-related information 
+(epidemic prevention and 
+
+
+================================================================================
+文件: A-multistate-modeling-approach-for-organizational-cybers_2022_Decision-Suppo.pdf
+页数: 14
+================================================================================
+Decision Support Systems 162 (2022) 113849
+Available online 28 August 2022
+0167-9236/© 2022 Elsevier B.V. All rights reserved.A multistate modeling approach for organizational cybersecurity 
+exploration and exploitation 
+Amir Zadeh*, Anand Jeyaraj 
+Raj Soin College of Business, Wright State University, Dayton, OH, United States   
+ARTICLE INFO  
+Keywords: 
+Cybersecurity response 
+Exploration 
+Exploitation 
+Ambidexterity 
+Markov chain 
+Text analytics ABSTRACT  
+This study examines the dynamic stages of exploration and exploitation efforts by organizations in their 
+cybersecurity responses using multistate modeling. Using textual data from the annual 10-K reports of S&P 100 
+organizations, this study uses a combination of text analytics and Markov chain approach to quantify exploration 
+and exploitation in organizational cybersecurity responses. The study models two and four states of exploration 
+and exploitation based on their cybersecurity responses over time and uses a continuous-time Markov chain 
+approach to analyze transitions between states as organizations adapt their responses over time to achieve 
+ambidexterity. The two-state Markov model focuses on the firm-level Exploration and Exploitation states 
+whereas the four-state model captures deeper levels of exploration and exploitation by considering Surviving, 
+Investigating, Reinforcing, and Balancing as possible states for exploration and exploitation of cybersecurity 
+responses. We analyze the dynamics of organizational exploration-exploitation behaviors by modeling longitu -
+dinal transition probabilities across different states. Implications for research and practice are discussed.   
+1.Introduction 
+Cybersecurity has become an increasingly important area for infor-
+mation technology (IT) and information systems (IS) research and 
+practices over the last few years as several highly visible and impactful 
+attacks on large and well-known organizations around the world have 
+resulted in significant security
+

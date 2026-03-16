@@ -31,6 +31,33 @@ except ImportError:
 
 api_bp = Blueprint('api', __name__)
 
+# --- Load IP Prediction Model ---
+_ip_model = None
+_ip_model_error = None
+
+def _load_ip_model():
+    """Load the trained IP prediction model (lazy loading)"""
+    global _ip_model, _ip_model_error
+    if _ip_model is not None or _ip_model_error:
+        return _ip_model
+    
+    model_path = os.path.join(os.path.dirname(__file__), 'resources', 'models', 'model_j_oracle_v7.pkl')
+    try:
+        _ip_model = joblib.load(model_path)
+        print(f"[Model] Loaded IP prediction model v7 from {model_path}")
+    except Exception as e:
+        _ip_model_error = str(e)
+        print(f"[Model] Failed to load IP model: {e}")
+    return _ip_model
+
+def _score_to_grade(score):
+    """Convert numeric score to letter grade"""
+    if score >= 90: return 'S'
+    elif score >= 80: return 'A'
+    elif score >= 70: return 'B'
+    elif score >= 60: return 'C'
+    else: return 'D'
+
 def load_system_config() -> dict:
     """Load system configuration or return defaults"""
     cfg_path = os.path.join(os.path.dirname(__file__), 'config', 'system_config.json')
@@ -3678,4 +3705,566 @@ def audit_ai_scores():
     except Exception as e:
         print(f"[AI Scores] 查询失败: {e}")
         return jsonify({'error': str(e), 'data': []}), 500
+
+
+# --- Comprehensive Prediction API ---
+@api_bp.route('/predict/comprehensive', methods=['POST', 'OPTIONS'])
+def predict_comprehensive():
+    """多维度综合IP评估预测"""
+    if request.method == 'OPTIONS':
+        return jsonify({}), 200
+        
+    try:
+        data = request.json
+        
+        # 提取各维度数据
+        basic_info = data.get('basicInfo', {})
+        content_quality = data.get('contentQuality', {})
+        market_data = data.get('marketData', {})
+        author_info = data.get('authorInfo', {})
+        commercial = data.get('commercialPotential', {})
+        audience = data.get('audienceProfile', {})
+        risk = data.get('riskAssessment', {})
+        
+        # 计算各维度加权得分
+        # 1. 内容质量得分 (权重: 25%)
+        content_score = sum(content_quality.values()) / len(content_quality) if content_quality else 5
+        content_weighted = content_score * 2.5  # 满分25分
+        
+        # 2. 市场表现得分 (基于实际数据计算)
+        market_score = 0
+        monthly_tickets = market_data.get('monthlyTickets', 0)
+        collections = market_data.get('collections', 0)
+        retention = market_data.get('retentionRate', 0)
+        growth = market_data.get('weekOverWeekGrowth', 0)
+        
+        # 月票得分 (满分20分)
+        if monthly_tickets >= 100000:
+            market_score += 20
+        elif monthly_tickets >= 50000:
+            market_score += 15
+        elif monthly_tickets >= 10000:
+            market_score += 10
+        elif monthly_tickets >= 1000:
+            market_score += 5
+        
+        # 收藏得分 (满分10分)
+        if collections >= 100000:
+            market_score += 10
+        elif collections >= 50000:
+            market_score += 7
+        elif collections >= 10000:
+            market_score += 4
+        
+        # 留存率得分 (满分10分)
+        if retention >= 70:
+            market_score += 10
+        elif retention >= 50:
+            market_score += 7
+        elif retention >= 30:
+            market_score += 4
+        
+        # 增长率得分 (满分10分)
+        if growth >= 20:
+            market_score += 10
+        elif growth >= 10:
+            market_score += 7
+        elif growth > 0:
+            market_score += 4
+        
+        # 3. 作者因素得分 (权重: 15%)
+        author_score = 0
+        experience = author_info.get('experience', 0)
+        previous_works = author_info.get('previousWorks', 0)
+        followers = author_info.get('totalFollowers', 0)
+        consistency = author_info.get('consistency', 5)
+        reputation = author_info.get('reputation', 5)
+        
+        author_score = min(15, (experience * 0.5 + previous_works * 0.3 + 
+                               followers / 10000 + consistency + reputation) / 4)
+        
+        # 4. 商业化潜力得分 (权重: 20%)
+        commercial_score = sum(commercial.values()) / len(commercial) * 2 if commercial else 5
+        commercial_weighted = commercial_score * 2  # 满分20分
+        
+        # 5. 受众质量得分 (权重: 15%)
+        audience_score = (audience.get('paymentWillingness', 5) + 
+                         audience.get('socialActivity', 5) + 
+                         audience.get('loyalty', 5)) / 3 * 1.5  # 满分15分
+        
+        # 6. 风险调整 (扣分或加分)
+        risk_score = sum(risk.values()) / len(risk) if risk else 5
+        risk_adjustment = (risk_score - 5) * 0.5  # -2.5 到 +2.5 的调整
+        
+        # 最终总分 (满分100)
+        total_score = min(100, max(0, 
+            content_weighted + market_score + author_score + 
+            commercial_weighted + audience_score + risk_adjustment
+        ))
+        
+        # 生成详细分析维度
+        dimensions = {
+            '内容质量': round(content_score * 10, 1),
+            '市场表现': round(market_score * 2, 1),
+            '作者实力': round(author_score * 6.67, 1),
+            '商业化潜力': round(commercial_score * 10, 1),
+            '受众质量': round(audience_score * 6.67, 1),
+            '安全性': round(risk_score * 10, 1)
+        }
+        
+        # 生成建议
+        suggestions = []
+        if content_score < 6:
+            suggestions.append("建议提升内容质量，加强世界观和角色塑造")
+        if monthly_tickets < 1000:
+            suggestions.append("当前月票较低，建议加强推广和读者互动")
+        if retention < 30:
+            suggestions.append("留存率偏低，建议优化开篇节奏和悬念设置")
+        if commercial_score < 6:
+            suggestions.append("商业化潜力有限，建议考虑更大众化的题材")
+        if not suggestions:
+            suggestions.append("各项指标良好，建议保持当前创作方向")
+        
+        # 调用AI生成报告
+        ai_report = ""
+        try:
+            from ai_service import analyze_prediction
+            ai_report = analyze_prediction(
+                basic_info.get('title', ''),
+                basic_info.get('category', ''),
+                total_score,
+                basic_info.get('synopsis', '')
+            )
+        except Exception as e:
+            print(f"[AI Report Error] {e}")
+            ai_report = f"根据多维度评估，该IP综合得分为 {total_score:.1f} 分。"
+        
+        result = {
+            'score': round(total_score, 1),
+            'dimensions': dimensions,
+            'suggestions': suggestions,
+            'report': ai_report,
+            'breakdown': {
+                'content_quality': round(content_weighted, 1),
+                'market_performance': round(market_score, 1),
+                'author_factor': round(author_score, 1),
+                'commercial_potential': round(commercial_weighted, 1),
+                'audience_quality': round(audience_score, 1),
+                'risk_adjustment': round(risk_adjustment, 1)
+            }
+        }
+        
+        return jsonify(result)
+        
+    except Exception as e:
+        print(f"[Comprehensive Prediction Error] {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+
+
+# --- Simple Prediction API (4 Modes) ---
+@api_bp.route('/predict/simple', methods=['POST', 'OPTIONS'])
+def predict_simple():
+    """简化版4模式IP预测 - 使用训练好的模型 model_j_oracle_v7，支持数据库检测和历史数据"""
+    if request.method == 'OPTIONS':
+        return jsonify({}), 200
+        
+    try:
+        data = request.json
+        mode = data.get('mode', 'basic')
+        platform = data.get('platform', '起点')
+        platform_key = 'Qidian' if platform == '起点' else 'Zongheng'
+        
+        # 加载模型
+        model = _load_ip_model()
+        
+        # 提取通用数据
+        title = data.get('title', '未知作品')
+        word_count = data.get('wordCount', 0) or 0
+        monthly_tickets = data.get('monthlyTickets', 0) or 0
+        ranking = data.get('ranking', 0) or 0
+        total_recommend = data.get('recommendations', 0) or 0
+        collections = data.get('collections', 0) or 0
+        category = data.get('category', '玄幻')
+        status = data.get('status', '连载')
+        author = data.get('author', '')
+        
+        # ================================================================
+        #  1. 数据库检测 - 查找是否已有该书
+        # ================================================================
+        db_match = None
+        history_data = []
+        
+        try:
+            from data_manager import QIDIAN_CONFIG, ZONGHENG_CONFIG
+        except ImportError:
+            from backend.data_manager import QIDIAN_CONFIG, ZONGHENG_CONFIG
+        
+        config = QIDIAN_CONFIG if platform_key == 'Qidian' else ZONGHENG_CONFIG
+        table = 'novel_monthly_stats' if platform_key == 'Qidian' else 'zongheng_book_ranks'
+        tkt_col = 'monthly_ticket_count' if platform_key == 'Qidian' else 'monthly_ticket'
+        
+        try:
+            conn = pymysql.connect(**config, cursorclass=pymysql.cursors.DictCursor)
+            with conn.cursor() as cur:
+                # 模糊匹配书名
+                cur.execute(f"""
+                    SELECT title, author, category, status, word_count,
+                           {tkt_col} as monthly_tickets,
+                           recommendation_count as total_recommend,
+                           year, month
+                    FROM {table}
+                    WHERE title LIKE %s
+                    ORDER BY year DESC, month DESC
+                    LIMIT 1
+                """, (f"%{title}%",))
+                db_match = cur.fetchone()
+                
+                if db_match:
+                    # 获取历史数据
+                    cur.execute(f"""
+                        SELECT title, year, month, {tkt_col} as monthly_tickets,
+                               recommendation_count as total_recommend,
+                               word_count
+                        FROM {table}
+                        WHERE title = %s
+                        ORDER BY year, month
+                    """, (db_match['title'],))
+                    history_data = cur.fetchall()
+                    
+                    # 补充缺失数据
+                    if not author and db_match.get('author'):
+                        author = db_match['author']
+                    if not word_count and db_match.get('word_count'):
+                        word_count = db_match['word_count']
+                    if not monthly_tickets and db_match.get('monthly_tickets'):
+                        monthly_tickets = db_match['monthly_tickets']
+                    if not total_recommend and db_match.get('total_recommend'):
+                        total_recommend = db_match['total_recommend']
+            conn.close()
+        except Exception as e:
+            print(f"[DB Match Error] {e}")
+        
+        # ================================================================
+        #  2. 使用训练模型计算基础评分
+        # ================================================================
+        score = 50.0
+        confidence = 'low'
+        
+        if model:
+            if ranking > 0:
+                total_books = 500 if platform_key == 'Qidian' else 50
+                rank_pct = (ranking - 1) / (total_books - 1)
+                base_score = 99.0 - 49.0 * rank_pct
+                wc_bonus = min(2.0, np.log1p(word_count / 500000) * 1.0) if word_count > 0 else 0
+                ticket_threshold = 5000 if platform_key == 'Qidian' else 500
+                ticket_bonus = min(3.0, monthly_tickets / ticket_threshold * 1.5) if monthly_tickets > ticket_threshold else 0
+                score = base_score + wc_bonus + ticket_bonus
+                score = np.clip(score, 45.0, 99.5)
+                confidence = 'high'
+            elif monthly_tickets > 0:
+                rank_ticket_map = model.get('rank_ticket_mapping', {}).get(platform_key, {})
+                closest_rank = None
+                min_diff = float('inf')
+                for r, t in rank_ticket_map.items():
+                    diff = abs(t - monthly_tickets)
+                    if diff < min_diff:
+                        min_diff = diff
+                        closest_rank = r
+                if closest_rank:
+                    total_books = 500 if platform_key == 'Qidian' else 50
+                    rank_pct = (closest_rank - 1) / (total_books - 1)
+                    score = 99.0 - 49.0 * rank_pct
+                    score = np.clip(score, 45.0, 99.5)
+                    confidence = 'medium'
+                else:
+                    features = np.array([[word_count, total_recommend]])
+                    score = model['ip_model'].predict(features)[0]
+                    score = np.clip(score, 45.0, 99.5)
+                    confidence = 'medium'
+            else:
+                features = np.array([[word_count, total_recommend if total_recommend > 0 else collections / 10]])
+                score = model['ip_model'].predict(features)[0]
+                score = np.clip(score, 45.0, 99.5)
+                confidence = 'low'
+        
+        # ================================================================
+        #  3. 六维度评判体系
+        # ================================================================
+        dimensions = {
+            '内容质量': 0,
+            '商业价值': 0,
+            '读者粘性': 0,
+            '更新稳定性': 0,
+            '市场潜力': 0,
+            'IP延展性': 0
+        }
+        dimension_details = {}
+        
+        # 维度1: 内容质量 (基于字数、简介、章节内容)
+        content_score = 10
+        if word_count >= 2000000:
+            content_score = 25
+        elif word_count >= 1000000:
+            content_score = 20
+        elif word_count >= 500000:
+            content_score = 15
+        synopsis = data.get('synopsis', '')
+        chapter = data.get('chapterContent', '')
+        if len(synopsis) >= 200:
+            content_score += 3
+        if len(chapter) >= 5000:
+            content_score += 2
+        dimensions['内容质量'] = min(30, content_score)
+        dimension_details['内容质量'] = f"字数{word_count/10000:.0f}万{'，内容丰富' if word_count >= 1000000 else '，内容适中'}"
+        
+        # 维度2: 商业价值 (基于月票、收藏、推荐)
+        commercial_score = 10
+        if monthly_tickets >= 10000:
+            commercial_score = 25
+        elif monthly_tickets >= 5000:
+            commercial_score = 20
+        elif monthly_tickets >= 1000:
+            commercial_score = 15
+        if collections >= 100000:
+            commercial_score += 5
+        dimensions['商业价值'] = min(30, commercial_score)
+        dimension_details['商业价值'] = f"月票{monthly_tickets}，收藏{collections}，{'头部作品' if monthly_tickets >= 5000 else '潜力作品' if monthly_tickets >= 1000 else '待观察'}"
+        
+        # 维度3: 读者粘性 (基于评论、粉丝、互动)
+        comments = data.get('comments', 0) or 0
+        followers = data.get('followers', 0) or 0
+        stickiness_score = 10
+        if comments >= 5000:
+            stickiness_score = 20
+        elif comments >= 1000:
+            stickiness_score = 15
+        if followers >= 50000:
+            stickiness_score += 5
+        dimensions['读者粘性'] = min(25, stickiness_score)
+        dimension_details['读者粘性'] = f"评论{comments}，粉丝{followers}，{'互动活跃' if comments >= 1000 else '互动一般'}"
+        
+        # 维度4: 更新稳定性 (基于状态、增长率)
+        stability_score = 15 if status == '连载' else (10 if status == '完本' else 5)
+        growth = data.get('weekOverWeekGrowth', 0) or 0
+        if growth > 20:
+            stability_score += 5
+        elif growth > 10:
+            stability_score += 3
+        dimensions['更新稳定性'] = min(20, stability_score)
+        dimension_details['更新稳定性'] = f"状态{status}，周增长{growth}%，{'稳定更新' if status == '连载' else '已完结'}"
+        
+        # 维度5: 市场潜力 (基于题材热度、平台竞争)
+        hot_categories = ['玄幻', '都市', '仙侠', '科幻', '悬疑']
+        potential_score = 15 if category in hot_categories else 10
+        if ranking > 0 and ranking <= 100:
+            potential_score += 5
+        dimensions['市场潜力'] = min(20, potential_score)
+        dimension_details['市场潜力'] = f"题材{category}，{'热门题材' if category in hot_categories else '小众题材'}"
+        
+        # 维度6: IP延展性 (基于题材适配度、字数规模)
+        adaptable_categories = ['玄幻', '仙侠', '都市', '科幻', '悬疑']
+        extend_score = 10 if category in adaptable_categories else 5
+        if word_count >= 1000000:
+            extend_score += 5
+        dimensions['IP延展性'] = min(15, extend_score)
+        dimension_details['IP延展性'] = f"{'适合改编' if category in adaptable_categories else '改编难度较高'}，内容体量{'充足' if word_count >= 1000000 else '适中'}"
+        
+        # ================================================================
+        #  4. AI大模型生成详细报告
+        # ================================================================
+        ai_report = None
+        suggestions = []
+        
+        # 分析历史数据趋势
+        history_trend = "无历史数据"
+        if history_data and len(history_data) > 1:
+            # 计算趋势
+            first = history_data[0]
+            last = history_data[-1]
+            mid = history_data[len(history_data)//2] if len(history_data) > 2 else first
+            
+            ticket_start = first.get('monthly_tickets', 0) or 0
+            ticket_end = last.get('monthly_tickets', 0) or 0
+            ticket_mid = mid.get('monthly_tickets', 0) or 0
+            
+            # 计算增长率和波动
+            if ticket_start > 0:
+                growth_rate = ((ticket_end - ticket_start) / ticket_start) * 100
+            else:
+                growth_rate = 0 if ticket_end == 0 else 100
+            
+            # 判断趋势类型
+            if growth_rate > 50:
+                trend_type = "快速增长"
+            elif growth_rate > 20:
+                trend_type = "稳步上升"
+            elif growth_rate > -20:
+                trend_type = "趋于平稳"
+            elif growth_rate > -50:
+                trend_type = "有所下滑"
+            else:
+                trend_type = "明显下滑"
+            
+            # 检测波动
+            tickets = [h.get('monthly_tickets', 0) or 0 for h in history_data]
+            avg = sum(tickets) / len(tickets)
+            variance = sum((t - avg)**2 for t in tickets) / len(tickets)
+            volatility = "波动较大" if variance > avg * 0.5 else "波动较小"
+            
+            history_trend = f"【{len(history_data)}个月历史数据】起始月票{ticket_start}→当前{ticket_end}，整体{trend_type}（{growth_rate:+.1f}%），{volatility}。中间值{ticket_mid}，平均值{avg:.0f}。"
+        elif history_data and len(history_data) == 1:
+            h = history_data[0]
+            history_trend = f"【1条历史记录】{h['year']}/{h['month']}月票{h.get('monthly_tickets', 0) or 0}，数据有限仅供参考。"
+        
+        # 构建AI提示词
+        prompt = f"""你是一位专业的网络文学IP价值评估专家。请对以下作品进行**详细的六维度深度分析**，重点结合历史数据趋势：
+
+作品信息：
+- 书名：《{title}》
+- 作者：{author or '未知'}
+- 平台：{platform}
+- 题材：{category}
+- 状态：{status}
+- 字数：{word_count/10000:.1f}万字
+- 月票：{monthly_tickets}
+- 收藏：{collections}
+- 推荐：{total_recommend}
+- 排名：{ranking if ranking > 0 else '未知'}
+
+六维度评分数据：
+1. 内容质量：{dimensions['内容质量']}/30 分 - {dimension_details['内容质量']}
+2. 商业价值：{dimensions['商业价值']}/30 分 - {dimension_details['商业价值']}
+3. 读者粘性：{dimensions['读者粘性']}/25 分 - {dimension_details['读者粘性']}
+4. 更新稳定性：{dimensions['更新稳定性']}/20 分 - {dimension_details['更新稳定性']}
+5. 市场潜力：{dimensions['市场潜力']}/20 分 - {dimension_details['市场潜力']}
+6. IP延展性：{dimensions['IP延展性']}/15 分 - {dimension_details['IP延展性']}
+
+历史数据趋势分析：
+{history_trend}
+
+综合评分：{score:.1f}分 ({_score_to_grade(score)}级)
+
+请严格按照以下格式生成**详细报告**，必须结合历史趋势进行深度分析：
+
+1. **综合评价报告**（必须包含）：
+   - 总体表现概述（50字）
+   - 历史数据解读：分析历史趋势（上升/下降/波动），说明变化原因（100字）
+   - 六维度逐一分析：解释每个维度为什么是那个分数，结合历史趋势说明（每个维度30-50字）
+   - 核心结论（30字）
+   总字数控制在500-600字
+
+2. **具体改进建议**（3-5条，必须结合历史趋势）：
+   - 基于历史趋势给出具体改进方向
+   - 明确指出针对哪个维度
+   - 给出可操作的改进措施
+
+3. **未来发展预测**（基于历史趋势推断）：
+   - 短期预测（1-3个月）：根据当前趋势推断
+   - 中期预测（3-6个月）：考虑平台季节性因素
+   - 风险提示：指出可能导致趋势变化的风险点
+   总字数250-350字
+
+请用JSON格式返回，注意report字段要包含历史数据解读：
+{{"report": "## 综合评价\\n\\n《{title}》综合评分{score:.1f}分（{_score_to_grade(score)}级）。\\n\\n### 历史数据解读\\n\\n【历史趋势】...\\n\\n### 六维度深度分析\\n\\n**内容质量**（{dimensions['内容质量']}/30分）：...\\n\\n**商业价值**（{dimensions['商业价值']}/30分）：...\\n\\n**读者粘性**（{dimensions['读者粘性']}/25分）：...\\n\\n**更新稳定性**（{dimensions['更新稳定性']}/20分）：...\\n\\n**市场潜力**（{dimensions['市场潜力']}/20分）：...\\n\\n**IP延展性**（{dimensions['IP延展性']}/15分）：...\\n\\n### 核心结论\\n...", "suggestions": ["建议1（基于历史趋势）：具体措施...", "建议2..."], "prediction": "## 发展预测\\n\\n**短期（1-3个月）**：根据{history_trend[:20]}...\\n\\n**中期（3-6个月）**：...\\n\\n**风险提示**：..."}}"""
+
+        try:
+            # 使用 _call_model 方法，model_key='chat'
+            messages = [{"role": "user", "content": prompt}]
+            response = ai_service._call_model('chat', messages, temperature=0.7, max_tokens=1200, json_mode=False)
+            
+            if response:
+                import re
+                # response 可能是字符串或包含 content 的字典
+                if isinstance(response, dict):
+                    content = response.get('content', str(response))
+                else:
+                    content = str(response)
+                    
+                # 尝试提取JSON
+                json_match = re.search(r'\{[\s\S]*\}', content)
+                if json_match:
+                    ai_report = json.loads(json_match.group())
+                else:
+                    ai_report = {
+                        'report': content[:500],
+                        'suggestions': ['建议补充更多作品数据以获得精准分析'],
+                        'prediction': '数据有限，建议持续观察'
+                    }
+        except Exception as e:
+            print(f"[AI Report Error] {e}")
+            import traceback
+            traceback.print_exc()
+            ai_report = None
+        
+        # 如果AI报告失败，生成默认报告
+        if not ai_report:
+            total_dim = sum(dimensions.values())
+            if score >= 80:
+                ai_report = {
+                    'report': f"《{title}》在{platform}平台表现优异，综合评分{score:.1f}分。{dimension_details['商业价值']}，{dimension_details['内容质量']}。作品具备头部IP潜力，建议重点关注和投入资源。",
+                    'suggestions': [
+                        "保持稳定更新，稳固榜单位置",
+                        "加强粉丝运营，提升互动活跃度",
+                        "可考虑IP衍生开发，如漫画、有声书等"
+                    ],
+                    'prediction': '预计未来3个月保持头部地位，具备影视改编潜力'
+                }
+            elif score >= 60:
+                ai_report = {
+                    'report': f"《{title}》在{platform}平台表现良好，综合评分{score:.1f}分。{dimension_details['商业价值']}，{dimension_details['读者粘性']}。作品有发展潜力，建议针对性优化。",
+                    'suggestions': [
+                        f"当前{dimension_details['内容质量']}，建议保持更新节奏",
+                        "优化作品简介，提升吸引力",
+                        "加强与读者互动，提升粉丝粘性"
+                    ],
+                    'prediction': '预计稳步增长，有晋升潜力'
+                }
+            else:
+                ai_report = {
+                    'report': f"《{title}》在{platform}平台处于起步阶段，综合评分{score:.1f}分。建议补充更多数据或持续观察一段时间后再评估。",
+                    'suggestions': [
+                        "完善作品信息，提供更多数据",
+                        "关注市场趋势，选择热门题材",
+                        "保持稳定更新，积累读者基础"
+                    ],
+                    'prediction': '需要更多数据支持评估，建议持续观察'
+                }
+        
+        suggestions = ai_report.get('suggestions', [])
+        
+        # ================================================================
+        #  5. 组装返回结果
+        # ================================================================
+        result = {
+            'score': round(float(score), 1),
+            'grade': _score_to_grade(score),
+            'dimensions': dimensions,
+            'dimension_details': dimension_details,
+            'suggestions': suggestions,
+            'report': ai_report.get('report', ''),
+            'prediction': ai_report.get('prediction', ''),
+            'platform': platform,
+            'mode': mode,
+            'confidence': confidence,
+            'model_version': model.get('version', 'unknown') if model else 'fallback',
+            'db_matched': db_match is not None,
+            'db_title': db_match['title'] if db_match else None,
+            'history': [{
+                'year': h['year'],
+                'month': h['month'],
+                'monthly_tickets': h['monthly_tickets'],
+                'total_recommend': h['total_recommend'],
+                'word_count': h['word_count']
+            } for h in history_data] if history_data else []
+        }
+        
+        return jsonify(result)
+        
+    except Exception as e:
+        print(f"[Simple Prediction Error] {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
 

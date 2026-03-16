@@ -1,0 +1,3392 @@
+
+--- Init DataManager ---
+Data Path: d:\ip-lumina-main\integrated_system\backend\resources/data/cleaned_data.csv
+Exists? True
+
+--- Init DataManager ---
+Data Path: d:\ip-lumina-main\integrated_system\backend\resources/data/cleaned_data.csv
+Exists? True
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻'}...
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠'}...
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '雪中悍刀行', 'category': '玄幻奇幻'}...
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻'}...
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠'}...
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '雪中悍刀行', 'category': '玄幻奇幻'}...
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '雪中悍刀行', 'category': '玄幻奇幻'}...
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '雪中悍刀行', 'category': '玄幻奇幻'}...
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.20000000001}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.20000000001}...
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.20000000001}...
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '雪中悍刀行', 'category': '玄幻奇幻'}...
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '雪中悍刀行', 'category': '玄幻奇幻'}...
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '雪中悍刀行', 'category': '玄幻奇幻'}...
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '雪中悍刀行', 'category': '玄幻奇幻'}...
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '雪中悍刀行', 'category': '玄幻奇幻'}...
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '雪中悍刀行', 'category': '玄幻奇幻'}...
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.20000000001}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.20000000001}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.20000000001}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.20000000001}...
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.2}...
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.2}...
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.2}...
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.2}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 4450076, 'popularity': 890015.2}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864000, 'finance': 12841, 'interaction': 87050000, 'popularity': 134590000}...
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻', 'word_count': 3864000, 'finance': 12841, 'interaction': 87050000, 'popularity': 134590000}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864000, 'finance': 12841, 'interaction': 87050000, 'popularity': 134590000}...
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.2}...
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.2}...
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻', 'word_count': 3864000, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.2}...
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 1200000, 'finance': 43337, 'interaction': 712030, 'popularity': 142406.0}...
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 1200000, 'finance': 43337, 'interaction': 712030, 'popularity': 142406.0}...
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 1200000, 'finance': 43337, 'interaction': 712030, 'popularity': 142406.0}...
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 1200000, 'finance': 43337, 'interaction': 712030, 'popularity': 142406.0}...
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.20000000001}...
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'word_count': 13160146, 'finance': 2195, 'interaction': 18806086, 'popularity': 357637764, 'abstract': '大千世界，无奇不有。我陈平安，唯有一剑，可搬山，倒海，降妖，镇魔，敕神，摘星，断江，摧城，开天！我叫陈平安，平平安安的平...
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'word_count': 13160146, 'finance': 2195, 'interaction': 18806086, 'popularity': 357637764, 'abstract': '大千世界，无奇不有。我陈平安，唯有一剑，可搬山，倒海，降妖，镇魔，敕神，摘星，断江，摧城，开天！我叫陈平安，平平安安的平...
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'word_count': 13160146, 'finance': 2195, 'interaction': 18806086, 'popularity': 357637764, 'abstract': '大千世界，无奇不有。我陈平安，唯有一剑，可搬山，倒海，降妖，镇魔，敕神，摘星，断江，摧城，开天！我叫陈平安，平平安安的平...
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'word_count': 13160146, 'finance': 35568, 'interaction': 18806086, 'popularity': 3761217.2}...
+
+--- Predict Request ---
+Input: {'title': '逆天邪神', 'category': '玄幻奇幻', 'word_count': 7866492, 'finance': 6905, 'interaction': 3867004, 'popularity': 339929091, 'abstract': '掌天毒之珠，承邪神之血，修逆天之力，一代邪神，君临天下！【添加微信公众号：火星引力】&quot;'}...
+
+--- Predict Request ---
+Input: {'title': '逆天邪神', 'category': '玄幻奇幻', 'word_count': 7866492, 'finance': 6905, 'interaction': 3867004, 'popularity': 339929091, 'abstract': '掌天毒之珠，承邪神之血，修逆天之力，一代邪神，君临天下！【添加微信公众号：火星引力】&quot;'}...
+
+--- Predict Request ---
+Input: {'title': '逆天邪神', 'category': '玄幻奇幻', 'word_count': 7866492, 'finance': 6905, 'interaction': 3867004, 'popularity': 339929091, 'abstract': '掌天毒之珠，承邪神之血，修逆天之力，一代邪神，君临天下！【添加微信公众号：火星引力】&quot;'}...
+
+--- Predict Request ---
+Input: {'title': '逆天邪神', 'category': '玄幻奇幻', 'word_count': 7866493, 'finance': 36381, 'interaction': 3867697, 'popularity': 773539.4}...
+
+--- Predict Request ---
+Input: {'title': '十方天帝', 'category': '玄幻奇幻', 'word_count': 758932, 'finance': 38, 'interaction': 339, 'popularity': 4220, 'abstract': '天道无情，大道无常。\n百族渺渺，凡俗茫茫。\n一个从人族禁区走出的少年，在血与乱中的蜕变，观百族、查万古，硬撼诸天大道，镇压万古轮回，只为寻得...
+
+--- Predict Request ---
+Input: {'title': '十方天帝', 'category': '玄幻奇幻', 'word_count': 758932, 'finance': 38, 'interaction': 339, 'popularity': 4220, 'abstract': '天道无情，大道无常。\n百族渺渺，凡俗茫茫。\n一个从人族禁区走出的少年，在血与乱中的蜕变，观百族、查万古，硬撼诸天大道，镇压万古轮回，只为寻得...
+
+--- Predict Request ---
+Input: {'title': '十方天帝', 'category': '玄幻奇幻', 'word_count': 758932, 'finance': 38, 'interaction': 339, 'popularity': 4220, 'abstract': '天道无情，大道无常。\n百族渺渺，凡俗茫茫。\n一个从人族禁区走出的少年，在血与乱中的蜕变，观百族、查万古，硬撼诸天大道，镇压万古轮回，只为寻得...
+
+--- Predict Request ---
+Input: {'title': '十方天帝', 'category': '玄幻奇幻', 'word_count': 758932, 'finance': 45, 'interaction': 339, 'popularity': 67.8}...
+
+--- Predict Request ---
+Input: {'title': '夜无疆', 'category': '玄幻', 'word_count': 2636000, 'finance': 67981, 'interaction': 8277400, 'popularity': 2762292, 'abstract': '那一天太阳落下再也没有升起…………………'}...
+
+--- Predict Request ---
+Input: {'title': '夜无疆', 'category': '玄幻', 'word_count': 2636000, 'finance': 67981, 'interaction': 8277400, 'popularity': 2762292, 'abstract': '那一天太阳落下再也没有升起…………………'}...
+
+--- Predict Request ---
+Input: {'title': '夜无疆', 'category': '玄幻', 'word_count': 2636000, 'finance': 67981, 'interaction': 8277400, 'popularity': 2762292, 'abstract': '那一天太阳落下再也没有升起…………………'}...
+
+--- Predict Request ---
+Input: {'title': '夜无疆', 'category': '玄幻', 'word_count': 2636000, 'finance': 272741, 'interaction': 8277400, 'popularity': 1655480.0}...
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '夜无疆', 'category': '玄幻', 'word_count': 2636000, 'finance': 67981, 'interaction': 8277400, 'popularity': 2762292, 'abstract': '那一天太阳落下再也没有升起…………………'}...
+
+--- Predict Request ---
+Input: {'title': '夜无疆', 'category': '玄幻', 'word_count': 2636000, 'finance': 67981, 'interaction': 8277400, 'popularity': 2762292, 'abstract': '那一天太阳落下再也没有升起…………………'}...
+
+--- Predict Request ---
+Input: {'title': '夜无疆', 'category': '玄幻', 'word_count': 2636000, 'finance': 67981, 'interaction': 8277400, 'popularity': 2762292, 'abstract': '那一天太阳落下再也没有升起…………………'}...
+
+--- Predict Request ---
+Input: {'title': '夜无疆', 'category': '玄幻', 'word_count': 2636000, 'finance': 272741, 'interaction': 8277400, 'popularity': 1655480.0}...
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '夜无疆', 'category': '玄幻', 'word_count': 2636000, 'finance': 272741, 'interaction': 8277400, 'popularity': 1655480.0}...
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.20000000001}...
+
+[API] Predict Called for: ????
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '????', 'category': '????', 'finance': 33900, 'interaction': 450000, 'word_count': 3800000, 'abstract': '????'}...
+
+[API] Predict Called for: 无敌天命
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'finance': 33900, 'interaction': 450000, 'word_count': 3800000, 'abstract': '测试摘要'}...
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.20000000001}...
+
+--- Init DataManager ---
+
+[API] Predict Called for: 无敌天命
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'finance': 43337, 'interaction': 450000, 'word_count': 3860000, 'abstract': '测试摘要'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.20000000001}...
+
+[API] Predict Called for: 无敌天命
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'finance': 43337, 'interaction': 450000, 'word_count': 3860000, 'abstract': '测试摘要'}...
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+[API] Predict Called for: 无敌天命
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'finance': 43337, 'interaction': 450000, 'word_count': 3860000, 'abstract': '测试摘要'}...
+
+[API] Predict Called for: 无敌天命
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'finance': 43337, 'interaction': 450000, 'word_count': 3860000, 'abstract': '测试摘要'}...
+
+[API] Predict Called for: 无敌天命
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'finance': 43337, 'interaction': 450000, 'word_count': 3860000, 'abstract': '测试摘要'}...
+
+[API] Predict Called for: 无敌天命
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'finance': 43337, 'interaction': 450000, 'word_count': 3860000, 'abstract': '测试摘要'}...
+
+[API] Predict Called for: 无敌天命
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'finance': 43337, 'interaction': 450000, 'word_count': 3860000, 'abstract': '测试摘要'}...
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+[API] Predict Called for: 无敌天命
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'finance': 43337, 'interaction': 450000, 'word_count': 3860000, 'abstract': '测试摘要'}...
+
+[API] Predict Called for: 无敌天命
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'finance': 43337, 'interaction': 450000, 'word_count': 3860000, 'abstract': '测试摘要'}...
+
+[API] Predict Called for: 无敌天命
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'finance': 43337, 'interaction': 450000, 'word_count': 3860000, 'abstract': '测试摘要'}...
+
+[API] Predict Called for: 无敌天命
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'finance': 43337, 'interaction': 450000, 'word_count': 3860000, 'abstract': '测试摘要'}...
+
+[API] Predict Called for: 无敌天命
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'finance': 43337, 'interaction': 450000, 'word_count': 3860000, 'abstract': '测试摘要'}...
+
+[API] Predict Called for: 无敌天命
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'finance': 43337, 'interaction': 450000, 'word_count': 3860000, 'abstract': '测试摘要'}...
+
+[API] Predict Called for: 无敌天命
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'finance': 43337, 'interaction': 450000, 'word_count': 3860000, 'abstract': '测试摘要'}...
+
+[API] Predict Called for: 无敌天命
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'finance': 43337, 'interaction': 450000, 'word_count': 3860000, 'abstract': '测试摘要'}...
+
+[API] Predict Called for: 无敌天命
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'finance': 43337, 'interaction': 450000, 'word_count': 3860000, 'abstract': '测试摘要'}...
+
+[API] Predict Called for: 无敌天命
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'finance': 43337, 'interaction': 450000, 'word_count': 3860000, 'abstract': '测试摘要'}...
+
+[API] Predict Called for: 无敌天命
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'finance': 43337, 'interaction': 450000, 'word_count': 3860000, 'abstract': '测试摘要'}...
+
+[API] Predict Called for: 无敌天命
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'finance': 43337, 'interaction': 450000, 'word_count': 3860000, 'abstract': '测试摘要'}...
+
+[API] Predict Called for: 无敌天命
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'finance': 43337, 'interaction': 450000, 'word_count': 3860000, 'abstract': '测试摘要'}...
+
+[API] Predict Called for: 无敌天命
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'finance': 43337, 'interaction': 450000, 'word_count': 3860000, 'abstract': '测试摘要'}...
+
+[API] Predict Called for: 无敌天命
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'finance': 43337, 'interaction': 450000, 'word_count': 3860000, 'abstract': '测试摘要'}...
+
+[API] Predict Called for: 无敌天命
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'finance': 43337, 'interaction': 450000, 'word_count': 3860000, 'abstract': '测试摘要'}...
+
+[API] Predict Called for: 无敌天命
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'finance': 43337, 'interaction': 450000, 'word_count': 3860000, 'abstract': '测试摘要'}...
+
+[API] Predict Called for: 无敌天命
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'finance': 43337, 'interaction': 450000, 'word_count': 3860000, 'abstract': '测试摘要'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.20000000001}...
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'word_count': 13160146, 'finance': 2195, 'interaction': 18806086, 'popularity': 357637764, 'abstract': '大千世界，无奇不有。我陈平安，唯有一剑，可搬山，倒海，降妖，镇魔，敕神，摘星，断江，摧城，开天！我叫陈平安，平平安安的平...
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'word_count': 13160146, 'finance': 2195, 'interaction': 18806086, 'popularity': 357637764, 'abstract': '大千世界，无奇不有。我陈平安，唯有一剑，可搬山，倒海，降妖，镇魔，敕神，摘星，断江，摧城，开天！我叫陈平安，平平安安的平...
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'word_count': 13160146, 'finance': 2195, 'interaction': 18806086, 'popularity': 357637764, 'abstract': '大千世界，无奇不有。我陈平安，唯有一剑，可搬山，倒海，降妖，镇魔，敕神，摘星，断江，摧城，开天！我叫陈平安，平平安安的平...
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'word_count': 13160146, 'finance': 35568, 'interaction': 18806086, 'popularity': 3761217.2}...
+
+--- Predict Request ---
+Input: {'title': '元始法则', 'category': '玄幻', 'word_count': 2618500, 'finance': 44140, 'interaction': 1634700, 'popularity': 702365, 'abstract': '星空中的“道城”，修行最初的萌芽之地“祖洲”，浩瀚宇宙水之起源“神仓古泽”，虚暗禁区“战斧座空洞”。还有藏在宏观中的天界，与微观...
+
+--- Predict Request ---
+Input: {'title': '元始法则', 'category': '玄幻', 'word_count': 2618500, 'finance': 44140, 'interaction': 1634700, 'popularity': 702365, 'abstract': '星空中的“道城”，修行最初的萌芽之地“祖洲”，浩瀚宇宙水之起源“神仓古泽”，虚暗禁区“战斧座空洞”。还有藏在宏观中的天界，与微观...
+
+--- Predict Request ---
+Input: {'title': '元始法则', 'category': '玄幻', 'word_count': 2618500, 'finance': 44140, 'interaction': 1634700, 'popularity': 702365, 'abstract': '星空中的“道城”，修行最初的萌芽之地“祖洲”，浩瀚宇宙水之起源“神仓古泽”，虚暗禁区“战斧座空洞”。还有藏在宏观中的天界，与微观...
+
+--- Predict Request ---
+Input: {'title': '元始法则', 'category': '玄幻', 'word_count': 2618500, 'finance': 70367, 'interaction': 1634700, 'popularity': 326940.0}...
+
+--- Predict Request ---
+Input: {'title': '隐动仙魔', 'category': '玄幻奇幻', 'word_count': 847639, 'finance': 22, 'interaction': 15115, 'popularity': 18111, 'abstract': '本书架构壮观且宏伟，风格凝重且深沉，故事妖娆且绚烂，人物鲜明且逼真，为了贯彻人世间最初的本真，通过仙侠修真的故事背景，谱写一曲刻骨铭心的爱...
+
+--- Predict Request ---
+Input: {'title': '隐动仙魔', 'category': '玄幻奇幻', 'word_count': 847639, 'finance': 22, 'interaction': 15115, 'popularity': 18111, 'abstract': '本书架构壮观且宏伟，风格凝重且深沉，故事妖娆且绚烂，人物鲜明且逼真，为了贯彻人世间最初的本真，通过仙侠修真的故事背景，谱写一曲刻骨铭心的爱...
+
+--- Predict Request ---
+Input: {'title': '隐动仙魔', 'category': '玄幻奇幻', 'word_count': 847639, 'finance': 22, 'interaction': 15115, 'popularity': 18111, 'abstract': '本书架构壮观且宏伟，风格凝重且深沉，故事妖娆且绚烂，人物鲜明且逼真，为了贯彻人世间最初的本真，通过仙侠修真的故事背景，谱写一曲刻骨铭心的爱...
+
+--- Predict Request ---
+Input: {'title': '隐动仙魔', 'category': '玄幻奇幻', 'word_count': 847639, 'finance': 251, 'interaction': 15115, 'popularity': 3023.0}...
+
+--- Predict Request ---
+Input: {'title': '上古圣墓', 'category': '玄幻奇幻', 'word_count': 397645, 'finance': 17, 'interaction': 1387, 'popularity': 8316, 'abstract': '在上古时期，盘古开天以后，万族一直寄予盘古留在地球上的一些东西，一直对地球虎视眈眈摩擦不断，直到有一天人族的出现，最终人族成为了万族与地球上的...
+
+--- Predict Request ---
+Input: {'title': '上古圣墓', 'category': '玄幻奇幻', 'word_count': 397645, 'finance': 17, 'interaction': 1387, 'popularity': 8316, 'abstract': '在上古时期，盘古开天以后，万族一直寄予盘古留在地球上的一些东西，一直对地球虎视眈眈摩擦不断，直到有一天人族的出现，最终人族成为了万族与地球上的...
+
+--- Predict Request ---
+Input: {'title': '上古圣墓', 'category': '玄幻奇幻', 'word_count': 397645, 'finance': 17, 'interaction': 1387, 'popularity': 8316, 'abstract': '在上古时期，盘古开天以后，万族一直寄予盘古留在地球上的一些东西，一直对地球虎视眈眈摩擦不断，直到有一天人族的出现，最终人族成为了万族与地球上的...
+
+--- Predict Request ---
+Input: {'title': '上古圣墓', 'category': '玄幻奇幻', 'word_count': 397645, 'finance': 45, 'interaction': 1387, 'popularity': 277.40000000000003}...
+
+--- Init DataManager ---
+
+[API] Predict Called for: Test Novel Title
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': 'Test Novel Title', 'category': '仙侠', 'abstract': 'This is a test description for the AI audit functionality. It needs to be around 200 characters long to satisfy the requirements of the pre...
+
+[API] Predict Called for: Epic Urban Story
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': 'Epic Urban Story', 'category': '仙侠', 'abstract': 'A hard-working man becomes the richest person in the city overnight. He uses his wealth to help the poor and fight against corruption. The ...
+
+[API] Predict Called for: Test A
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': 'Test A', 'category': '??', 'abstract': 'A cultivation story'}...
+
+[API] Predict Called for: Urban Legend
+[API] Model Loaded? True
+
+--- Predict Request ---
+Input: {'title': 'Urban Legend', 'category': '??', 'abstract': 'A young man in city struggles against all'}...
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'word_count': 13160146, 'finance': 2195, 'interaction': 18806086, 'popularity': 357637764, 'abstract': '大千世界，无奇不有。我陈平安，唯有一剑，可搬山，倒海，降妖，镇魔，敕神，摘星，断江，摧城，开天！我叫陈平安，平平安安的平...
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'word_count': 13160146, 'finance': 2195, 'interaction': 18806086, 'popularity': 357637764, 'abstract': '大千世界，无奇不有。我陈平安，唯有一剑，可搬山，倒海，降妖，镇魔，敕神，摘星，断江，摧城，开天！我叫陈平安，平平安安的平...
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'word_count': 13160146, 'finance': 2195, 'interaction': 18806086, 'popularity': 357637764, 'abstract': '大千世界，无奇不有。我陈平安，唯有一剑，可搬山，倒海，降妖，镇魔，敕神，摘星，断江，摧城，开天！我叫陈平安，平平安安的平...
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'word_count': 13160146, 'finance': 2195, 'interaction': 18806086, 'popularity': 357637764, 'abstract': '大千世界，无奇不有。我陈平安，唯有一剑，可搬山，倒海，降妖，镇魔，敕神，摘星，断江，摧城，开天！我叫陈平安，平平安安的平...
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'word_count': 13160146, 'finance': 2195, 'interaction': 18806086, 'popularity': 357637764, 'abstract': '大千世界，无奇不有。我陈平安，唯有一剑，可搬山，倒海，降妖，镇魔，敕神，摘星，断江，摧城，开天！我叫陈平安，平平安安的平...
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'word_count': 13160146, 'finance': 2195, 'interaction': 18806086, 'popularity': 357637764, 'abstract': '大千世界，无奇不有。我陈平安，唯有一剑，可搬山，倒海，降妖，镇魔，敕神，摘星，断江，摧城，开天！我叫陈平安，平平安安的平...
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'word_count': 13160146, 'finance': 35568, 'interaction': 18806086, 'popularity': 3761217.2}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.20000000001}...
+
+--- Predict Request ---
+Input: {'title': '万道之王', 'category': '玄幻奇幻', 'word_count': 515874, 'finance': 21, 'interaction': 207, 'popularity': 3333, 'abstract': '轮回的诅咒。\n不知从何时开始。\n当时间长河开始流动，横亘于诸纪元的辉光之中。\n轮回争渡，逃过时间的唯一道路。\n超脱因果，摆脱命运的唯一方...
+
+--- Predict Request ---
+Input: {'title': '万道之王', 'category': '玄幻奇幻', 'word_count': 515874, 'finance': 21, 'interaction': 207, 'popularity': 3333, 'abstract': '轮回的诅咒。\n不知从何时开始。\n当时间长河开始流动，横亘于诸纪元的辉光之中。\n轮回争渡，逃过时间的唯一道路。\n超脱因果，摆脱命运的唯一方...
+
+--- Predict Request ---
+Input: {'title': '万道之王', 'category': '玄幻奇幻', 'word_count': 515874, 'finance': 21, 'interaction': 207, 'popularity': 3333, 'abstract': '轮回的诅咒。\n不知从何时开始。\n当时间长河开始流动，横亘于诸纪元的辉光之中。\n轮回争渡，逃过时间的唯一道路。\n超脱因果，摆脱命运的唯一方...
+
+--- Predict Request ---
+Input: {'title': '万道之王', 'category': '玄幻奇幻', 'word_count': 515874, 'finance': 28, 'interaction': 207, 'popularity': 41.400000000000006}...
+
+--- Predict Request ---
+Input: {'title': '绝世剑神：君临天下', 'category': '玄幻奇幻', 'word_count': 580823, 'finance': 25, 'interaction': 0, 'popularity': 2425, 'abstract': '一朝觉醒，龙吟震天！青云直上，剑指苍穹！\n陆青云，携九霄龙魂，踏天骄之骨，铸无敌之路！'}...
+
+--- Predict Request ---
+Input: {'title': '绝世剑神：君临天下', 'category': '玄幻奇幻', 'word_count': 580823, 'finance': 25, 'interaction': 0, 'popularity': 2425, 'abstract': '一朝觉醒，龙吟震天！青云直上，剑指苍穹！\n陆青云，携九霄龙魂，踏天骄之骨，铸无敌之路！'}...
+
+--- Predict Request ---
+Input: {'title': '绝世剑神：君临天下', 'category': '玄幻奇幻', 'word_count': 580823, 'finance': 25, 'interaction': 0, 'popularity': 2425, 'abstract': '一朝觉醒，龙吟震天！青云直上，剑指苍穹！\n陆青云，携九霄龙魂，踏天骄之骨，铸无敌之路！'}...
+
+--- Predict Request ---
+Input: {'title': '绝世剑神：君临天下', 'category': '玄幻奇幻', 'word_count': 580823, 'finance': 1110, 'interaction': 0, 'popularity': 0.0}...
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！'}...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 43337, 'interaction': 445076, 'popularity': 89015.20000000001}...
+
+--- Predict Request ---
+Input: {'title': '气武我为王', 'category': '玄幻奇幻', 'word_count': 487994, 'finance': 20, 'interaction': 1595, 'popularity': 15610, 'abstract': '气武大陆，强者为尊！废物少年得强者所助，掌五行神诀，修剑道之路，承轮回奥义！\n一人一剑，道破气武，剑压群雄！一代剑仙，君临天下！'}...
+
+--- Predict Request ---
+Input: {'title': '气武我为王', 'category': '玄幻奇幻', 'word_count': 487994, 'finance': 20, 'interaction': 1595, 'popularity': 15610, 'abstract': '气武大陆，强者为尊！废物少年得强者所助，掌五行神诀，修剑道之路，承轮回奥义！\n一人一剑，道破气武，剑压群雄！一代剑仙，君临天下！'}...
+
+--- Predict Request ---
+Input: {'title': '气武我为王', 'category': '玄幻奇幻', 'word_count': 487994, 'finance': 20, 'interaction': 1595, 'popularity': 15610, 'abstract': '气武大陆，强者为尊！废物少年得强者所助，掌五行神诀，修剑道之路，承轮回奥义！\n一人一剑，道破气武，剑压群雄！一代剑仙，君临天下！'}...
+
+--- Predict Request ---
+Input: {'title': '气武我为王', 'category': '玄幻奇幻', 'word_count': 487994, 'finance': 20, 'interaction': 1595, 'popularity': 319.0}...
+
+--- Predict Request ---
+Input: {'title': '这不是娱乐', 'category': '都市', 'word_count': 600000, 'finance': 9818, 'interaction': 487100, 'popularity': 0, 'abstract': '毁灭吧，累了！读者群：629116518，66646452'}...
+
+--- Predict Request ---
+Input: {'title': '这不是娱乐', 'category': '都市', 'word_count': 600000, 'finance': 9818, 'interaction': 487100, 'popularity': 0, 'abstract': '毁灭吧，累了！读者群：629116518，66646452'}...
+
+--- Predict Request ---
+Input: {'title': '这不是娱乐', 'category': '都市', 'word_count': 600000, 'finance': 9818, 'interaction': 487100, 'popularity': 0, 'abstract': '毁灭吧，累了！读者群：629116518，66646452'}...
+
+--- Predict Request ---
+Input: {'title': '这不是娱乐', 'category': '都市', 'word_count': 600000, 'finance': 9818, 'interaction': 487100, 'popularity': 97420.0}...
+
+--- Predict Request ---
+Input: {'title': '纵剑三千里', 'category': '武侠仙侠', 'word_count': 560197, 'finance': 28, 'interaction': 602, 'popularity': 7831, 'abstract': '太历承始四千八百一十一年，有神龙自北而来，携带天道造化，闯入人间。\n人间数百修行者争夺之下，神龙受伤，藏进一个婴儿识海。\n有人为夺取造化，...
+
+--- Predict Request ---
+Input: {'title': '纵剑三千里', 'category': '武侠仙侠', 'word_count': 560197, 'finance': 28, 'interaction': 602, 'popularity': 7831, 'abstract': '太历承始四千八百一十一年，有神龙自北而来，携带天道造化，闯入人间。\n人间数百修行者争夺之下，神龙受伤，藏进一个婴儿识海。\n有人为夺取造化，...
+
+--- Predict Request ---
+Input: {'title': '纵剑三千里', 'category': '武侠仙侠', 'word_count': 560197, 'finance': 28, 'interaction': 602, 'popularity': 7831, 'abstract': '太历承始四千八百一十一年，有神龙自北而来，携带天道造化，闯入人间。\n人间数百修行者争夺之下，神龙受伤，藏进一个婴儿识海。\n有人为夺取造化，...
+
+--- Predict Request ---
+Input: {'title': '纵剑三千里', 'category': '武侠仙侠', 'word_count': 560197, 'finance': 56, 'interaction': 602, 'popularity': 120.4}...
+
+--- Predict Request ---
+Input: {'title': '绝世剑神：君临天下', 'category': '玄幻奇幻', 'word_count': 580823, 'finance': 25, 'interaction': 0, 'popularity': 2425, 'abstract': '一朝觉醒，龙吟震天！青云直上，剑指苍穹！\n陆青云，携九霄龙魂，踏天骄之骨，铸无敌之路！'}...
+
+--- Predict Request ---
+Input: {'title': '绝世剑神：君临天下', 'category': '玄幻奇幻', 'word_count': 580823, 'finance': 25, 'interaction': 0, 'popularity': 2425, 'abstract': '一朝觉醒，龙吟震天！青云直上，剑指苍穹！\n陆青云，携九霄龙魂，踏天骄之骨，铸无敌之路！'}...
+
+--- Predict Request ---
+Input: {'title': '绝世剑神：君临天下', 'category': '玄幻奇幻', 'word_count': 580823, 'finance': 25, 'interaction': 0, 'popularity': 2425, 'abstract': '一朝觉醒，龙吟震天！青云直上，剑指苍穹！\n陆青云，携九霄龙魂，踏天骄之骨，铸无敌之路！'}...
+
+--- Predict Request ---
+Input: {'title': '绝世剑神：君临天下', 'category': '玄幻奇幻', 'word_count': 580823, 'finance': 1110, 'interaction': 0, 'popularity': 0.0}...
+
+--- Predict Request ---
+Input: {'title': '柯学验尸官', 'category': '轻小说', 'word_count': 2489900, 'finance': 6925, 'interaction': 845699, 'popularity': 0, 'abstract': '【这是柯南同人】本书全称：《刚穿越到柯学世界就被名侦探指认为头号犯罪嫌疑人，身为验尸官的我现在一点不慌》'}...
+
+--- Predict Request ---
+Input: {'title': '柯学验尸官', 'category': '轻小说', 'word_count': 2489900, 'finance': 6925, 'interaction': 845699, 'popularity': 0, 'abstract': '【这是柯南同人】本书全称：《刚穿越到柯学世界就被名侦探指认为头号犯罪嫌疑人，身为验尸官的我现在一点不慌》'}...
+
+--- Predict Request ---
+Input: {'title': '柯学验尸官', 'category': '轻小说', 'word_count': 2489900, 'finance': 6925, 'interaction': 845699, 'popularity': 0, 'abstract': '【这是柯南同人】本书全称：《刚穿越到柯学世界就被名侦探指认为头号犯罪嫌疑人，身为验尸官的我现在一点不慌》'}...
+
+--- Predict Request ---
+Input: {'title': '柯学验尸官', 'category': '轻小说', 'word_count': 2489900, 'finance': 10198, 'interaction': 845699, 'popularity': 169139.80000000002}...
+
+--- Predict Request ---
+Input: {'title': '掌门低调点', 'category': '轻小说', 'word_count': 991600, 'finance': 11505, 'interaction': 529700, 'popularity': 0, 'abstract': '掌门：“我不要。”--【NPC流，曾用名《听说你很拽啊》】【已有一本均订两万作品，两本均订破万作品。读者1群:1138057505（200...
+
+--- Predict Request ---
+Input: {'title': '掌门低调点', 'category': '轻小说', 'word_count': 991600, 'finance': 11505, 'interaction': 529700, 'popularity': 0, 'abstract': '掌门：“我不要。”--【NPC流，曾用名《听说你很拽啊》】【已有一本均订两万作品，两本均订破万作品。读者1群:1138057505（200...
+
+--- Predict Request ---
+Input: {'title': '掌门低调点', 'category': '轻小说', 'word_count': 991600, 'finance': 11505, 'interaction': 529700, 'popularity': 0, 'abstract': '掌门：“我不要。”--【NPC流，曾用名《听说你很拽啊》】【已有一本均订两万作品，两本均订破万作品。读者1群:1138057505（200...
+
+--- Predict Request ---
+Input: {'title': '掌门低调点', 'category': '轻小说', 'word_count': 991600, 'finance': 17462, 'interaction': 529700, 'popularity': 105940.0}...
+
+--- Predict Request ---
+Input: {'title': '捞尸人', 'category': '都市', 'word_count': 4772800, 'finance': 198723, 'interaction': 5208800, 'popularity': 6900124, 'abstract': '人知鬼恐怖，鬼晓人心毒。这是一本传统灵异小说。'}...
+
+--- Predict Request ---
+Input: {'title': '捞尸人', 'category': '都市', 'word_count': 4772800, 'finance': 198723, 'interaction': 5208800, 'popularity': 6900124, 'abstract': '人知鬼恐怖，鬼晓人心毒。这是一本传统灵异小说。'}...
+
+--- Predict Request ---
+Input: {'title': '捞尸人', 'category': '都市', 'word_count': 4772800, 'finance': 198723, 'interaction': 5208800, 'popularity': 6900124, 'abstract': '人知鬼恐怖，鬼晓人心毒。这是一本传统灵异小说。'}...
+
+--- Predict Request ---
+Input: {'title': '捞尸人', 'category': '都市', 'word_count': 4772800, 'finance': 627877, 'interaction': 5208800, 'popularity': 1041760.0}...
+
+--- Predict Request ---
+Input: {'title': '这里有诡异', 'category': '都市', 'word_count': 995374, 'finance': 23, 'interaction': 3279, 'popularity': 16448, 'abstract': '新书《不装了，我就是妖孽》来袭，欢迎大家收藏阅读。\n诡者，妖魔鬼怪也；\n异者，神秘诡谲也。\n这里有食人影子的食影，有以梦杀人的梦魇，有以...
+
+--- Predict Request ---
+Input: {'title': '这里有诡异', 'category': '都市', 'word_count': 995374, 'finance': 23, 'interaction': 3279, 'popularity': 16448, 'abstract': '新书《不装了，我就是妖孽》来袭，欢迎大家收藏阅读。\n诡者，妖魔鬼怪也；\n异者，神秘诡谲也。\n这里有食人影子的食影，有以梦杀人的梦魇，有以...
+
+--- Predict Request ---
+Input: {'title': '这里有诡异', 'category': '都市', 'word_count': 995374, 'finance': 23, 'interaction': 3279, 'popularity': 16448, 'abstract': '新书《不装了，我就是妖孽》来袭，欢迎大家收藏阅读。\n诡者，妖魔鬼怪也；\n异者，神秘诡谲也。\n这里有食人影子的食影，有以梦杀人的梦魇，有以...
+
+--- Predict Request ---
+Input: {'title': '这里有诡异', 'category': '都市', 'word_count': 995374, 'finance': 121, 'interaction': 3279, 'popularity': 655.8000000000001}...
+
+--- Predict Request ---
+Input: {'title': '绝世剑神：君临天下', 'category': '玄幻奇幻', 'word_count': 580823, 'finance': 25, 'interaction': 0, 'popularity': 2425, 'abstract': '一朝觉醒，龙吟震天！青云直上，剑指苍穹！\n陆青云，携九霄龙魂，踏天骄之骨，铸无敌之路！'}...
+
+--- Predict Request ---
+Input: {'title': '绝世剑神：君临天下', 'category': '玄幻奇幻', 'word_count': 580823, 'finance': 25, 'interaction': 0, 'popularity': 2425, 'abstract': '一朝觉醒，龙吟震天！青云直上，剑指苍穹！\n陆青云，携九霄龙魂，踏天骄之骨，铸无敌之路！'}...
+
+--- Predict Request ---
+Input: {'title': '绝世剑神：君临天下', 'category': '玄幻奇幻', 'word_count': 580823, 'finance': 25, 'interaction': 0, 'popularity': 2425, 'abstract': '一朝觉醒，龙吟震天！青云直上，剑指苍穹！\n陆青云，携九霄龙魂，踏天骄之骨，铸无敌之路！'}...
+
+--- Predict Request ---
+Input: {'title': '绝世剑神：君临天下', 'category': '玄幻奇幻', 'word_count': 580823, 'finance': 1110, 'interaction': 0, 'popularity': 0.0}...
+
+--- Predict Request ---
+Input: {'title': '柯学验尸官', 'category': '轻小说', 'word_count': 2489900, 'finance': 6925, 'interaction': 845699, 'popularity': 0, 'abstract': '【这是柯南同人】本书全称：《刚穿越到柯学世界就被名侦探指认为头号犯罪嫌疑人，身为验尸官的我现在一点不慌》'}...
+
+--- Predict Request ---
+Input: {'title': '柯学验尸官', 'category': '轻小说', 'word_count': 2489900, 'finance': 6925, 'interaction': 845699, 'popularity': 0, 'abstract': '【这是柯南同人】本书全称：《刚穿越到柯学世界就被名侦探指认为头号犯罪嫌疑人，身为验尸官的我现在一点不慌》'}...
+
+--- Predict Request ---
+Input: {'title': '柯学验尸官', 'category': '轻小说', 'word_count': 2489900, 'finance': 6925, 'interaction': 845699, 'popularity': 0, 'abstract': '【这是柯南同人】本书全称：《刚穿越到柯学世界就被名侦探指认为头号犯罪嫌疑人，身为验尸官的我现在一点不慌》'}...
+
+--- Predict Request ---
+Input: {'title': '柯学验尸官', 'category': '轻小说', 'word_count': 2489900, 'finance': 10198, 'interaction': 845699, 'popularity': 169139.80000000002}...
+
+--- Predict Request ---
+Input: {'title': '柯学验尸官', 'category': '轻小说', 'word_count': 2489900, 'finance': 6925, 'interaction': 845699, 'popularity': 0, 'abstract': '【这是柯南同人】本书全称：《刚穿越到柯学世界就被名侦探指认为头号犯罪嫌疑人，身为验尸官的我现在一点不慌》'}...
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '雪中悍刀行', 'category': '玄幻奇幻', 'word_count': 4615353, 'finance': 636, 'interaction': 10739809, 'popularity': 2147961.8000000003}...
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '柯学验尸官', 'category': '轻小说', 'word_count': 2489900, 'finance': 6925, 'interaction': 845699, 'popularity': 0, 'abstract': '【这是柯南同人】本书全称：《刚穿越到柯学世界就被名侦探指认为头号犯罪嫌疑人，身为验尸官的我现在一点不慌》'}...
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '雪中悍刀行', 'category': '玄幻奇幻', 'word_count': 4615353, 'finance': 636, 'interaction': 10739809, 'popularity': 2147961.8000000003}...
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '柯学验尸官', 'category': '轻小说', 'word_count': 2489900, 'finance': 6925, 'interaction': 845699, 'popularity': 0, 'abstract': '【这是柯南同人】本书全称：《刚穿越到柯学世界就被名侦探指认为头号犯罪嫌疑人，身为验尸官的我现在一点不慌》', 'status': '完结'...
+Predicted Result: 62.8 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '柯学验尸官', 'category': '轻小说', 'word_count': 2489900, 'finance': 6925, 'interaction': 845699, 'popularity': 0, 'abstract': '【这是柯南同人】本书全称：《刚穿越到柯学世界就被名侦探指认为头号犯罪嫌疑人，身为验尸官的我现在一点不慌》', 'status': '完结'...
+Predicted Result: 62.8 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '柯学验尸官', 'status': '完结', 'updated_at': '2021-10-18 00:57:54', 'finance': 6925, 'interaction': 845699, 'word_count': 2489900}...
+Predicted Result: 66.0 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '柯学验尸官', 'category': '轻小说', 'word_count': 2489900, 'finance': 6925, 'interaction': 845699, 'popularity': 0, 'abstract': '【这是柯南同人】本书全称：《刚穿越到柯学世界就被名侦探指认为头号犯罪嫌疑人，身为验尸官的我现在一点不慌》', 'status': '完结'...
+Predicted Result: 62.8 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '柯学验尸官', 'status': '完结', 'updated_at': '2021-10-18 00:57:54', 'finance': 6925, 'interaction': 845699, 'word_count': 2489900}...
+Predicted Result: 66.0 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '柯学验尸官', 'category': '轻小说', 'word_count': 2489900, 'finance': 6925, 'interaction': 845699, 'popularity': 0, 'abstract': '【这是柯南同人】本书全称：《刚穿越到柯学世界就被名侦探指认为头号犯罪嫌疑人，身为验尸官的我现在一点不慌》', 'status': '完结'...
+Predicted Result: 62.8 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '柯学验尸官', 'status': '完结', 'updated_at': '2021-10-18 00:57:54', 'finance': 6925, 'interaction': 845699, 'word_count': 2489900}...
+Predicted Result: 66.0 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '柯学验尸官', 'category': '轻小说', 'word_count': 2489900, 'finance': 6925, 'interaction': 845699, 'popularity': 0, 'abstract': '【这是柯南同人】本书全称：《刚穿越到柯学世界就被名侦探指认为头号犯罪嫌疑人，身为验尸官的我现在一点不慌》'}...
+
+--- Predict Request ---
+Input: {'title': '柯学验尸官', 'category': '轻小说', 'word_count': 2489900, 'finance': 6925, 'interaction': 845699, 'popularity': 0, 'abstract': '【这是柯南同人】本书全称：《刚穿越到柯学世界就被名侦探指认为头号犯罪嫌疑人，身为验尸官的我现在一点不慌》'}...
+
+--- Predict Request ---
+Input: {'title': '柯学验尸官', 'category': '轻小说', 'word_count': 2489900, 'finance': 6925, 'interaction': 845699, 'popularity': 0, 'abstract': '【这是柯南同人】本书全称：《刚穿越到柯学世界就被名侦探指认为头号犯罪嫌疑人，身为验尸官的我现在一点不慌》'}...
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '柯学验尸官', 'category': '轻小说', 'word_count': 2489900, 'finance': 25, 'interaction': 845699, 'popularity': 0, 'abstract': '【这是柯南同人】本书全称：《刚穿越到柯学世界就被名侦探指认为头号犯罪嫌疑人，身为验尸官的我现在一点不慌》', 'status': '完结', ...
+Predicted Result: 50.1 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '柯学验尸官', 'status': '完结', 'updated_at': '2021-10-18 00:57:54', 'finance': 25, 'interaction': 845699, 'word_count': 2489900}...
+Predicted Result: 53.1 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '神机道士在大唐', 'status': '完结', 'updated_at': '2020-07-31 13:50:15', 'finance': 140, 'interaction': 9822, 'word_count': 629603}...
+Predicted Result: 47.0 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '十修', 'status': '完结', 'updated_at': '2021-11-29 16:05:33', 'finance': 2175, 'interaction': 4838, 'word_count': 263421}...
+Predicted Result: 53.4 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '赘婿出山', 'status': '完结', 'updated_at': '2022-10-12 18:24:18', 'finance': 2229, 'interaction': 1861609, 'word_count': 7860552}...
+Predicted Result: 70.6 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '日月风华', 'status': '完结', 'updated_at': '2024-08-28 09:56:53', 'finance': 8127, 'interaction': 5819914, 'word_count': 6066154}...
+Predicted Result: 76.8 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '娱乐王朝', 'status': '完结', 'updated_at': '2024-06-02', 'finance': 118, 'interaction': 114533, 'word_count': 6256415}...
+Predicted Result: 54.0 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '大造化剑主', 'status': '完结', 'updated_at': '10个月前', 'finance': 188, 'interaction': 87478, 'word_count': 8641762}...
+Predicted Result: 57.8 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '大明杀神', 'status': '完结', 'updated_at': '2024-10-17 15:09:00', 'finance': 53, 'interaction': 6997, 'word_count': 2420135}...
+Predicted Result: 49.1 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '万界守门人', 'status': '完结', 'updated_at': '2025-11-20 15:50:03', 'finance': 113, 'interaction': 481400, 'word_count': 3272700}...
+Predicted Result: 61.4 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '过河卒', 'status': '完结', 'updated_at': '2个月前', 'finance': 165, 'interaction': 169058, 'word_count': 7013976}...
+Predicted Result: 58.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '重生就要对自己狠一点', 'status': '完结', 'updated_at': '2022-03-08 09:50:53', 'finance': 4, 'interaction': 525700, 'word_count': 2669400}...
+Predicted Result: 49.2 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '上古圣墓', 'category': '玄幻奇幻', 'word_count': 397645, 'finance': 17, 'interaction': 1387, 'popularity': 8316, 'abstract': '在上古时期，盘古开天以后，万族一直寄予盘古留在地球上的一些东西，一直对地球虎视眈眈摩擦不断，直到有一天人族的出现，最终人族成为了万族与地球上的...
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！', 'status': '连载', 'updated_at': '2026-02-23...
+Predicted Result: 91.7 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！', 'status': '连载', 'updated_at': '2026-02-23...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！', 'status': '连载', 'updated_at': '2026-02-23...
+Predicted Result: 91.7 (Method: AI Ensemble Model (Smooth Weight Fusion))
+Predicted Result: 91.7 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 89015.20000000001}...
+Predicted Result: 90.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'word_count': 13160146, 'finance': 2195, 'interaction': 18806086, 'popularity': 357637764, 'abstract': '大千世界，无奇不有。我陈平安，唯有一剑，可搬山，倒海，降妖，镇魔，敕神，摘星，断江，摧城，开天！我叫陈平安，平平安安的平...
+Predicted Result: 83.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'word_count': 13160146, 'finance': 2195, 'interaction': 18806086, 'popularity': 357637764, 'abstract': '大千世界，无奇不有。我陈平安，唯有一剑，可搬山，倒海，降妖，镇魔，敕神，摘星，断江，摧城，开天！我叫陈平安，平平安安的平...
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'word_count': 13160146, 'finance': 2195, 'interaction': 18806086, 'popularity': 357637764, 'abstract': '大千世界，无奇不有。我陈平安，唯有一剑，可搬山，倒海，降妖，镇魔，敕神，摘星，断江，摧城，开天！我叫陈平安，平平安安的平...
+Predicted Result: 83.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+Predicted Result: 83.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'word_count': 13160146, 'finance': 2195, 'interaction': 18806086, 'popularity': 3761217.2}...
+Predicted Result: 95.1 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '齐天', 'category': '玄幻奇幻', 'word_count': 0, 'finance': 10842, 'interaction': 12444, 'popularity': 1872283, 'abstract': '天大地大，祖宗最大！齐麟家宗祠内，供奉着十尊古老的先祖灵牌，世人不知其名，亦不晓其往事。直到某日一大族碾灭祠堂，将齐麟脊骨踩得咯吱作响：“齐天...
+Predicted Result: 84.0 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '齐天', 'category': '玄幻奇幻', 'word_count': 0, 'finance': 10842, 'interaction': 12444, 'popularity': 1872283, 'abstract': '天大地大，祖宗最大！齐麟家宗祠内，供奉着十尊古老的先祖灵牌，世人不知其名，亦不晓其往事。直到某日一大族碾灭祠堂，将齐麟脊骨踩得咯吱作响：“齐天...
+Predicted Result: 84.0 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '齐天', 'category': '玄幻奇幻', 'word_count': 0, 'finance': 10842, 'interaction': 12444, 'popularity': 1872283, 'abstract': '天大地大，祖宗最大！齐麟家宗祠内，供奉着十尊古老的先祖灵牌，世人不知其名，亦不晓其往事。直到某日一大族碾灭祠堂，将齐麟脊骨踩得咯吱作响：“齐天...
+Predicted Result: 84.0 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '齐天', 'category': '玄幻奇幻', 'word_count': 0, 'finance': 10842, 'interaction': 12444, 'popularity': 2488.8}...
+Predicted Result: 79.2 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'word_count': 13160146, 'finance': 2195, 'interaction': 18806086, 'popularity': 357637764, 'abstract': '大千世界，无奇不有。我陈平安，唯有一剑，可搬山，倒海，降妖，镇魔，敕神，摘星，断江，摧城，开天！我叫陈平安，平平安安的平...
+Predicted Result: 83.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'word_count': 13160146, 'finance': 2195, 'interaction': 18806086, 'popularity': 357637764, 'abstract': '大千世界，无奇不有。我陈平安，唯有一剑，可搬山，倒海，降妖，镇魔，敕神，摘星，断江，摧城，开天！我叫陈平安，平平安安的平...
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'word_count': 13160146, 'finance': 2195, 'interaction': 18806086, 'popularity': 357637764, 'abstract': '大千世界，无奇不有。我陈平安，唯有一剑，可搬山，倒海，降妖，镇魔，敕神，摘星，断江，摧城，开天！我叫陈平安，平平安安的平...
+Predicted Result: 83.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+Predicted Result: 83.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'word_count': 13160146, 'finance': 2195, 'interaction': 18806086, 'popularity': 3761217.2}...
+Predicted Result: 95.1 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！', 'status': '连载', 'updated_at': '2026-02-23...
+Predicted Result: 91.7 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！', 'status': '连载', 'updated_at': '2026-02-23...
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！', 'status': '连载', 'updated_at': '2026-02-23...
+Predicted Result: 91.7 (Method: AI Ensemble Model (Smooth Weight Fusion))
+Predicted Result: 91.7 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 89015.20000000001}...
+Predicted Result: 90.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '星辰大道', 'category': '玄幻奇幻', 'word_count': 2905065, 'finance': 7502, 'interaction': 311331, 'popularity': 12659841, 'abstract': '我看星空很大，星空看我也很大。这是宇宙，我的宇宙！2200年的一天，当陨石砸落，科技终结，武道开始。我于废墟走出，指点星空！...
+Predicted Result: 86.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '星辰大道', 'category': '玄幻奇幻', 'word_count': 2905065, 'finance': 7502, 'interaction': 311331, 'popularity': 12659841, 'abstract': '我看星空很大，星空看我也很大。这是宇宙，我的宇宙！2200年的一天，当陨石砸落，科技终结，武道开始。我于废墟走出，指点星空！...
+Predicted Result: 86.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+Predicted Result: 86.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '星辰大道', 'category': '玄幻奇幻', 'word_count': 2905065, 'finance': 7502, 'interaction': 311331, 'popularity': 62266.200000000004}...
+Predicted Result: 84.8 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '齐天', 'category': '玄幻奇幻', 'word_count': 0, 'finance': 10842, 'interaction': 12444, 'popularity': 1872283, 'abstract': '天大地大，祖宗最大！齐麟家宗祠内，供奉着十尊古老的先祖灵牌，世人不知其名，亦不晓其往事。直到某日一大族碾灭祠堂，将齐麟脊骨踩得咯吱作响：“齐天...
+Predicted Result: 84.0 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '齐天', 'status': '连载', 'updated_at': '2026-02-23 06:56:00', 'finance': 10842, 'interaction': 12444, 'word_count': 0}...
+Predicted Result: 81.0 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'word_count': 13160146, 'finance': 2195, 'interaction': 18806086, 'popularity': 357637764, 'abstract': '大千世界，无奇不有。我陈平安，唯有一剑，可搬山，倒海，降妖，镇魔，敕神，摘星，断江，摧城，开天！我叫陈平安，平平安安的平...
+Predicted Result: 83.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '剑来', 'status': '完结', 'updated_at': '2026-02-23 00:44:13', 'finance': 2195, 'interaction': 18806086, 'word_count': 13160146}...
+Predicted Result: 82.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！', 'status': '连载', 'updated_at': '2026-02-23...
+Predicted Result: 91.7 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'status': '连载', 'updated_at': '2026-02-23 07:01:00', 'finance': 12841, 'interaction': 445076, 'word_count': 3864367}...
+Predicted Result: 89.4 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '齐天', 'category': '玄幻奇幻', 'word_count': 0, 'finance': 10842, 'interaction': 12444, 'popularity': 1872283, 'abstract': '天大地大，祖宗最大！齐麟家宗祠内，供奉着十尊古老的先祖灵牌，世人不知其名，亦不晓其往事。直到某日一大族碾灭祠堂，将齐麟脊骨踩得咯吱作响：“齐天...
+Predicted Result: 84.0 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '齐天', 'status': '连载', 'updated_at': '2026-02-23 06:56:00', 'finance': 10842, 'interaction': 12444, 'word_count': 0}...
+Predicted Result: 81.0 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'word_count': 13160146, 'finance': 2195, 'interaction': 18806086, 'popularity': 357637764, 'abstract': '大千世界，无奇不有。我陈平安，唯有一剑，可搬山，倒海，降妖，镇魔，敕神，摘星，断江，摧城，开天！我叫陈平安，平平安安的平...
+Predicted Result: 83.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '剑来', 'status': '完结', 'updated_at': '2026-02-23 00:44:13', 'finance': 2195, 'interaction': 18806086, 'word_count': 13160146}...
+Predicted Result: 82.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！', 'status': '连载', 'updated_at': '2026-02-23...
+Predicted Result: 91.7 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'status': '连载', 'updated_at': '2026-02-23 07:01:00', 'finance': 12841, 'interaction': 445076, 'word_count': 3864367}...
+Predicted Result: 89.4 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '1984：从破产川菜馆开始', 'category': '都市', 'word_count': 1656399, 'interaction': 206200, 'finance': 11857, 'popularity': 100000}...
+Predicted Result: 85.2 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '从魔法少女开始独断万古', 'category': '轻小说', 'word_count': 832800, 'interaction': 123900, 'finance': 14824, 'popularity': 100000}...
+Predicted Result: 87.0 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '仙道尽头', 'category': '仙侠', 'word_count': 901700, 'interaction': 147200, 'finance': 10083, 'popularity': 100000}...
+Predicted Result: 83.7 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '以一龙之力打倒整个世界！', 'category': '轻小说', 'word_count': 1847000, 'interaction': 169600, 'finance': 19589, 'popularity': 100000}...
+Predicted Result: 89.4 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '以神通之名', 'category': '都市', 'word_count': 1014300, 'interaction': 94600, 'finance': 25600, 'popularity': 100000}...
+Predicted Result: 88.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '冬日重现', 'category': '轻小说', 'word_count': 1246000, 'interaction': 239700, 'finance': 12418, 'popularity': 100000}...
+Predicted Result: 86.1 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '刚准备高考，离婚逆袭系统来了', 'category': '都市', 'word_count': 2587100, 'interaction': 620200, 'finance': 13983, 'popularity': 705037}...
+Predicted Result: 91.0 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '夜无疆', 'category': '玄幻', 'word_count': 2636000, 'interaction': 8277300, 'finance': 35368, 'popularity': 2762292}...
+Predicted Result: 94.7 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '山河稷', 'category': '仙侠', 'word_count': 1995200, 'interaction': 853700, 'finance': 20303, 'popularity': 669275}...
+Predicted Result: 92.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '异度旅社', 'category': '科幻', 'word_count': 1936300, 'interaction': 3463399, 'finance': 12668, 'popularity': 910298}...
+Predicted Result: 92.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '我，枪神！', 'category': '都市', 'word_count': 152800, 'interaction': 48200, 'finance': 26768, 'popularity': 100000}...
+Predicted Result: 88.4 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '捞尸人', 'category': '都市', 'word_count': 4772800, 'interaction': 5208600, 'finance': 49064, 'popularity': 6900124}...
+Predicted Result: 93.3 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '没钱修什么仙？', 'category': '仙侠', 'word_count': 2761900, 'interaction': 2655500, 'finance': 32525, 'popularity': 1789776}...
+Predicted Result: 93.6 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '玄鉴仙族', 'category': '仙侠', 'word_count': 5113000, 'interaction': 4537700, 'finance': 47783, 'popularity': 7732104}...
+Predicted Result: 94.3 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '神明调查报告', 'category': '科幻', 'word_count': 1203000, 'interaction': 216600, 'finance': 15464, 'popularity': 100000}...
+Predicted Result: 88.8 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '苟在武道世界成圣', 'category': '玄幻', 'word_count': 1985500, 'interaction': 225799, 'finance': 21001, 'popularity': 100000}...
+Predicted Result: 90.7 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '诡秘之主', 'category': '玄幻', 'word_count': 4467700, 'interaction': 36000900, 'finance': 11374, 'popularity': 17568272}...
+Predicted Result: 95.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '这个地下城长蘑菇了', 'category': '奇幻', 'word_count': 1257100, 'interaction': 405000, 'finance': 11943, 'popularity': 421049}...
+Predicted Result: 89.8 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '都重生了谁考公务员啊', 'category': '都市', 'word_count': 2404100, 'interaction': 1998000, 'finance': 9572, 'popularity': 1351004}...
+Predicted Result: 92.0 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '青山', 'category': '玄幻', 'word_count': 1761699, 'interaction': 2205500, 'finance': 17980, 'popularity': 1328812}...
+Predicted Result: 93.3 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '万仙来朝', 'category': '玄幻奇幻', 'word_count': 1951556, 'interaction': 157164, 'finance': 498, 'popularity': 8696543}...
+Predicted Result: 76.4 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '万剑朝宗', 'category': '玄幻奇幻', 'word_count': 1509129, 'interaction': 18382, 'finance': 58, 'popularity': 389709}...
+Predicted Result: 62.4 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '不是说好解毒么，怎么成仙帝了？', 'category': '玄幻奇幻', 'word_count': 2283038, 'interaction': 3649, 'finance': 81, 'popularity': 1443531}...
+Predicted Result: 63.6 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '东北修道三十年，世人敬我如敬神', 'category': '奇闻异事', 'word_count': 736411, 'interaction': 1024, 'finance': 72, 'popularity': 259282}...
+Predicted Result: 59.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '九阳武神', 'category': '玄幻奇幻', 'word_count': 11563210, 'interaction': 896, 'finance': 41, 'popularity': 1038192}...
+Predicted Result: 59.7 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '五仙门', 'category': '武侠仙侠', 'word_count': 9746108, 'interaction': 101464, 'finance': 98, 'popularity': 7188847}...
+Predicted Result: 69.3 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '人间有剑', 'category': '玄幻奇幻', 'word_count': 1818567, 'interaction': 63954, 'finance': 460, 'popularity': 4189725}...
+Predicted Result: 72.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '从军赋', 'category': '历史', 'word_count': 2420089, 'interaction': 34582, 'finance': 464, 'popularity': 6081532}...
+Predicted Result: 72.7 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '从县委书记到权力巅峰', 'category': '都市', 'word_count': 4561472, 'interaction': 5076, 'finance': 251, 'popularity': 3800767}...
+Predicted Result: 67.8 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '从省府大秘到权力巅峰', 'category': '都市', 'word_count': 1708514, 'interaction': 2612, 'finance': 105, 'popularity': 985457}...
+Predicted Result: 62.8 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '仙子，求你别再从书里出来了', 'category': '都市', 'word_count': 357291, 'interaction': 1409, 'finance': 86, 'popularity': 87728}...
+Predicted Result: 59.8 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '众仙俯首', 'category': '武侠仙侠', 'word_count': 2106261, 'interaction': 92088, 'finance': 486, 'popularity': 4869560}...
+Predicted Result: 74.3 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '凰宫梦', 'category': '古代言情', 'word_count': 0, 'interaction': 500000, 'finance': 144, 'popularity': 100000}...
+Predicted Result: 72.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '剑动仙朝', 'category': '玄幻奇幻', 'word_count': 1019003, 'interaction': 10814, 'finance': 317, 'popularity': 622618}...
+Predicted Result: 68.6 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '剑斩仙门', 'category': '玄幻奇幻', 'word_count': 624279, 'interaction': 3856, 'finance': 121, 'popularity': 110733}...
+Predicted Result: 62.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'word_count': 13059580, 'interaction': 18733387, 'finance': 1189, 'popularity': 353685411}...
+Predicted Result: 95.2 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '割鹿记', 'category': '历史', 'word_count': 3754556, 'interaction': 235576, 'finance': 115, 'popularity': 5521344}...
+Predicted Result: 70.7 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '吞噬九重天', 'category': '玄幻奇幻', 'word_count': 8619284, 'interaction': 9064, 'finance': 394, 'popularity': 3668999}...
+Predicted Result: 70.6 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '吞天混沌经：开局先吞圣女修为', 'category': '玄幻奇幻', 'word_count': 4047763, 'interaction': 166, 'finance': 86, 'popularity': 131300}...
+Predicted Result: 59.6 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '囚仙塔', 'category': '玄幻奇幻', 'word_count': 556027, 'interaction': 3398, 'finance': 37, 'popularity': 19401}...
+Predicted Result: 56.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '圣殊', 'category': '历史', 'word_count': 553585, 'interaction': 35640, 'finance': 623, 'popularity': 3178457}...
+Predicted Result: 72.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '大乾最狂驸马爷', 'category': '历史', 'word_count': 2682519, 'interaction': 6817, 'finance': 36, 'popularity': 2103092}...
+Predicted Result: 61.2 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '大明：寒门辅臣', 'category': '历史', 'word_count': 6749483, 'interaction': 54540, 'finance': 204, 'popularity': 4382297}...
+Predicted Result: 69.4 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '大明第一墙头草', 'category': '历史', 'word_count': 874720, 'interaction': 17721, 'finance': 71, 'popularity': 621522}...
+Predicted Result: 63.1 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '大雪满龙刀', 'category': '玄幻奇幻', 'word_count': 1586419, 'interaction': 322139, 'finance': 69, 'popularity': 20138625}...
+Predicted Result: 71.6 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '大魏芳华', 'category': '历史', 'word_count': 2949151, 'interaction': 613546, 'finance': 321, 'popularity': 18815684}...
+Predicted Result: 78.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '天上白玉京', 'category': '玄幻奇幻', 'word_count': 1020842, 'interaction': 24050, 'finance': 107, 'popularity': 697860}...
+Predicted Result: 65.7 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '天命：从大业十二年开始', 'category': '历史', 'word_count': 3040501, 'interaction': 104157, 'finance': 89, 'popularity': 1303734}...
+Predicted Result: 67.0 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '天黑请点灯', 'category': '奇闻异事', 'word_count': 2329521, 'interaction': 46131, 'finance': 1425, 'popularity': 2604946}...
+Predicted Result: 75.0 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '太荒吞天诀', 'category': '玄幻奇幻', 'word_count': 14787195, 'interaction': 204833, 'finance': 973, 'popularity': 91328152}...
+Predicted Result: 80.4 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '妙手大仙医', 'category': '都市', 'word_count': 4123815, 'interaction': 8239, 'finance': 41, 'popularity': 2712433}...
+Predicted Result: 62.1 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '嫡子凶猛', 'category': '历史', 'word_count': 1642944, 'interaction': 466, 'finance': 40, 'popularity': 601945}...
+Predicted Result: 58.3 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '封疆悍卒', 'category': '历史', 'word_count': 2150297, 'interaction': 7335, 'finance': 744, 'popularity': 2672952}...
+Predicted Result: 72.1 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '屠狗之辈', 'category': '都市', 'word_count': 2389686, 'interaction': 287181, 'finance': 52, 'popularity': 27676760}...
+Predicted Result: 70.0 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '巅峰权途', 'category': '都市', 'word_count': 3518854, 'interaction': 2513, 'finance': 39, 'popularity': 1789650}...
+Predicted Result: 60.1 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '巅峰青云路', 'category': '都市', 'word_count': 4282105, 'interaction': 7291, 'finance': 581, 'popularity': 2691655}...
+Predicted Result: 71.2 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '开局丹田被废，我靠炼丹杀疯了', 'category': '玄幻奇幻', 'word_count': 2622603, 'interaction': 528, 'finance': 65, 'popularity': 368475}...
+Predicted Result: 59.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '弑神仙尊', 'category': '玄幻奇幻', 'word_count': 1247752, 'interaction': 28494, 'finance': 46, 'popularity': 108140}...
+Predicted Result: 61.1 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '我省府大秘，问鼎京圈', 'category': '都市', 'word_count': 1300965, 'interaction': 280, 'finance': 88, 'popularity': 226129}...
+Predicted Result: 59.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '掌天图', 'category': '玄幻奇幻', 'word_count': 1936303, 'interaction': 1771, 'finance': 61, 'popularity': 436629}...
+Predicted Result: 61.2 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3468497, 'interaction': 397768, 'finance': 4077, 'popularity': 120968704}...
+Predicted Result: 86.1 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '星辰之主', 'category': '科幻', 'word_count': 7896999, 'interaction': 3523637, 'finance': 280, 'popularity': 16788565}...
+Predicted Result: 89.4 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '星辰大道', 'category': '玄幻奇幻', 'word_count': 2501411, 'interaction': 244618, 'finance': 1767, 'popularity': 9967739}...
+Predicted Result: 80.2 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '星际猎人', 'category': '科幻', 'word_count': 1549695, 'interaction': 31312, 'finance': 167, 'popularity': 320333}...
+Predicted Result: 65.6 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '最强狂兵Ⅱ：黑暗荣耀', 'category': '都市', 'word_count': 2949923, 'interaction': 379865, 'finance': 1098, 'popularity': 19127649}...
+Predicted Result: 80.6 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '有帝族背景还开挂，我无敌了！', 'category': '玄幻奇幻', 'word_count': 3019648, 'interaction': 2233, 'finance': 214, 'popularity': 1676645}...
+Predicted Result: 66.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '朱门春闺', 'category': '古代言情', 'word_count': 0, 'interaction': 500000, 'finance': 150, 'popularity': 100000}...
+Predicted Result: 73.0 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '权力巅峰', 'category': '都市', 'word_count': 4962032, 'interaction': 14081, 'finance': 74, 'popularity': 12914940}...
+Predicted Result: 66.0 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '步步登阶', 'category': '都市', 'word_count': 1523972, 'interaction': 1408, 'finance': 135, 'popularity': 1721251}...
+Predicted Result: 63.8 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '步步高升：从省考状元到权力巅峰', 'category': '都市', 'word_count': 2221664, 'interaction': 56506, 'finance': 281, 'popularity': 2212023}...
+Predicted Result: 70.1 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '武道长生，从大离第一纨绔开始', 'category': '玄幻奇幻', 'word_count': 1232075, 'interaction': 4110, 'finance': 45, 'popularity': 572598}...
+Predicted Result: 60.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '武道长生：从猎户开始加点修行', 'category': '历史', 'word_count': 1024390, 'interaction': 5759, 'finance': 144, 'popularity': 233384}...
+Predicted Result: 63.4 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '混沌塔', 'category': '玄幻奇幻', 'word_count': 3107636, 'interaction': 1815, 'finance': 76, 'popularity': 1077871}...
+Predicted Result: 62.4 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '源力过载', 'category': '玄幻奇幻', 'word_count': 1763603, 'interaction': 22668, 'finance': 39, 'popularity': 918927}...
+Predicted Result: 62.3 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '灰烬领主', 'category': '玄幻奇幻', 'word_count': 11970932, 'interaction': 335688, 'finance': 359, 'popularity': 19895166}...
+Predicted Result: 77.7 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '盘龙神剑', 'category': '玄幻奇幻', 'word_count': 3437555, 'interaction': 15986, 'finance': 249, 'popularity': 218933}...
+Predicted Result: 66.7 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '离婚后她惊艳了世界', 'category': '现代言情', 'word_count': 0, 'interaction': 500000, 'finance': 2859, 'popularity': 100000}...
+Predicted Result: 81.8 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '第一剑仙', 'category': '玄幻奇幻', 'word_count': 1681925, 'interaction': 11169, 'finance': 240, 'popularity': 880334}...
+Predicted Result: 67.7 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '绝色生骄', 'category': '历史', 'word_count': 2031930, 'interaction': 113791, 'finance': 165, 'popularity': 3820462}...
+Predicted Result: 70.1 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '舔狗反派只想苟，女主不按套路走！', 'category': '都市', 'word_count': 5159473, 'interaction': 6203, 'finance': 97, 'popularity': 2435108}...
+Predicted Result: 64.7 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '诡异游戏：开局觉醒Bug级天赋', 'category': '都市', 'word_count': 1705888, 'interaction': 17778, 'finance': 123, 'popularity': 3199441}...
+Predicted Result: 66.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '财戒', 'category': '都市', 'word_count': 2672063, 'interaction': 1037, 'finance': 40, 'popularity': 1012550}...
+Predicted Result: 59.0 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '躺平：老婆修炼我变强', 'category': '玄幻奇幻', 'word_count': 4234163, 'interaction': 19141, 'finance': 305, 'popularity': 3653029}...
+Predicted Result: 70.3 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '边关兵王：从领娶罪女开始崛起', 'category': '历史', 'word_count': 1348026, 'interaction': 1777, 'finance': 83, 'popularity': 1411877}...
+Predicted Result: 62.6 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '边军悍卒', 'category': '历史', 'word_count': 2544819, 'interaction': 7634, 'finance': 255, 'popularity': 4074526}...
+Predicted Result: 68.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '逆天邪神', 'category': '玄幻奇幻', 'word_count': 7866492, 'interaction': 3866724, 'finance': 140, 'popularity': 339909624}...
+Predicted Result: 88.6 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '逆流年代：从1970开始种田养家', 'category': '都市', 'word_count': 3848068, 'interaction': 11187, 'finance': 353, 'popularity': 2631472}...
+Predicted Result: 69.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '逍遥四公子', 'category': '历史', 'word_count': 4532818, 'interaction': 11508, 'finance': 106, 'popularity': 17520708}...
+Predicted Result: 67.1 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '都市古仙医2：大医镇世', 'category': '都市', 'word_count': 1148988, 'interaction': 1935, 'finance': 42, 'popularity': 288083}...
+Predicted Result: 58.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '重生1958：从窝在深山打猎开始', 'category': '都市', 'word_count': 4382878, 'interaction': 11913, 'finance': 80, 'popularity': 5272376}...
+Predicted Result: 65.2 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '重生78，开局被女知青退婚', 'category': '都市', 'word_count': 4674614, 'interaction': 14244, 'finance': 64, 'popularity': 6682790}...
+Predicted Result: 64.8 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '问鼎：从一等功臣到权力巅峰', 'category': '都市', 'word_count': 7897081, 'interaction': 30177, 'finance': 133, 'popularity': 14126847}...
+Predicted Result: 68.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '问鼎青云：从退役功臣到权力之巅', 'category': '都市', 'word_count': 2664763, 'interaction': 7477, 'finance': 282, 'popularity': 1178940}...
+Predicted Result: 67.6 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '阴脉先生', 'category': '奇闻异事', 'word_count': 3438683, 'interaction': 52713, 'finance': 62, 'popularity': 1966897}...
+Predicted Result: 64.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '陆地键仙', 'category': '玄幻奇幻', 'word_count': 7749097, 'interaction': 471411, 'finance': 42, 'popularity': 28630564}...
+Predicted Result: 71.4 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '鸿蒙霸体诀', 'category': '玄幻奇幻', 'word_count': 7799538, 'interaction': 10953, 'finance': 107, 'popularity': 4302613}...
+Predicted Result: 66.6 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '齐天', 'category': '玄幻奇幻', 'word_count': 1341544, 'interaction': 8397, 'finance': 7068, 'popularity': 1320666}...
+Predicted Result: 80.3 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '东京医途', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 15877, 'popularity': 100000}...
+Predicted Result: 90.7 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '大宋文豪', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 9371, 'popularity': 100000}...
+Predicted Result: 87.1 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '解春衫', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 444, 'popularity': 100000}...
+Predicted Result: 77.0 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '权势滔天：从拯救省府千金开始', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 328, 'popularity': 100000}...
+Predicted Result: 76.2 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '逆天邪神之续章', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 228, 'popularity': 100000}...
+Predicted Result: 74.4 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '穿成恶雌想跑路，反派逼我当团宠', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 172, 'popularity': 100000}...
+Predicted Result: 73.6 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '东北出马三十载，神威压尽天下仙', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 135, 'popularity': 100000}...
+Predicted Result: 72.6 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '从市委大秘到权力之巅', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 138, 'popularity': 100000}...
+Predicted Result: 72.8 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '我的江湖往事2', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 141, 'popularity': 100000}...
+Predicted Result: 72.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '权力巅峰：从拒绝省厅千金开始', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 96, 'popularity': 100000}...
+Predicted Result: 71.7 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '空降的禁欲上司，是我前夫', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 80, 'popularity': 100000}...
+Predicted Result: 71.0 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '我体内有座女帝陵', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 62, 'popularity': 100000}...
+Predicted Result: 70.4 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '触碰蔷薇', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 65, 'popularity': 100000}...
+Predicted Result: 70.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '全家夺我军功，重生嫡女屠了满门', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 64, 'popularity': 100000}...
+Predicted Result: 70.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '第五年重逢，驰先生再度失控', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 56, 'popularity': 100000}...
+Predicted Result: 70.2 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '席先生，你被太太踢出局了！', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 76, 'popularity': 100000}...
+Predicted Result: 70.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '莎车茶烟暖', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 54, 'popularity': 100000}...
+Predicted Result: 70.1 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '皇叔借点功德，王妃把符画猛了', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 55, 'popularity': 100000}...
+Predicted Result: 70.1 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '明末：我崇祯，再造大明', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 101, 'popularity': 100000}...
+Predicted Result: 71.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '三年恋情你另娶，我嫁糙汉你哭啥', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 100, 'popularity': 100000}...
+Predicted Result: 71.8 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '无敌逍遥侯', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 59, 'popularity': 100000}...
+Predicted Result: 70.3 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '穿成大龄通房后', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 42, 'popularity': 100000}...
+Predicted Result: 69.2 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '被逼自刎，嫡女重生撕婚书覆皇朝', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 37, 'popularity': 100000}...
+Predicted Result: 68.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '抢我婚约嫁太子？我携孕肚嫁皇帝', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 40, 'popularity': 100000}...
+Predicted Result: 69.1 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '大佬十代单传，我为他一胎生四宝', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 46, 'popularity': 100000}...
+Predicted Result: 69.6 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '他说不爱，婚后却沦陷了', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 33, 'popularity': 100000}...
+Predicted Result: 68.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '最高权力', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 33, 'popularity': 100000}...
+Predicted Result: 68.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '忘川引渡人', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 103, 'popularity': 100000}...
+Predicted Result: 71.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '玄幻：人在废丹房，我能合成万物', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 57, 'popularity': 100000}...
+Predicted Result: 70.3 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '摘星', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 56, 'popularity': 100000}...
+Predicted Result: 70.2 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '暗体', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 50, 'popularity': 100000}...
+Predicted Result: 69.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '被贵妃配给太监当对食后', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 42, 'popularity': 100000}...
+Predicted Result: 69.2 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '1984：从破产川菜馆开始', 'category': '都市', 'word_count': 1656399, 'interaction': 206200, 'finance': 11857, 'popularity': 100000}...
+Predicted Result: 85.2 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '从魔法少女开始独断万古', 'category': '轻小说', 'word_count': 832800, 'interaction': 123900, 'finance': 14824, 'popularity': 100000}...
+Predicted Result: 87.0 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '仙道尽头', 'category': '仙侠', 'word_count': 901700, 'interaction': 147200, 'finance': 10083, 'popularity': 100000}...
+Predicted Result: 83.7 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '以一龙之力打倒整个世界！', 'category': '轻小说', 'word_count': 1847000, 'interaction': 169600, 'finance': 19589, 'popularity': 100000}...
+Predicted Result: 89.4 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '以神通之名', 'category': '都市', 'word_count': 1014300, 'interaction': 94600, 'finance': 25600, 'popularity': 100000}...
+Predicted Result: 88.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '冬日重现', 'category': '轻小说', 'word_count': 1246000, 'interaction': 239700, 'finance': 12418, 'popularity': 100000}...
+Predicted Result: 86.1 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '刚准备高考，离婚逆袭系统来了', 'category': '都市', 'word_count': 2587100, 'interaction': 620200, 'finance': 13983, 'popularity': 705037}...
+Predicted Result: 91.0 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '夜无疆', 'category': '玄幻', 'word_count': 2636000, 'interaction': 8277300, 'finance': 35368, 'popularity': 2762292}...
+Predicted Result: 94.7 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '山河稷', 'category': '仙侠', 'word_count': 1995200, 'interaction': 853700, 'finance': 20303, 'popularity': 669275}...
+Predicted Result: 92.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '异度旅社', 'category': '科幻', 'word_count': 1936300, 'interaction': 3463399, 'finance': 12668, 'popularity': 910298}...
+Predicted Result: 92.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '我，枪神！', 'category': '都市', 'word_count': 152800, 'interaction': 48200, 'finance': 26768, 'popularity': 100000}...
+Predicted Result: 88.4 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '捞尸人', 'category': '都市', 'word_count': 4772800, 'interaction': 5208600, 'finance': 49064, 'popularity': 6900124}...
+Predicted Result: 93.3 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '没钱修什么仙？', 'category': '仙侠', 'word_count': 2761900, 'interaction': 2655500, 'finance': 32525, 'popularity': 1789776}...
+Predicted Result: 93.6 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '玄鉴仙族', 'category': '仙侠', 'word_count': 5113000, 'interaction': 4537700, 'finance': 47783, 'popularity': 7732104}...
+Predicted Result: 94.3 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '神明调查报告', 'category': '科幻', 'word_count': 1203000, 'interaction': 216600, 'finance': 15464, 'popularity': 100000}...
+Predicted Result: 88.8 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '苟在武道世界成圣', 'category': '玄幻', 'word_count': 1985500, 'interaction': 225799, 'finance': 21001, 'popularity': 100000}...
+Predicted Result: 90.7 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '诡秘之主', 'category': '玄幻', 'word_count': 4467700, 'interaction': 36000900, 'finance': 11374, 'popularity': 17568272}...
+Predicted Result: 95.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '这个地下城长蘑菇了', 'category': '奇幻', 'word_count': 1257100, 'interaction': 405000, 'finance': 11943, 'popularity': 421049}...
+Predicted Result: 89.8 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '都重生了谁考公务员啊', 'category': '都市', 'word_count': 2404100, 'interaction': 1998000, 'finance': 9572, 'popularity': 1351004}...
+Predicted Result: 92.0 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '青山', 'category': '玄幻', 'word_count': 1761699, 'interaction': 2205500, 'finance': 17980, 'popularity': 1328812}...
+Predicted Result: 93.3 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '万仙来朝', 'category': '玄幻奇幻', 'word_count': 1951556, 'interaction': 157164, 'finance': 498, 'popularity': 8696543}...
+Predicted Result: 76.4 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '万剑朝宗', 'category': '玄幻奇幻', 'word_count': 1509129, 'interaction': 18382, 'finance': 58, 'popularity': 389709}...
+Predicted Result: 62.4 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '不是说好解毒么，怎么成仙帝了？', 'category': '玄幻奇幻', 'word_count': 2283038, 'interaction': 3649, 'finance': 81, 'popularity': 1443531}...
+Predicted Result: 63.6 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '东北修道三十年，世人敬我如敬神', 'category': '奇闻异事', 'word_count': 736411, 'interaction': 1024, 'finance': 72, 'popularity': 259282}...
+Predicted Result: 59.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '九阳武神', 'category': '玄幻奇幻', 'word_count': 11563210, 'interaction': 896, 'finance': 41, 'popularity': 1038192}...
+Predicted Result: 59.7 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '五仙门', 'category': '武侠仙侠', 'word_count': 9746108, 'interaction': 101464, 'finance': 98, 'popularity': 7188847}...
+Predicted Result: 69.3 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '人间有剑', 'category': '玄幻奇幻', 'word_count': 1818567, 'interaction': 63954, 'finance': 460, 'popularity': 4189725}...
+Predicted Result: 72.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '从军赋', 'category': '历史', 'word_count': 2420089, 'interaction': 34582, 'finance': 464, 'popularity': 6081532}...
+Predicted Result: 72.7 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '从县委书记到权力巅峰', 'category': '都市', 'word_count': 4561472, 'interaction': 5076, 'finance': 251, 'popularity': 3800767}...
+Predicted Result: 67.8 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '从省府大秘到权力巅峰', 'category': '都市', 'word_count': 1708514, 'interaction': 2612, 'finance': 105, 'popularity': 985457}...
+Predicted Result: 62.8 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '仙子，求你别再从书里出来了', 'category': '都市', 'word_count': 357291, 'interaction': 1409, 'finance': 86, 'popularity': 87728}...
+Predicted Result: 59.8 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '众仙俯首', 'category': '武侠仙侠', 'word_count': 2106261, 'interaction': 92088, 'finance': 486, 'popularity': 4869560}...
+Predicted Result: 74.3 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '凰宫梦', 'category': '古代言情', 'word_count': 0, 'interaction': 500000, 'finance': 144, 'popularity': 100000}...
+Predicted Result: 72.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '剑动仙朝', 'category': '玄幻奇幻', 'word_count': 1019003, 'interaction': 10814, 'finance': 317, 'popularity': 622618}...
+Predicted Result: 68.6 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '剑斩仙门', 'category': '玄幻奇幻', 'word_count': 624279, 'interaction': 3856, 'finance': 121, 'popularity': 110733}...
+Predicted Result: 62.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'word_count': 13059580, 'interaction': 18733387, 'finance': 1189, 'popularity': 353685411}...
+Predicted Result: 95.2 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '割鹿记', 'category': '历史', 'word_count': 3754556, 'interaction': 235576, 'finance': 115, 'popularity': 5521344}...
+Predicted Result: 70.7 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '吞噬九重天', 'category': '玄幻奇幻', 'word_count': 8619284, 'interaction': 9064, 'finance': 394, 'popularity': 3668999}...
+Predicted Result: 70.6 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '吞天混沌经：开局先吞圣女修为', 'category': '玄幻奇幻', 'word_count': 4047763, 'interaction': 166, 'finance': 86, 'popularity': 131300}...
+Predicted Result: 59.6 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '囚仙塔', 'category': '玄幻奇幻', 'word_count': 556027, 'interaction': 3398, 'finance': 37, 'popularity': 19401}...
+Predicted Result: 56.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '圣殊', 'category': '历史', 'word_count': 553585, 'interaction': 35640, 'finance': 623, 'popularity': 3178457}...
+Predicted Result: 72.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '大乾最狂驸马爷', 'category': '历史', 'word_count': 2682519, 'interaction': 6817, 'finance': 36, 'popularity': 2103092}...
+Predicted Result: 61.2 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '大明：寒门辅臣', 'category': '历史', 'word_count': 6749483, 'interaction': 54540, 'finance': 204, 'popularity': 4382297}...
+Predicted Result: 69.4 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '大明第一墙头草', 'category': '历史', 'word_count': 874720, 'interaction': 17721, 'finance': 71, 'popularity': 621522}...
+Predicted Result: 63.1 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '大雪满龙刀', 'category': '玄幻奇幻', 'word_count': 1586419, 'interaction': 322139, 'finance': 69, 'popularity': 20138625}...
+Predicted Result: 71.6 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '大魏芳华', 'category': '历史', 'word_count': 2949151, 'interaction': 613546, 'finance': 321, 'popularity': 18815684}...
+Predicted Result: 78.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '天上白玉京', 'category': '玄幻奇幻', 'word_count': 1020842, 'interaction': 24050, 'finance': 107, 'popularity': 697860}...
+Predicted Result: 65.7 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '天命：从大业十二年开始', 'category': '历史', 'word_count': 3040501, 'interaction': 104157, 'finance': 89, 'popularity': 1303734}...
+Predicted Result: 67.0 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '天黑请点灯', 'category': '奇闻异事', 'word_count': 2329521, 'interaction': 46131, 'finance': 1425, 'popularity': 2604946}...
+Predicted Result: 75.0 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '太荒吞天诀', 'category': '玄幻奇幻', 'word_count': 14787195, 'interaction': 204833, 'finance': 973, 'popularity': 91328152}...
+Predicted Result: 80.4 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '妙手大仙医', 'category': '都市', 'word_count': 4123815, 'interaction': 8239, 'finance': 41, 'popularity': 2712433}...
+Predicted Result: 62.1 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '嫡子凶猛', 'category': '历史', 'word_count': 1642944, 'interaction': 466, 'finance': 40, 'popularity': 601945}...
+Predicted Result: 58.3 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '封疆悍卒', 'category': '历史', 'word_count': 2150297, 'interaction': 7335, 'finance': 744, 'popularity': 2672952}...
+Predicted Result: 72.1 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '屠狗之辈', 'category': '都市', 'word_count': 2389686, 'interaction': 287181, 'finance': 52, 'popularity': 27676760}...
+Predicted Result: 70.0 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '巅峰权途', 'category': '都市', 'word_count': 3518854, 'interaction': 2513, 'finance': 39, 'popularity': 1789650}...
+Predicted Result: 60.1 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '巅峰青云路', 'category': '都市', 'word_count': 4282105, 'interaction': 7291, 'finance': 581, 'popularity': 2691655}...
+Predicted Result: 71.2 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '开局丹田被废，我靠炼丹杀疯了', 'category': '玄幻奇幻', 'word_count': 2622603, 'interaction': 528, 'finance': 65, 'popularity': 368475}...
+Predicted Result: 59.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '弑神仙尊', 'category': '玄幻奇幻', 'word_count': 1247752, 'interaction': 28494, 'finance': 46, 'popularity': 108140}...
+Predicted Result: 61.1 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '我省府大秘，问鼎京圈', 'category': '都市', 'word_count': 1300965, 'interaction': 280, 'finance': 88, 'popularity': 226129}...
+Predicted Result: 59.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '掌天图', 'category': '玄幻奇幻', 'word_count': 1936303, 'interaction': 1771, 'finance': 61, 'popularity': 436629}...
+Predicted Result: 61.2 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3468497, 'interaction': 397768, 'finance': 4077, 'popularity': 120968704}...
+Predicted Result: 86.1 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '星辰之主', 'category': '科幻', 'word_count': 7896999, 'interaction': 3523637, 'finance': 280, 'popularity': 16788565}...
+Predicted Result: 89.4 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '星辰大道', 'category': '玄幻奇幻', 'word_count': 2501411, 'interaction': 244618, 'finance': 1767, 'popularity': 9967739}...
+Predicted Result: 80.2 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '星际猎人', 'category': '科幻', 'word_count': 1549695, 'interaction': 31312, 'finance': 167, 'popularity': 320333}...
+Predicted Result: 65.6 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '最强狂兵Ⅱ：黑暗荣耀', 'category': '都市', 'word_count': 2949923, 'interaction': 379865, 'finance': 1098, 'popularity': 19127649}...
+Predicted Result: 80.6 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '有帝族背景还开挂，我无敌了！', 'category': '玄幻奇幻', 'word_count': 3019648, 'interaction': 2233, 'finance': 214, 'popularity': 1676645}...
+Predicted Result: 66.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '朱门春闺', 'category': '古代言情', 'word_count': 0, 'interaction': 500000, 'finance': 150, 'popularity': 100000}...
+Predicted Result: 73.0 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '权力巅峰', 'category': '都市', 'word_count': 4962032, 'interaction': 14081, 'finance': 74, 'popularity': 12914940}...
+Predicted Result: 66.0 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '步步登阶', 'category': '都市', 'word_count': 1523972, 'interaction': 1408, 'finance': 135, 'popularity': 1721251}...
+Predicted Result: 63.8 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '步步高升：从省考状元到权力巅峰', 'category': '都市', 'word_count': 2221664, 'interaction': 56506, 'finance': 281, 'popularity': 2212023}...
+Predicted Result: 70.1 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '武道长生，从大离第一纨绔开始', 'category': '玄幻奇幻', 'word_count': 1232075, 'interaction': 4110, 'finance': 45, 'popularity': 572598}...
+Predicted Result: 60.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '武道长生：从猎户开始加点修行', 'category': '历史', 'word_count': 1024390, 'interaction': 5759, 'finance': 144, 'popularity': 233384}...
+Predicted Result: 63.4 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '混沌塔', 'category': '玄幻奇幻', 'word_count': 3107636, 'interaction': 1815, 'finance': 76, 'popularity': 1077871}...
+Predicted Result: 62.4 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '源力过载', 'category': '玄幻奇幻', 'word_count': 1763603, 'interaction': 22668, 'finance': 39, 'popularity': 918927}...
+Predicted Result: 62.3 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '灰烬领主', 'category': '玄幻奇幻', 'word_count': 11970932, 'interaction': 335688, 'finance': 359, 'popularity': 19895166}...
+Predicted Result: 77.7 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '盘龙神剑', 'category': '玄幻奇幻', 'word_count': 3437555, 'interaction': 15986, 'finance': 249, 'popularity': 218933}...
+Predicted Result: 66.7 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '离婚后她惊艳了世界', 'category': '现代言情', 'word_count': 0, 'interaction': 500000, 'finance': 2859, 'popularity': 100000}...
+Predicted Result: 81.8 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '第一剑仙', 'category': '玄幻奇幻', 'word_count': 1681925, 'interaction': 11169, 'finance': 240, 'popularity': 880334}...
+Predicted Result: 67.7 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '绝色生骄', 'category': '历史', 'word_count': 2031930, 'interaction': 113791, 'finance': 165, 'popularity': 3820462}...
+Predicted Result: 70.1 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '舔狗反派只想苟，女主不按套路走！', 'category': '都市', 'word_count': 5159473, 'interaction': 6203, 'finance': 97, 'popularity': 2435108}...
+Predicted Result: 64.7 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '诡异游戏：开局觉醒Bug级天赋', 'category': '都市', 'word_count': 1705888, 'interaction': 17778, 'finance': 123, 'popularity': 3199441}...
+Predicted Result: 66.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '财戒', 'category': '都市', 'word_count': 2672063, 'interaction': 1037, 'finance': 40, 'popularity': 1012550}...
+Predicted Result: 59.0 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '躺平：老婆修炼我变强', 'category': '玄幻奇幻', 'word_count': 4234163, 'interaction': 19141, 'finance': 305, 'popularity': 3653029}...
+Predicted Result: 70.3 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '边关兵王：从领娶罪女开始崛起', 'category': '历史', 'word_count': 1348026, 'interaction': 1777, 'finance': 83, 'popularity': 1411877}...
+Predicted Result: 62.6 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '边军悍卒', 'category': '历史', 'word_count': 2544819, 'interaction': 7634, 'finance': 255, 'popularity': 4074526}...
+Predicted Result: 68.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '逆天邪神', 'category': '玄幻奇幻', 'word_count': 7866492, 'interaction': 3866724, 'finance': 140, 'popularity': 339909624}...
+Predicted Result: 88.6 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '逆流年代：从1970开始种田养家', 'category': '都市', 'word_count': 3848068, 'interaction': 11187, 'finance': 353, 'popularity': 2631472}...
+Predicted Result: 69.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '逍遥四公子', 'category': '历史', 'word_count': 4532818, 'interaction': 11508, 'finance': 106, 'popularity': 17520708}...
+Predicted Result: 67.1 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '都市古仙医2：大医镇世', 'category': '都市', 'word_count': 1148988, 'interaction': 1935, 'finance': 42, 'popularity': 288083}...
+Predicted Result: 58.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '重生1958：从窝在深山打猎开始', 'category': '都市', 'word_count': 4382878, 'interaction': 11913, 'finance': 80, 'popularity': 5272376}...
+Predicted Result: 65.2 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '重生78，开局被女知青退婚', 'category': '都市', 'word_count': 4674614, 'interaction': 14244, 'finance': 64, 'popularity': 6682790}...
+Predicted Result: 64.8 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '问鼎：从一等功臣到权力巅峰', 'category': '都市', 'word_count': 7897081, 'interaction': 30177, 'finance': 133, 'popularity': 14126847}...
+Predicted Result: 68.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '问鼎青云：从退役功臣到权力之巅', 'category': '都市', 'word_count': 2664763, 'interaction': 7477, 'finance': 282, 'popularity': 1178940}...
+Predicted Result: 67.6 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '阴脉先生', 'category': '奇闻异事', 'word_count': 3438683, 'interaction': 52713, 'finance': 62, 'popularity': 1966897}...
+Predicted Result: 64.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '陆地键仙', 'category': '玄幻奇幻', 'word_count': 7749097, 'interaction': 471411, 'finance': 42, 'popularity': 28630564}...
+Predicted Result: 71.4 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '鸿蒙霸体诀', 'category': '玄幻奇幻', 'word_count': 7799538, 'interaction': 10953, 'finance': 107, 'popularity': 4302613}...
+Predicted Result: 66.6 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '齐天', 'category': '玄幻奇幻', 'word_count': 1341544, 'interaction': 8397, 'finance': 7068, 'popularity': 1320666}...
+Predicted Result: 80.3 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '东京医途', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 15877, 'popularity': 100000}...
+Predicted Result: 90.7 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '大宋文豪', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 9371, 'popularity': 100000}...
+Predicted Result: 87.1 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '解春衫', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 444, 'popularity': 100000}...
+Predicted Result: 77.0 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '权势滔天：从拯救省府千金开始', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 328, 'popularity': 100000}...
+Predicted Result: 76.2 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '逆天邪神之续章', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 228, 'popularity': 100000}...
+Predicted Result: 74.4 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '穿成恶雌想跑路，反派逼我当团宠', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 172, 'popularity': 100000}...
+Predicted Result: 73.6 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '东北出马三十载，神威压尽天下仙', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 135, 'popularity': 100000}...
+Predicted Result: 72.6 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '从市委大秘到权力之巅', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 138, 'popularity': 100000}...
+Predicted Result: 72.8 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '我的江湖往事2', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 141, 'popularity': 100000}...
+Predicted Result: 72.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '权力巅峰：从拒绝省厅千金开始', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 96, 'popularity': 100000}...
+Predicted Result: 71.7 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '空降的禁欲上司，是我前夫', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 80, 'popularity': 100000}...
+Predicted Result: 71.0 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '我体内有座女帝陵', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 62, 'popularity': 100000}...
+Predicted Result: 70.4 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '触碰蔷薇', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 65, 'popularity': 100000}...
+Predicted Result: 70.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '全家夺我军功，重生嫡女屠了满门', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 64, 'popularity': 100000}...
+Predicted Result: 70.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '第五年重逢，驰先生再度失控', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 56, 'popularity': 100000}...
+Predicted Result: 70.2 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '席先生，你被太太踢出局了！', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 76, 'popularity': 100000}...
+Predicted Result: 70.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '莎车茶烟暖', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 54, 'popularity': 100000}...
+Predicted Result: 70.1 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '皇叔借点功德，王妃把符画猛了', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 55, 'popularity': 100000}...
+Predicted Result: 70.1 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '明末：我崇祯，再造大明', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 101, 'popularity': 100000}...
+Predicted Result: 71.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '三年恋情你另娶，我嫁糙汉你哭啥', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 100, 'popularity': 100000}...
+Predicted Result: 71.8 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '无敌逍遥侯', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 59, 'popularity': 100000}...
+Predicted Result: 70.3 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '穿成大龄通房后', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 42, 'popularity': 100000}...
+Predicted Result: 69.2 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '被逼自刎，嫡女重生撕婚书覆皇朝', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 37, 'popularity': 100000}...
+Predicted Result: 68.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '抢我婚约嫁太子？我携孕肚嫁皇帝', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 40, 'popularity': 100000}...
+Predicted Result: 69.1 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '大佬十代单传，我为他一胎生四宝', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 46, 'popularity': 100000}...
+Predicted Result: 69.6 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '他说不爱，婚后却沦陷了', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 33, 'popularity': 100000}...
+Predicted Result: 68.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '最高权力', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 33, 'popularity': 100000}...
+Predicted Result: 68.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '忘川引渡人', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 103, 'popularity': 100000}...
+Predicted Result: 71.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '玄幻：人在废丹房，我能合成万物', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 57, 'popularity': 100000}...
+Predicted Result: 70.3 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '摘星', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 56, 'popularity': 100000}...
+Predicted Result: 70.2 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '暗体', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 50, 'popularity': 100000}...
+Predicted Result: 69.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '被贵妃配给太监当对食后', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 42, 'popularity': 100000}...
+Predicted Result: 69.2 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '万仙来朝', 'category': '玄幻奇幻', 'word_count': 1951556, 'interaction': 157164, 'finance': 498, 'popularity': 8696543}...
+Predicted Result: 76.4 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '万剑朝宗', 'category': '玄幻奇幻', 'word_count': 1509129, 'interaction': 18382, 'finance': 58, 'popularity': 389709}...
+Predicted Result: 62.4 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '不是说好解毒么，怎么成仙帝了？', 'category': '玄幻奇幻', 'word_count': 2283038, 'interaction': 3649, 'finance': 81, 'popularity': 1443531}...
+Predicted Result: 63.6 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '东北修道三十年，世人敬我如敬神', 'category': '奇闻异事', 'word_count': 736411, 'interaction': 1024, 'finance': 72, 'popularity': 259282}...
+Predicted Result: 59.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '九阳武神', 'category': '玄幻奇幻', 'word_count': 11563210, 'interaction': 896, 'finance': 41, 'popularity': 1038192}...
+Predicted Result: 59.7 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '五仙门', 'category': '武侠仙侠', 'word_count': 9746108, 'interaction': 101464, 'finance': 98, 'popularity': 7188847}...
+Predicted Result: 69.3 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '人间有剑', 'category': '玄幻奇幻', 'word_count': 1818567, 'interaction': 63954, 'finance': 460, 'popularity': 4189725}...
+Predicted Result: 72.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '从军赋', 'category': '历史', 'word_count': 2420089, 'interaction': 34582, 'finance': 464, 'popularity': 6081532}...
+Predicted Result: 72.7 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '从县委书记到权力巅峰', 'category': '都市', 'word_count': 4561472, 'interaction': 5076, 'finance': 251, 'popularity': 3800767}...
+Predicted Result: 67.8 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '从省府大秘到权力巅峰', 'category': '都市', 'word_count': 1708514, 'interaction': 2612, 'finance': 105, 'popularity': 985457}...
+Predicted Result: 62.8 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '仙子，求你别再从书里出来了', 'category': '都市', 'word_count': 357291, 'interaction': 1409, 'finance': 86, 'popularity': 87728}...
+Predicted Result: 59.8 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '众仙俯首', 'category': '武侠仙侠', 'word_count': 2106261, 'interaction': 92088, 'finance': 486, 'popularity': 4869560}...
+Predicted Result: 74.3 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '凰宫梦', 'category': '古代言情', 'word_count': 0, 'interaction': 500000, 'finance': 144, 'popularity': 100000}...
+Predicted Result: 72.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '剑动仙朝', 'category': '玄幻奇幻', 'word_count': 1019003, 'interaction': 10814, 'finance': 317, 'popularity': 622618}...
+Predicted Result: 68.6 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '剑斩仙门', 'category': '玄幻奇幻', 'word_count': 624279, 'interaction': 3856, 'finance': 121, 'popularity': 110733}...
+Predicted Result: 62.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '剑来', 'category': '武侠仙侠', 'word_count': 13059580, 'interaction': 18733387, 'finance': 1189, 'popularity': 353685411}...
+Predicted Result: 95.2 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '割鹿记', 'category': '历史', 'word_count': 3754556, 'interaction': 235576, 'finance': 115, 'popularity': 5521344}...
+Predicted Result: 70.7 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '吞噬九重天', 'category': '玄幻奇幻', 'word_count': 8619284, 'interaction': 9064, 'finance': 394, 'popularity': 3668999}...
+Predicted Result: 70.6 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '吞天混沌经：开局先吞圣女修为', 'category': '玄幻奇幻', 'word_count': 4047763, 'interaction': 166, 'finance': 86, 'popularity': 131300}...
+Predicted Result: 59.6 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '囚仙塔', 'category': '玄幻奇幻', 'word_count': 556027, 'interaction': 3398, 'finance': 37, 'popularity': 19401}...
+Predicted Result: 56.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '圣殊', 'category': '历史', 'word_count': 553585, 'interaction': 35640, 'finance': 623, 'popularity': 3178457}...
+Predicted Result: 72.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '大乾最狂驸马爷', 'category': '历史', 'word_count': 2682519, 'interaction': 6817, 'finance': 36, 'popularity': 2103092}...
+Predicted Result: 61.2 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '大明：寒门辅臣', 'category': '历史', 'word_count': 6749483, 'interaction': 54540, 'finance': 204, 'popularity': 4382297}...
+Predicted Result: 69.4 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '大明第一墙头草', 'category': '历史', 'word_count': 874720, 'interaction': 17721, 'finance': 71, 'popularity': 621522}...
+Predicted Result: 63.1 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '大雪满龙刀', 'category': '玄幻奇幻', 'word_count': 1586419, 'interaction': 322139, 'finance': 69, 'popularity': 20138625}...
+Predicted Result: 71.6 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '大魏芳华', 'category': '历史', 'word_count': 2949151, 'interaction': 613546, 'finance': 321, 'popularity': 18815684}...
+Predicted Result: 78.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '天上白玉京', 'category': '玄幻奇幻', 'word_count': 1020842, 'interaction': 24050, 'finance': 107, 'popularity': 697860}...
+Predicted Result: 65.7 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '天命：从大业十二年开始', 'category': '历史', 'word_count': 3040501, 'interaction': 104157, 'finance': 89, 'popularity': 1303734}...
+Predicted Result: 67.0 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '天黑请点灯', 'category': '奇闻异事', 'word_count': 2329521, 'interaction': 46131, 'finance': 1425, 'popularity': 2604946}...
+Predicted Result: 75.0 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '太荒吞天诀', 'category': '玄幻奇幻', 'word_count': 14787195, 'interaction': 204833, 'finance': 973, 'popularity': 91328152}...
+Predicted Result: 80.4 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '妙手大仙医', 'category': '都市', 'word_count': 4123815, 'interaction': 8239, 'finance': 41, 'popularity': 2712433}...
+Predicted Result: 62.1 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '嫡子凶猛', 'category': '历史', 'word_count': 1642944, 'interaction': 466, 'finance': 40, 'popularity': 601945}...
+Predicted Result: 58.3 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '封疆悍卒', 'category': '历史', 'word_count': 2150297, 'interaction': 7335, 'finance': 744, 'popularity': 2672952}...
+Predicted Result: 72.1 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '屠狗之辈', 'category': '都市', 'word_count': 2389686, 'interaction': 287181, 'finance': 52, 'popularity': 27676760}...
+Predicted Result: 70.0 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '巅峰权途', 'category': '都市', 'word_count': 3518854, 'interaction': 2513, 'finance': 39, 'popularity': 1789650}...
+Predicted Result: 60.1 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '巅峰青云路', 'category': '都市', 'word_count': 4282105, 'interaction': 7291, 'finance': 581, 'popularity': 2691655}...
+Predicted Result: 71.2 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '开局丹田被废，我靠炼丹杀疯了', 'category': '玄幻奇幻', 'word_count': 2622603, 'interaction': 528, 'finance': 65, 'popularity': 368475}...
+Predicted Result: 59.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '弑神仙尊', 'category': '玄幻奇幻', 'word_count': 1247752, 'interaction': 28494, 'finance': 46, 'popularity': 108140}...
+Predicted Result: 61.1 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '我省府大秘，问鼎京圈', 'category': '都市', 'word_count': 1300965, 'interaction': 280, 'finance': 88, 'popularity': 226129}...
+Predicted Result: 59.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '掌天图', 'category': '玄幻奇幻', 'word_count': 1936303, 'interaction': 1771, 'finance': 61, 'popularity': 436629}...
+Predicted Result: 61.2 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3468497, 'interaction': 397768, 'finance': 4077, 'popularity': 120968704}...
+Predicted Result: 86.1 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '星辰之主', 'category': '科幻', 'word_count': 7896999, 'interaction': 3523637, 'finance': 280, 'popularity': 16788565}...
+Predicted Result: 89.4 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '星辰大道', 'category': '玄幻奇幻', 'word_count': 2501411, 'interaction': 244618, 'finance': 1767, 'popularity': 9967739}...
+Predicted Result: 80.2 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '星际猎人', 'category': '科幻', 'word_count': 1549695, 'interaction': 31312, 'finance': 167, 'popularity': 320333}...
+Predicted Result: 65.6 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '最强狂兵Ⅱ：黑暗荣耀', 'category': '都市', 'word_count': 2949923, 'interaction': 379865, 'finance': 1098, 'popularity': 19127649}...
+Predicted Result: 80.6 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '有帝族背景还开挂，我无敌了！', 'category': '玄幻奇幻', 'word_count': 3019648, 'interaction': 2233, 'finance': 214, 'popularity': 1676645}...
+Predicted Result: 66.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '朱门春闺', 'category': '古代言情', 'word_count': 0, 'interaction': 500000, 'finance': 150, 'popularity': 100000}...
+Predicted Result: 73.0 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '权力巅峰', 'category': '都市', 'word_count': 4962032, 'interaction': 14081, 'finance': 74, 'popularity': 12914940}...
+Predicted Result: 66.0 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '步步登阶', 'category': '都市', 'word_count': 1523972, 'interaction': 1408, 'finance': 135, 'popularity': 1721251}...
+Predicted Result: 63.8 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '步步高升：从省考状元到权力巅峰', 'category': '都市', 'word_count': 2221664, 'interaction': 56506, 'finance': 281, 'popularity': 2212023}...
+Predicted Result: 70.1 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '武道长生，从大离第一纨绔开始', 'category': '玄幻奇幻', 'word_count': 1232075, 'interaction': 4110, 'finance': 45, 'popularity': 572598}...
+Predicted Result: 60.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '武道长生：从猎户开始加点修行', 'category': '历史', 'word_count': 1024390, 'interaction': 5759, 'finance': 144, 'popularity': 233384}...
+Predicted Result: 63.4 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '混沌塔', 'category': '玄幻奇幻', 'word_count': 3107636, 'interaction': 1815, 'finance': 76, 'popularity': 1077871}...
+Predicted Result: 62.4 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '源力过载', 'category': '玄幻奇幻', 'word_count': 1763603, 'interaction': 22668, 'finance': 39, 'popularity': 918927}...
+Predicted Result: 62.3 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '灰烬领主', 'category': '玄幻奇幻', 'word_count': 11970932, 'interaction': 335688, 'finance': 359, 'popularity': 19895166}...
+Predicted Result: 77.7 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '盘龙神剑', 'category': '玄幻奇幻', 'word_count': 3437555, 'interaction': 15986, 'finance': 249, 'popularity': 218933}...
+Predicted Result: 66.7 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '离婚后她惊艳了世界', 'category': '现代言情', 'word_count': 0, 'interaction': 500000, 'finance': 2859, 'popularity': 100000}...
+Predicted Result: 81.8 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '第一剑仙', 'category': '玄幻奇幻', 'word_count': 1681925, 'interaction': 11169, 'finance': 240, 'popularity': 880334}...
+Predicted Result: 67.7 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '绝色生骄', 'category': '历史', 'word_count': 2031930, 'interaction': 113791, 'finance': 165, 'popularity': 3820462}...
+Predicted Result: 70.1 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '舔狗反派只想苟，女主不按套路走！', 'category': '都市', 'word_count': 5159473, 'interaction': 6203, 'finance': 97, 'popularity': 2435108}...
+Predicted Result: 64.7 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '诡异游戏：开局觉醒Bug级天赋', 'category': '都市', 'word_count': 1705888, 'interaction': 17778, 'finance': 123, 'popularity': 3199441}...
+Predicted Result: 66.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '财戒', 'category': '都市', 'word_count': 2672063, 'interaction': 1037, 'finance': 40, 'popularity': 1012550}...
+Predicted Result: 59.0 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '躺平：老婆修炼我变强', 'category': '玄幻奇幻', 'word_count': 4234163, 'interaction': 19141, 'finance': 305, 'popularity': 3653029}...
+Predicted Result: 70.3 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '边关兵王：从领娶罪女开始崛起', 'category': '历史', 'word_count': 1348026, 'interaction': 1777, 'finance': 83, 'popularity': 1411877}...
+Predicted Result: 62.6 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '边军悍卒', 'category': '历史', 'word_count': 2544819, 'interaction': 7634, 'finance': 255, 'popularity': 4074526}...
+Predicted Result: 68.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '逆天邪神', 'category': '玄幻奇幻', 'word_count': 7866492, 'interaction': 3866724, 'finance': 140, 'popularity': 339909624}...
+Predicted Result: 88.6 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '逆流年代：从1970开始种田养家', 'category': '都市', 'word_count': 3848068, 'interaction': 11187, 'finance': 353, 'popularity': 2631472}...
+Predicted Result: 69.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '逍遥四公子', 'category': '历史', 'word_count': 4532818, 'interaction': 11508, 'finance': 106, 'popularity': 17520708}...
+Predicted Result: 67.1 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '都市古仙医2：大医镇世', 'category': '都市', 'word_count': 1148988, 'interaction': 1935, 'finance': 42, 'popularity': 288083}...
+Predicted Result: 58.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '重生1958：从窝在深山打猎开始', 'category': '都市', 'word_count': 4382878, 'interaction': 11913, 'finance': 80, 'popularity': 5272376}...
+Predicted Result: 65.2 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '重生78，开局被女知青退婚', 'category': '都市', 'word_count': 4674614, 'interaction': 14244, 'finance': 64, 'popularity': 6682790}...
+Predicted Result: 64.8 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '问鼎：从一等功臣到权力巅峰', 'category': '都市', 'word_count': 7897081, 'interaction': 30177, 'finance': 133, 'popularity': 14126847}...
+Predicted Result: 68.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '问鼎青云：从退役功臣到权力之巅', 'category': '都市', 'word_count': 2664763, 'interaction': 7477, 'finance': 282, 'popularity': 1178940}...
+Predicted Result: 67.6 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '阴脉先生', 'category': '奇闻异事', 'word_count': 3438683, 'interaction': 52713, 'finance': 62, 'popularity': 1966897}...
+Predicted Result: 64.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '陆地键仙', 'category': '玄幻奇幻', 'word_count': 7749097, 'interaction': 471411, 'finance': 42, 'popularity': 28630564}...
+Predicted Result: 71.4 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '鸿蒙霸体诀', 'category': '玄幻奇幻', 'word_count': 7799538, 'interaction': 10953, 'finance': 107, 'popularity': 4302613}...
+Predicted Result: 66.6 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '齐天', 'category': '玄幻奇幻', 'word_count': 1341544, 'interaction': 8397, 'finance': 7068, 'popularity': 1320666}...
+Predicted Result: 80.3 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '解春衫', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 444, 'popularity': 100000}...
+Predicted Result: 77.0 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '权势滔天：从拯救省府千金开始', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 328, 'popularity': 100000}...
+Predicted Result: 76.2 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '逆天邪神之续章', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 228, 'popularity': 100000}...
+Predicted Result: 74.4 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '穿成恶雌想跑路，反派逼我当团宠', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 172, 'popularity': 100000}...
+Predicted Result: 73.6 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '东北出马三十载，神威压尽天下仙', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 135, 'popularity': 100000}...
+Predicted Result: 72.6 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '从市委大秘到权力之巅', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 138, 'popularity': 100000}...
+Predicted Result: 72.8 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '我的江湖往事2', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 141, 'popularity': 100000}...
+Predicted Result: 72.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '权力巅峰：从拒绝省厅千金开始', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 96, 'popularity': 100000}...
+Predicted Result: 71.7 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '空降的禁欲上司，是我前夫', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 80, 'popularity': 100000}...
+Predicted Result: 71.0 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '我体内有座女帝陵', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 62, 'popularity': 100000}...
+Predicted Result: 70.4 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '触碰蔷薇', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 65, 'popularity': 100000}...
+Predicted Result: 70.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '全家夺我军功，重生嫡女屠了满门', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 64, 'popularity': 100000}...
+Predicted Result: 70.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '第五年重逢，驰先生再度失控', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 56, 'popularity': 100000}...
+Predicted Result: 70.2 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '席先生，你被太太踢出局了！', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 76, 'popularity': 100000}...
+Predicted Result: 70.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '莎车茶烟暖', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 54, 'popularity': 100000}...
+Predicted Result: 70.1 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '皇叔借点功德，王妃把符画猛了', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 55, 'popularity': 100000}...
+Predicted Result: 70.1 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '明末：我崇祯，再造大明', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 101, 'popularity': 100000}...
+Predicted Result: 71.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '三年恋情你另娶，我嫁糙汉你哭啥', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 100, 'popularity': 100000}...
+Predicted Result: 71.8 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '无敌逍遥侯', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 59, 'popularity': 100000}...
+Predicted Result: 70.3 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '穿成大龄通房后', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 42, 'popularity': 100000}...
+Predicted Result: 69.2 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '被逼自刎，嫡女重生撕婚书覆皇朝', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 37, 'popularity': 100000}...
+Predicted Result: 68.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '抢我婚约嫁太子？我携孕肚嫁皇帝', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 40, 'popularity': 100000}...
+Predicted Result: 69.1 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '大佬十代单传，我为他一胎生四宝', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 46, 'popularity': 100000}...
+Predicted Result: 69.6 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '他说不爱，婚后却沦陷了', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 33, 'popularity': 100000}...
+Predicted Result: 68.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '最高权力', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 33, 'popularity': 100000}...
+Predicted Result: 68.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '忘川引渡人', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 103, 'popularity': 100000}...
+Predicted Result: 71.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '玄幻：人在废丹房，我能合成万物', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 57, 'popularity': 100000}...
+Predicted Result: 70.3 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '摘星', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 56, 'popularity': 100000}...
+Predicted Result: 70.2 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '暗体', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 50, 'popularity': 100000}...
+Predicted Result: 69.9 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '被贵妃配给太监当对食后', 'category': '未知', 'word_count': 1000000, 'interaction': 500000, 'finance': 42, 'popularity': 100000}...
+Predicted Result: 69.2 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！', 'status': '连载', 'updated_at': '2026-02-23...
+Predicted Result: 91.7 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！', 'status': '连载', 'updated_at': '2026-02-23...
+Predicted Result: 91.7 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 134590499, 'abstract': '谁言天命天注定？我命由我不由天！', 'status': '连载', 'updated_at': '2026-02-23...
+Predicted Result: 91.7 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '无敌天命', 'category': '玄幻奇幻', 'word_count': 3864367, 'finance': 12841, 'interaction': 445076, 'popularity': 89015.20000000001}...
+Predicted Result: 90.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '齐天', 'category': '玄幻奇幻', 'word_count': 0, 'finance': 10842, 'interaction': 12444, 'popularity': 1872283, 'abstract': '天大地大，祖宗最大！齐麟家宗祠内，供奉着十尊古老的先祖灵牌，世人不知其名，亦不晓其往事。直到某日一大族碾灭祠堂，将齐麟脊骨踩得咯吱作响：“齐天...
+Predicted Result: 84.0 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '齐天', 'category': '玄幻奇幻', 'word_count': 0, 'finance': 10842, 'interaction': 12444, 'popularity': 1872283, 'abstract': '天大地大，祖宗最大！齐麟家宗祠内，供奉着十尊古老的先祖灵牌，世人不知其名，亦不晓其往事。直到某日一大族碾灭祠堂，将齐麟脊骨踩得咯吱作响：“齐天...
+Predicted Result: 84.0 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '齐天', 'category': '玄幻奇幻', 'word_count': 0, 'finance': 10842, 'interaction': 12444, 'popularity': 1872283, 'abstract': '天大地大，祖宗最大！齐麟家宗祠内，供奉着十尊古老的先祖灵牌，世人不知其名，亦不晓其往事。直到某日一大族碾灭祠堂，将齐麟脊骨踩得咯吱作响：“齐天...
+Predicted Result: 84.0 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '齐天', 'category': '玄幻奇幻', 'word_count': 0, 'finance': 10842, 'interaction': 12444, 'popularity': 2488.8}...
+Predicted Result: 79.2 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Predict Request ---
+Input: {'title': '玄鉴仙族', 'category': '仙侠', 'word_count': 5113000, 'finance': 100414, 'interaction': 4537900, 'popularity': 7732104, 'abstract': '陆江仙熬夜猝死，残魂却附在了一面满是裂痕的青灰色铜镜上，飘落到了浩瀚无垠的修仙世界。凶险难测的大黎山，眉尺河旁小小的村落，一...
+Predicted Result: 94.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '玄鉴仙族', 'category': '仙侠', 'word_count': 5113000, 'finance': 100414, 'interaction': 4537900, 'popularity': 7732104, 'abstract': '陆江仙熬夜猝死，残魂却附在了一面满是裂痕的青灰色铜镜上，飘落到了浩瀚无垠的修仙世界。凶险难测的大黎山，眉尺河旁小小的村落，一...
+
+--- Predict Request ---
+Input: {'title': '玄鉴仙族', 'category': '仙侠', 'word_count': 5113000, 'finance': 100414, 'interaction': 4537900, 'popularity': 7732104, 'abstract': '陆江仙熬夜猝死，残魂却附在了一面满是裂痕的青灰色铜镜上，飘落到了浩瀚无垠的修仙世界。凶险难测的大黎山，眉尺河旁小小的村落，一...
+Predicted Result: 94.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+Predicted Result: 94.5 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Predict Request ---
+Input: {'title': '玄鉴仙族', 'category': '仙侠', 'word_count': 5113000, 'finance': 100414, 'interaction': 4537900, 'popularity': 907580.0}...
+Predicted Result: 94.3 (Method: AI Ensemble Model (Smooth Weight Fusion))
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+[API] Predict Called for: 白手起家，蝙蝠侠干碎我的致富梦
+[API] Model Loaded? True
+
+[API] Predict Called for: 纯阳！
+[API] Model Loaded? True
+
+[API] Predict Called for: 纯阳！
+[API] Model Loaded? True
+
+--- Init DataManager ---
+
+[API] Predict Called for: 纯阳
+[API] Model Loaded? True
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+[API] Predict Called for: 人间太岁神
+[API] Model Loaded? True
+
+[API] Predict Called for: 捞尸人
+[API] Model Loaded? True
+
+[API] Predict Called for:  捞尸人
+[API] Model Loaded? True
+
+[API] Predict Called for: 捞尸人
+[API] Model Loaded? True
+
+[API] Predict Called for: 捞尸人
+[API] Model Loaded? True
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+[API] Predict Called for: 捞尸人
+[API] Model Loaded? True
+
+--- Init DataManager ---
+
+[API] Predict Called for: 异度旅社
+[API] Model Loaded? True
+
+--- Init DataManager ---
+
+[API] Predict Called for: 冬日重现
+[API] Model Loaded? True
+
+--- Init DataManager ---
+
+[API] Predict Called for: 重生之浪王之王
+[API] Model Loaded? True
+
+--- Init DataManager ---
+
+[API] Predict Called for: 重生之浪王之王
+[API] Model Loaded? True
+
+[API] Predict Called for:  阎浮武事
+[API] Model Loaded? True
+
+[API] Predict Called for: 谍战：红色掌柜
+[API] Model Loaded? True
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---
+
+--- Init DataManager ---

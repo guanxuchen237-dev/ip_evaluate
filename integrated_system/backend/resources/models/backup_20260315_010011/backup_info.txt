@@ -1,0 +1,8 @@
+备份时间: 20260315_010011
+备份模型:
+  - ticket_comments_enhanced_20260315_000101.pkl
+  - model_f_complete.pkl
+
+说明:
+- Model E: 97维特征 (NLP+评论+时序)
+- Model F: 双引擎+更新熵+IP基因聚类
