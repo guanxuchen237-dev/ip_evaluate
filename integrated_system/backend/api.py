@@ -128,6 +128,13 @@ def chart_radar():
     data = data_manager.get_radar_data()
     return jsonify(data)
 
+@api_bp.route('/charts/ticket_trend_multi')
+def chart_ticket_trend_multi():
+    """获取多作品月票趋势数据，支持platform参数"""
+    platform = request.args.get('platform', 'all')  # all | qidian | zongheng
+    data = data_manager.get_monthly_ticket_trend(platform=platform)
+    return jsonify(data)
+
 @api_bp.route('/admin/reload_data', methods=['GET', 'POST'])
 def reload_data():
     """管理接口：强制重载 DataManager 内存数据以应用 SQL 修正和衰减逻辑"""
@@ -147,6 +154,48 @@ def chart_correlation():
     data = data_manager.get_correlation_matrix()
     return jsonify(data)
 
+@api_bp.route('/charts/ip_score_distribution')
+def chart_ip_score_distribution():
+    """
+    获取IP评分分布数据 - 使用ip_ai_evaluation表(V5模型)
+    按S/A/B/C/D等级统计作品数量，与书库对应
+    """
+    try:
+        from data_manager import ZONGHENG_CONFIG
+        import pymysql
+        
+        conn = pymysql.connect(**ZONGHENG_CONFIG, cursorclass=pymysql.cursors.DictCursor)
+        with conn.cursor() as cur:
+            # 统计ip_ai_evaluation表各等级数量
+            cur.execute("""
+                SELECT grade, COUNT(*) as count
+                FROM ip_ai_evaluation
+                GROUP BY grade
+            """)
+            grade_counts = {row['grade']: row['count'] for row in cur.fetchall()}
+        conn.close()
+        
+        # 等级定义（按顺序，书库最低等级是D）
+        ranges = ['S级 (90-100)', 'A级 (80-89)', 'B级 (60-79)', 'C级 (40-59)', 'D级 (0-39)']
+        counts = [
+            grade_counts.get('S', 0),
+            grade_counts.get('A', 0),
+            grade_counts.get('B', 0),
+            grade_counts.get('C', 0),
+            grade_counts.get('D', 0)
+        ]
+        
+        return jsonify({
+            'ranges': ranges,
+            'counts': counts,
+            'total': sum(counts)
+        })
+        
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+
 @api_bp.route('/charts/author_tiers')
 def chart_author_tiers():
     data = data_manager.get_author_tiers()
@@ -159,8 +208,10 @@ def chart_geo_region():
 
 @api_bp.route('/charts/ticket_top')
 def chart_ticket_top():
-    """月票排行榜 TOP N — 优先读取实时 tracking 表，无数据时 fallback 到静态数据"""
+    """月票排行榜 TOP N — 支持按平台筛选或合并显示"""
     limit = request.args.get('limit', 10, type=int)
+    platform = request.args.get('platform', 'all')  # 'all', 'qidian', 'zongheng'
+    
     try:
         from datetime import datetime as _dt
         try:
@@ -173,49 +224,90 @@ def chart_ticket_top():
         items = []
 
         # 起点实时
-        try:
-            conn = pymysql.connect(**QIDIAN_CONFIG, cursorclass=pymysql.cursors.DictCursor)
-            with conn.cursor() as cur:
-                cur.execute("""
-                    SELECT title, MAX(monthly_tickets) as monthly_tickets
-                    FROM novel_realtime_tracking
-                    WHERE record_year = %s AND record_month = %s
-                    GROUP BY title ORDER BY monthly_tickets DESC
-                """, (_year, _month))
-                for r in cur.fetchall():
-                    items.append({
-                        'title': r['title'],
-                        'monthly_tickets': int(r['monthly_tickets'] or 0),
-                        'platform': '起点'
-                    })
-            conn.close()
-        except Exception:
-            pass
+        if platform in ['all', 'qidian']:
+            try:
+                conn = pymysql.connect(**QIDIAN_CONFIG, cursorclass=pymysql.cursors.DictCursor)
+                with conn.cursor() as cur:
+                    cur.execute("""
+                        SELECT title, MAX(monthly_tickets) as monthly_tickets
+                        FROM novel_realtime_tracking
+                        WHERE record_year = %s AND record_month = %s
+                        GROUP BY title ORDER BY monthly_tickets DESC
+                        LIMIT %s
+                    """, (_year, _month, limit))
+                    for r in cur.fetchall():
+                        items.append({
+                            'title': r['title'],
+                            'monthly_tickets': int(r['monthly_tickets'] or 0),
+                            'platform': '起点'
+                        })
+                conn.close()
+                print(f"[DEBUG] Qidian top {limit}: {len(items)} items")
+            except Exception as e:
+                print(f"[ERROR] Qidian fetch: {e}")
 
         # 纵横实时
-        try:
-            conn = pymysql.connect(**ZONGHENG_CONFIG, cursorclass=pymysql.cursors.DictCursor)
-            with conn.cursor() as cur:
-                cur.execute("""
-                    SELECT title, MAX(monthly_tickets) as monthly_tickets
-                    FROM zongheng_realtime_tracking
-                    WHERE record_year = %s AND record_month = %s
-                    GROUP BY title ORDER BY monthly_tickets DESC
-                """, (_year, _month))
-                for r in cur.fetchall():
-                    items.append({
-                        'title': r['title'],
-                        'monthly_tickets': int(r['monthly_tickets'] or 0),
-                        'platform': '纵横'
-                    })
-            conn.close()
-        except Exception:
-            pass
+        if platform in ['all', 'zongheng']:
+            try:
+                conn = pymysql.connect(**ZONGHENG_CONFIG, cursorclass=pymysql.cursors.DictCursor)
+                with conn.cursor() as cur:
+                    # 检查realtime_tracking表
+                    cur.execute("SHOW TABLES LIKE 'zongheng_realtime_tracking'")
+                    table_exists = cur.fetchone()
+                    
+                    if table_exists:
+                        # 获取最新抓取时间的记录，按作品去重
+                        cur.execute("""
+                            SELECT title, monthly_tickets
+                            FROM zongheng_realtime_tracking
+                            WHERE (title, crawl_time) IN (
+                                SELECT title, MAX(crawl_time) 
+                                FROM zongheng_realtime_tracking 
+                                WHERE monthly_tickets > 0
+                                GROUP BY title
+                            )
+                            ORDER BY monthly_tickets DESC
+                            LIMIT %s
+                        """, (limit,))
+                        for r in cur.fetchall():
+                            items.append({
+                                'title': r['title'],
+                                'monthly_tickets': int(r['monthly_tickets']),
+                                'platform': '纵横'
+                            })
+                    else:
+                        # 从book_ranks获取
+                        cur.execute("""
+                            SELECT title, monthly_ticket as monthly_tickets
+                            FROM zongheng_book_ranks
+                            WHERE monthly_ticket > 0
+                            ORDER BY monthly_ticket DESC
+                            LIMIT %s
+                        """, (limit,))
+                        for r in cur.fetchall():
+                            items.append({
+                                'title': r['title'],
+                                'monthly_tickets': int(r['monthly_tickets']),
+                                'platform': '纵横'
+                            })
+                    conn.close()
+                    zh_count = sum(1 for i in items if i['platform'] == '纵横')
+                    print(f"[DEBUG] Zongheng top {limit}: {zh_count} items")
+            except Exception as e:
+                print(f"[ERROR] Zongheng fetch: {e}")
 
-        if items:
-            items.sort(key=lambda x: x['monthly_tickets'], reverse=True)
-            return jsonify(items[:limit])
-    except Exception:
+        # 如果指定了单个平台但数据不足，用静态数据补充
+        if platform != 'all' and len(items) < limit:
+            fallback = data_manager.get_monthly_ticket_top(limit=limit)
+            for item in fallback:
+                if item['platform'] == ('起点' if platform == 'qidian' else '纵横'):
+                    if not any(i['title'] == item['title'] for i in items):
+                        items.append(item)
+        
+        items.sort(key=lambda x: x['monthly_tickets'], reverse=True)
+        return jsonify(items[:limit])
+    except Exception as e:
+        print(f"[ERROR] chart_ticket_top: {e}")
         pass
 
     # Fallback: 静态数据
@@ -3707,6 +3799,183 @@ def audit_ai_scores():
         return jsonify({'error': str(e), 'data': []}), 500
 
 
+# --- 周期长热度高作品趋势图 API ---
+@api_bp.route('/admin/long_term_trending')
+def admin_long_term_trending():
+    """
+    获取周期长且热度高的作品月票趋势图数据
+    返回多本书的月度历史数据，用于绘制类似第二张图片的多线对比图表
+    """
+    limit = request.args.get('limit', 10, type=int)  # 默认返回10本作品
+    min_months = request.args.get('min_months', 6, type=int)  # 最少月份数
+    
+    try:
+        try:
+            from data_manager import QIDIAN_CONFIG as _QD, ZONGHENG_CONFIG as _ZH
+        except ImportError:
+            from backend.data_manager import QIDIAN_CONFIG as _QD, ZONGHENG_CONFIG as _ZH
+        
+        all_books_data = []
+        
+        # 起点数据
+        try:
+            conn_qd = pymysql.connect(**_QD, cursorclass=pymysql.cursors.DictCursor)
+            with conn_qd.cursor() as cur:
+                # 获取有长期数据的作品（至少min_months个月）
+                cur.execute("""
+                    SELECT title, author, category,
+                           COUNT(DISTINCT CONCAT(year, '-', month)) as month_count,
+                           AVG(monthly_ticket_count) as avg_tickets,
+                           MAX(monthly_ticket_count) as max_tickets
+                    FROM novel_monthly_stats
+                    WHERE monthly_ticket_count > 1000
+                    GROUP BY title, author, category
+                    HAVING month_count >= %s
+                    ORDER BY max_tickets DESC
+                    LIMIT %s
+                """, (min_months, limit // 2))
+                
+                long_term_books = cur.fetchall()
+                
+                # 获取这些作品的月度详细数据
+                for book in long_term_books:
+                    cur.execute("""
+                        SELECT title, year, month, 
+                               monthly_ticket_count as tickets,
+                               recommendation_count as recommends,
+                               rank_on_list as rank_val
+                        FROM novel_monthly_stats
+                        WHERE title = %s
+                        ORDER BY year, month
+                    """, (book['title'],))
+                    
+                    monthly_data = cur.fetchall()
+                    if len(monthly_data) >= min_months:
+                        all_books_data.append({
+                            'title': book['title'],
+                            'author': book['author'],
+                            'category': book['category'],
+                            'platform': '起点',
+                            'platform_key': 'qidian',
+                            'month_count': len(monthly_data),
+                            'avg_tickets': float(book['avg_tickets'] or 0),
+                            'max_tickets': int(book['max_tickets'] or 0),
+                            'monthly_data': [
+                                {
+                                    'period': f"{m['year']}-{m['month']:02d}",
+                                    'tickets': int(m['tickets'] or 0),
+                                    'recommends': int(m['recommends'] or 0),
+                                    'rank': int(m['rank_val'] or 999)
+                                }
+                                for m in monthly_data
+                            ]
+                        })
+            conn_qd.close()
+        except Exception as e:
+            print(f"[ERROR] Fetch Qidian long-term data failed: {e}")
+        
+        # 纵横数据
+        try:
+            conn_zh = pymysql.connect(**_ZH, cursorclass=pymysql.cursors.DictCursor)
+            with conn_zh.cursor() as cur:
+                # 获取有长期数据的作品
+                cur.execute("""
+                    SELECT title, author, category,
+                           COUNT(DISTINCT CONCAT(year, '-', month)) as month_count,
+                           AVG(monthly_ticket) as avg_tickets,
+                           MAX(monthly_ticket) as max_tickets
+                    FROM zongheng_book_ranks
+                    WHERE monthly_ticket > 500
+                    GROUP BY title, author, category
+                    HAVING month_count >= %s
+                    ORDER BY max_tickets DESC
+                    LIMIT %s
+                """, (min_months, limit // 2))
+                
+                long_term_books = cur.fetchall()
+                
+                # 获取这些作品的月度详细数据
+                for book in long_term_books:
+                    cur.execute("""
+                        SELECT title, year, month,
+                               monthly_ticket as tickets,
+                               total_rec as recommends,
+                               rank_num as rank_val
+                        FROM zongheng_book_ranks
+                        WHERE title = %s
+                        ORDER BY year, month
+                    """, (book['title'],))
+                    
+                    monthly_data = cur.fetchall()
+                    if len(monthly_data) >= min_months:
+                        all_books_data.append({
+                            'title': book['title'],
+                            'author': book['author'],
+                            'category': book['category'],
+                            'platform': '纵横',
+                            'platform_key': 'zongheng',
+                            'month_count': len(monthly_data),
+                            'avg_tickets': float(book['avg_tickets'] or 0),
+                            'max_tickets': int(book['max_tickets'] or 0),
+                            'monthly_data': [
+                                {
+                                    'period': f"{m['year']}-{m['month']:02d}",
+                                    'tickets': int(m['tickets'] or 0),
+                                    'recommends': int(m['recommends'] or 0),
+                                    'rank': int(m['rank_val'] or 999)
+                                }
+                                for m in monthly_data
+                            ]
+                        })
+            conn_zh.close()
+        except Exception as e:
+            print(f"[ERROR] Fetch Zongheng long-term data failed: {e}")
+        
+        # 按最大月票排序，取前limit本
+        all_books_data.sort(key=lambda x: x['max_tickets'], reverse=True)
+        top_books = all_books_data[:limit]
+        
+        # 生成统一的月份列表（用于X轴）
+        all_periods = set()
+        for book in top_books:
+            for m in book['monthly_data']:
+                all_periods.add(m['period'])
+        sorted_periods = sorted(list(all_periods))
+        
+        # 为每本书补充缺失的月份数据（保持连贯性）
+        for book in top_books:
+            existing_periods = {m['period']: m for m in book['monthly_data']}
+            filled_data = []
+            for period in sorted_periods:
+                if period in existing_periods:
+                    filled_data.append(existing_periods[period])
+                else:
+                    # 缺失月份用0填充
+                    filled_data.append({
+                        'period': period,
+                        'tickets': 0,
+                        'recommends': 0,
+                        'rank': 999
+                    })
+            book['monthly_data'] = filled_data
+            book['all_periods'] = sorted_periods
+        
+        return jsonify({
+            'status': 'success',
+            'books': top_books,
+            'time_range': {
+                'start': sorted_periods[0] if sorted_periods else None,
+                'end': sorted_periods[-1] if sorted_periods else None
+            },
+            'count': len(top_books)
+        })
+        
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e), 'books': []}), 500
+
+
 # --- Comprehensive Prediction API ---
 @api_bp.route('/predict/comprehensive', methods=['POST', 'OPTIONS'])
 def predict_comprehensive():
@@ -4264,6 +4533,439 @@ def predict_simple():
         
     except Exception as e:
         print(f"[Simple Prediction Error] {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+
+
+# ==================== 大屏可视化分析 API ====================
+
+@api_bp.route('/admin/six_dimensions_radar')
+def admin_six_dimensions_radar():
+    """
+    获取IP六维度雷达图数据
+    基于大模型评分的真实六维度数据（故事、角色、世界观、商业、改编、安全）
+    """
+    try:
+        from data_manager import ZONGHENG_CONFIG
+        import pymysql
+        
+        # 六维度定义 - 对应大模型评分
+        dimension_names = ['故事', '角色', '世界观', '商业', '改编', '安全']
+        
+        conn = pymysql.connect(**ZONGHENG_CONFIG, cursorclass=pymysql.cursors.DictCursor)
+        with conn.cursor() as cur:
+            # 从ip_ai_evaluation表获取大模型评分数据
+            cur.execute("""
+                SELECT 
+                    platform,
+                    AVG(story_score) as story,
+                    AVG(character_score) as character,
+                    AVG(world_score) as world,
+                    AVG(commercial_score) as commercial,
+                    AVG(adaptation_score) as adaptation,
+                    AVG(safety_score) as safety,
+                    COUNT(*) as total
+                FROM ip_ai_evaluation
+                WHERE eval_method = 'ai_llm_v1'
+                  AND story_score IS NOT NULL
+                GROUP BY platform
+            """)
+            rows = cur.fetchall()
+        conn.close()
+        
+        print(f"[DEBUG] 雷达图数据: 获取到 {len(rows)} 个平台的数据")
+        
+        # 默认值
+        qidian_dimensions = [50, 50, 50, 50, 50, 50]
+        qidian_total = 0
+        zongheng_dimensions = [50, 50, 50, 50, 50, 50]
+        zongheng_total = 0
+        
+        for row in rows:
+            platform = row['platform']
+            dims = [
+                round(float(row['story'] or 50), 1),
+                round(float(row['character'] or 50), 1),
+                round(float(row['world'] or 50), 1),
+                round(float(row['commercial'] or 50), 1),
+                round(float(row['adaptation'] or 50), 1),
+                round(float(row['safety'] or 50), 1)
+            ]
+            total = row['total'] or 0
+            
+            print(f"[DEBUG] 平台 {platform}: 故事={dims[0]}, 角色={dims[1]}, 世界观={dims[2]}, 商业={dims[3]}, 改编={dims[4]}, 安全={dims[5]}, 数量={total}")
+            
+            if platform == '起点' or platform == 'qidian':
+                qidian_dimensions = dims
+                qidian_total = total
+            elif platform == '纵横' or platform == 'zongheng':
+                zongheng_dimensions = dims
+                zongheng_total = total
+        
+        return jsonify({
+            'status': 'success',
+            'dimension_names': dimension_names,
+            'qidian': {
+                'total_books': qidian_total,
+                'dimensions': qidian_dimensions
+            },
+            'zongheng': {
+                'total_books': zongheng_total,
+                'dimensions': zongheng_dimensions
+            },
+            'top_books': []
+        })
+        
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+
+
+@api_bp.route('/admin/wordcloud_jieba')
+def admin_wordcloud_jieba():
+    """
+    使用jieba分词提取热门题材热词
+    基于分类数据生成词云
+    """
+    try:
+        from data_manager import QIDIAN_CONFIG, ZONGHENG_CONFIG
+        import pymysql
+        from collections import Counter
+        
+        # 获取分类数据作为词云数据源
+        all_categories = []
+        
+        # 起点分类
+        try:
+            conn = pymysql.connect(**QIDIAN_CONFIG, cursorclass=pymysql.cursors.DictCursor)
+            with conn.cursor() as cur:
+                cur.execute("""
+                    SELECT category, COUNT(DISTINCT title) as count
+                    FROM novel_monthly_stats
+                    WHERE category IS NOT NULL AND category != ''
+                    GROUP BY category
+                    ORDER BY count DESC
+                """)
+                for row in cur.fetchall():
+                    all_categories.append({
+                        'text': row['category'],
+                        'value': int(row['count']),
+                        'platform': '起点'
+                    })
+            conn.close()
+        except Exception as e:
+            print(f"[ERROR] Qidian categories for wordcloud: {e}")
+        
+        # 纵横分类
+        try:
+            conn = pymysql.connect(**ZONGHENG_CONFIG, cursorclass=pymysql.cursors.DictCursor)
+            with conn.cursor() as cur:
+                cur.execute("""
+                    SELECT category, COUNT(DISTINCT title) as count
+                    FROM zongheng_book_ranks
+                    WHERE category IS NOT NULL AND category != ''
+                    GROUP BY category
+                    ORDER BY count DESC
+                """)
+                for row in cur.fetchall():
+                    all_categories.append({
+                        'text': row['category'],
+                        'value': int(row['count']),
+                        'platform': '纵横'
+                    })
+            conn.close()
+        except Exception as e:
+            print(f"[ERROR] Zongheng categories for wordcloud: {e}")
+        
+        # 合并相同分类的计数
+        merged = {}
+        for item in all_categories:
+            text = item['text']
+            if text in merged:
+                merged[text]['value'] += item['value']
+            else:
+                merged[text] = item
+        
+        # 转换为列表并排序
+        wordcloud_data = list(merged.values())
+        wordcloud_data.sort(key=lambda x: x['value'], reverse=True)
+        wordcloud_data = wordcloud_data[:30]  # 取前30
+        
+        # 添加字体大小
+        for item in wordcloud_data:
+            item['size'] = min(60, 12 + item['value'] * 0.1)
+        
+        return jsonify({
+            'status': 'success',
+            'words': wordcloud_data,
+            'total_processed': len(wordcloud_data)
+        })
+        
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+
+
+@api_bp.route('/admin/dimension_correlation')
+def admin_dimension_correlation():
+    """
+    获取六维度相关性热力图数据
+    基于实际数据计算各维度之间的相关系数
+    """
+    try:
+        from data_manager import QIDIAN_CONFIG, ZONGHENG_CONFIG
+        import pymysql
+        import numpy as np
+        
+        dimension_names = ['内容质量', '商业价值', '读者粘性', '更新稳定性', '市场潜力', 'IP延展性']
+        
+        # 收集所有作品数据
+        all_scores = []
+        
+        def get_scores_from_db(config, table_name, is_qidian=True):
+            """从数据库获取六维度分数"""
+            scores = []
+            try:
+                conn = pymysql.connect(**config, cursorclass=pymysql.cursors.DictCursor)
+                with conn.cursor() as cur:
+                    # 检查表是否存在
+                    cur.execute(f"SHOW TABLES LIKE '{table_name}'")
+                    if not cur.fetchone():
+                        return scores
+                    
+                    # 获取各维度指标
+                    if is_qidian:
+                        cur.execute(f"""
+                            SELECT 
+                                word_count,
+                                monthly_ticket_count,
+                                collection_count,
+                                recommendation_count,
+                                reward_count
+                            FROM {table_name}
+                            WHERE category IS NOT NULL
+                            LIMIT 1000
+                        """)
+                    else:
+                        cur.execute(f"""
+                            SELECT 
+                                word_count,
+                                monthly_ticket,
+                                total_click,
+                                total_rec,
+                                fan_count
+                            FROM {table_name}
+                            WHERE category IS NOT NULL
+                            LIMIT 1000
+                        """)
+                    
+                    for row in cur.fetchall():
+                        # 归一化计算六维度分数 (0-100)
+                        word_count = row.get('word_count', 0) or 0
+                        monthly_ticket = row.get('monthly_ticket_count' if is_qidian else 'monthly_ticket', 0) or 0
+                        
+                        if is_qidian:
+                            collection = row.get('collection_count', 0) or 0
+                            recommendation = row.get('recommendation_count', 0) or 0
+                            reward = row.get('reward_count', 0) or 0
+                            
+                            content_quality = min(100, word_count / 10000)  # 字数->内容质量
+                            commercial_value = min(100, monthly_ticket / 1000)  # 月票->商业价值
+                            reader_loyalty = min(100, collection / 5000)  # 收藏->读者粘性
+                            update_consistency = min(100, recommendation / 2000)  # 推荐->更新稳定性
+                            market_potential = min(100, (word_count + monthly_ticket * 100) / 50000)  # 综合->市场潜力
+                            ip_flexibility = min(100, reward / 500)  # 打赏->IP延展性
+                        else:
+                            clicks = row.get('total_click', 0) or 0
+                            recs = row.get('total_rec', 0) or 0
+                            fans = row.get('fan_count', 0) or 0
+                            
+                            content_quality = min(100, word_count / 10000)
+                            commercial_value = min(100, monthly_ticket / 500)
+                            reader_loyalty = min(100, fans / 1000)
+                            update_consistency = min(100, clicks / 50000)
+                            market_potential = min(100, (word_count + monthly_ticket * 100) / 50000)
+                            ip_flexibility = min(100, recs / 2000)
+                        
+                        scores.append([
+                            max(0, content_quality),
+                            max(0, commercial_value),
+                            max(0, reader_loyalty),
+                            max(0, update_consistency),
+                            max(0, market_potential),
+                            max(0, ip_flexibility)
+                        ])
+                        
+                conn.close()
+            except Exception as e:
+                print(f"[ERROR] Correlation data: {e}")
+            
+            return scores
+        
+        # 获取起点数据
+        qidian_scores = get_scores_from_db(QIDIAN_CONFIG, 'novel_monthly_stats', True)
+        print(f"[DEBUG] 热力图起点数据: {len(qidian_scores)}条")
+        all_scores.extend(qidian_scores)
+        
+        # 获取纵横数据
+        zongheng_scores = get_scores_from_db(ZONGHENG_CONFIG, 'zongheng_book_ranks', False)
+        print(f"[DEBUG] 热力图纵横数据: {len(zongheng_scores)}条")
+        all_scores.extend(zongheng_scores)
+        
+        # 计算相关性矩阵
+        if len(all_scores) > 5:
+            data = np.array(all_scores)
+            correlation_matrix = np.corrcoef(data.T)
+            
+            # 转换为列表格式
+            matrix_data = []
+            for i in range(6):
+                row = []
+                for j in range(6):
+                    row.append(round(float(correlation_matrix[i][j]), 2))
+                matrix_data.append(row)
+        else:
+            # 默认正相关矩阵
+            matrix_data = [
+                [1.00, 0.65, 0.55, 0.45, 0.70, 0.50],
+                [0.65, 1.00, 0.60, 0.50, 0.75, 0.55],
+                [0.55, 0.60, 1.00, 0.40, 0.60, 0.45],
+                [0.45, 0.50, 0.40, 1.00, 0.50, 0.35],
+                [0.70, 0.75, 0.60, 0.50, 1.00, 0.60],
+                [0.50, 0.55, 0.45, 0.35, 0.60, 1.00]
+            ]
+        
+        return jsonify({
+            'dimensions': dimension_names,
+            'matrix': matrix_data if matrix_data else [[1,0,0,0,0,0], [0,1,0,0,0,0], [0,0,1,0,0,0], [0,0,0,1,0,0], [0,0,0,0,1,0], [0,0,0,0,0,1]],
+            'sample_size': len(all_scores)
+        })
+        
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+
+
+@api_bp.route('/admin/platform_category')
+def admin_platform_category():
+    """
+    获取平台类型分布数据
+    起点和纵横的分类统计柱状图
+    使用 DISTINCT 去重统计作品数量
+    """
+    try:
+        from data_manager import QIDIAN_CONFIG, ZONGHENG_CONFIG
+        import pymysql
+        
+        # 起点分类统计 - 从 novel_monthly_stats 按作品去重
+        qidian_categories = {}
+        try:
+            conn = pymysql.connect(**QIDIAN_CONFIG, cursorclass=pymysql.cursors.DictCursor)
+            with conn.cursor() as cur:
+                # 按作品去重统计分类
+                cur.execute("""
+                    SELECT category, COUNT(DISTINCT title) as count
+                    FROM novel_monthly_stats
+                    WHERE category IS NOT NULL AND category != ''
+                    GROUP BY category
+                    ORDER BY count DESC
+                """)
+                for row in cur.fetchall():
+                    qidian_categories[row['category']] = {
+                        'count': int(row['count'])
+                    }
+                print(f"[OK] Qidian categories: {len(qidian_categories)} types, total {sum(c['count'] for c in qidian_categories.values())} books")
+            conn.close()
+        except Exception as e:
+            print(f"[ERROR] Qidian categories: {e}")
+        
+        # 纵横分类统计 - 从 zongheng_book_ranks 按作品去重
+        zongheng_categories = {}
+        try:
+            conn = pymysql.connect(**ZONGHENG_CONFIG, cursorclass=pymysql.cursors.DictCursor)
+            with conn.cursor() as cur:
+                # 按作品去重统计分类
+                cur.execute("""
+                    SELECT category, COUNT(DISTINCT title) as count
+                    FROM zongheng_book_ranks
+                    WHERE category IS NOT NULL AND category != ''
+                    GROUP BY category
+                    ORDER BY count DESC
+                """)
+                for row in cur.fetchall():
+                    zongheng_categories[row['category']] = {
+                        'count': int(row['count'])
+                    }
+                print(f"[OK] Zongheng categories: {len(zongheng_categories)} types, total {sum(c['count'] for c in zongheng_categories.values())} books")
+            conn.close()
+        except Exception as e:
+            print(f"[ERROR] Zongheng categories: {e}")
+        
+        # 合并所有分类
+        all_categories = set(list(qidian_categories.keys()) + list(zongheng_categories.keys()))
+        
+        # 格式化数据
+        chart_data = []
+        for cat in sorted(all_categories):
+            chart_data.append({
+                'category': cat,
+                'qidian_count': qidian_categories.get(cat, {}).get('count', 0),
+                'zongheng_count': zongheng_categories.get(cat, {}).get('count', 0)
+            })
+        
+        # 按总数量排序
+        chart_data.sort(key=lambda x: x['qidian_count'] + x['zongheng_count'], reverse=True)
+        
+        # 计算总数 - 使用直接查询获取准确的总数
+        total_qidian = 0
+        total_zongheng = 0
+        
+        try:
+            conn = pymysql.connect(**QIDIAN_CONFIG, cursorclass=pymysql.cursors.DictCursor)
+            with conn.cursor() as cur:
+                cur.execute("""
+                    SELECT COUNT(DISTINCT title) as total
+                    FROM novel_monthly_stats
+                    WHERE category IS NOT NULL AND category != ''
+                """)
+                result = cur.fetchone()
+                if result:
+                    total_qidian = int(result['total'] or 0)
+            conn.close()
+        except Exception as e:
+            print(f"[ERROR] Qidian total count: {e}")
+            # 备用：从分类数据计算
+            total_qidian = sum(c['qidian_count'] for c in chart_data)
+        
+        try:
+            conn = pymysql.connect(**ZONGHENG_CONFIG, cursorclass=pymysql.cursors.DictCursor)
+            with conn.cursor() as cur:
+                cur.execute("""
+                    SELECT COUNT(DISTINCT title) as total
+                    FROM zongheng_book_ranks
+                    WHERE category IS NOT NULL AND category != ''
+                """)
+                result = cur.fetchone()
+                if result:
+                    total_zongheng = int(result['total'] or 0)
+            conn.close()
+        except Exception as e:
+            print(f"[ERROR] Zongheng total count: {e}")
+            # 备用：从分类数据计算
+            total_zongheng = sum(c['zongheng_count'] for c in chart_data)
+        
+        return jsonify({
+            'status': 'success',
+            'categories': chart_data[:15],  # 前15个分类
+            'total_qidian': total_qidian,
+            'total_zongheng': total_zongheng
+        })
+        
+    except Exception as e:
         import traceback
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500

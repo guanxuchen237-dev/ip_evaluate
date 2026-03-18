@@ -9,7 +9,7 @@ import {
   Cpu, HardDrive, Database, LayoutDashboard, Library, Settings, BookOpen, TrendingUp,
   Zap, FileText, AlertOctagon, RotateCcw, Eye, EyeOff, ChevronLeft, ChevronRight, Filter,
   Save, TestTube, Info, RefreshCw, KeyRound, Link, Bot, Bug,
-  Download, Sparkles, Radar, MessageSquare, BarChart3, Scan, Crown
+  Download, Sparkles, Radar, MessageSquare, BarChart3, Scan, Crown, Cloud, Grid3X3
 } from 'lucide-vue-next'
 
 const router = useRouter()
@@ -472,6 +472,8 @@ onMounted(() => {
   }
   if (currentTab.value === 'overview') {
       fetchTrainingPoolData()
+      fetchLongTermTrending()
+      fetchRealtimeRanking()
   }
   fetchDashboardMetrics()
   // 每 15 秒刷新一次监控大屏数据
@@ -1021,6 +1023,110 @@ function showSettingsToast(message: string, type: 'success' | 'error') {
   settingsToast.value = { show: true, message, type }
   setTimeout(() => { settingsToast.value.show = false }, 3000)
 }
+
+// --- 周期长热度高作品趋势图 ---
+const longTermTrendingData = ref<any[]>([])
+const longTermTrendingLoading = ref(false)
+const longTermTrendingTimeRange = ref({ start: '', end: '' })
+const longTermTrendingHover = ref<any>(null)
+
+// 预设颜色方案（与第二张图片类似的多色线条）
+const trendColors = [
+  { line: '#6366f1', fill: 'rgba(99, 102, 241, 0.1)', label: 'indigo' },   // Indigo
+  { line: '#f59e0b', fill: 'rgba(245, 158, 11, 0.1)', label: 'amber' },   // Amber
+  { line: '#10b981', fill: 'rgba(16, 185, 129, 0.1)', label: 'emerald' }, // Emerald
+  { line: '#ec4899', fill: 'rgba(236, 72, 153, 0.1)', label: 'pink' },     // Pink
+  { line: '#3b82f6', fill: 'rgba(59, 130, 246, 0.1)', label: 'blue' },      // Blue
+  { line: '#8b5cf6', fill: 'rgba(139, 92, 246, 0.1)', label: 'violet' },   // Violet
+  { line: '#ef4444', fill: 'rgba(239, 68, 68, 0.1)', label: 'red' },        // Red
+  { line: '#14b8a6', fill: 'rgba(20, 184, 166, 0.1)', label: 'teal' },      // Teal
+  { line: '#f97316', fill: 'rgba(249, 115, 22, 0.1)', label: 'orange' },   // Orange
+  { line: '#84cc16', fill: 'rgba(132, 204, 22, 0.1)', label: 'lime' },     // Lime
+]
+
+async function fetchLongTermTrending() {
+  longTermTrendingLoading.value = true
+  try {
+    const res = await fetch(`${API_BASE}/admin/long_term_trending?limit=10`)
+    if (res.ok) {
+      const data = await res.json()
+      if (data.status === 'success') {
+        longTermTrendingData.value = data.books || []
+        longTermTrendingTimeRange.value = data.time_range || { start: '', end: '' }
+      }
+    }
+  } catch (e) { console.error('获取周期长热度高作品趋势失败', e) }
+  finally { longTermTrendingLoading.value = false }
+}
+
+// 生成平滑曲线路径
+const getTrendLinePath = (book: any, chartWidth: number, chartHeight: number, maxTickets: number) => {
+  if (!book.monthly_data || book.monthly_data.length === 0) return ''
+  
+  const stepX = chartWidth / Math.max(book.all_periods.length - 1, 1)
+  const points = book.monthly_data.map((m: any, i: number) => {
+    const x = i * stepX
+    const y = chartHeight - (m.tickets / Math.max(maxTickets, 1)) * chartHeight
+    return `${x},${y}`
+  })
+  
+  return 'M' + points.join(' L')
+}
+
+// 计算图表中使用的最大月票值（用于统一Y轴）
+const maxTrendingTickets = computed(() => {
+  if (!longTermTrendingData.value.length) return 1
+  let max = 0
+  for (const book of longTermTrendingData.value) {
+    for (const m of book.monthly_data || []) {
+      if (m.tickets > max) max = m.tickets
+    }
+  }
+  return max
+})
+
+// 起点书籍
+const qidianBooks = computed(() => {
+  return longTermTrendingData.value.filter(b => b.platform === '起点')
+})
+
+// 纵横书籍
+const zonghengBooks = computed(() => {
+  return longTermTrendingData.value.filter(b => b.platform === '纵横')
+})
+
+// 起点最大月票值
+const maxQidianTickets = computed(() => {
+  const books = qidianBooks.value
+  if (!books.length) return 1
+  let max = 0
+  for (const book of books) {
+    for (const m of book.monthly_data || []) {
+      if (m.tickets > max) max = m.tickets
+    }
+  }
+  return max
+})
+
+// 纵横最大月票值
+const maxZonghengTickets = computed(() => {
+  const books = zonghengBooks.value
+  if (!books.length) return 1
+  let max = 0
+  for (const book of books) {
+    for (const m of book.monthly_data || []) {
+      if (m.tickets > max) max = m.tickets
+    }
+  }
+  return max
+})
+
+// 格式化月份显示
+const formatPeriod = (period: string) => {
+  if (!period) return ''
+  const [year, month] = period.split('-')
+  return `${year}-${month}`
+}
 </script>
 
 <template>
@@ -1181,7 +1287,7 @@ function showSettingsToast(message: string, type: 'success' | 'error') {
               </div>
         </div>
 
-        <!-- 3. 底部 4 列均等卡片 -->
+        <!-- 4. 底部 4 列均等卡片 -->
         <div class="grid grid-cols-12 gap-4">
             <!-- 来源分布 -->
             <div class="col-span-12 sm:col-span-6 lg:col-span-3">

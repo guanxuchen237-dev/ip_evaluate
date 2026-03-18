@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { ref, onMounted, onUnmounted } from "vue";
 import * as echarts from "echarts";
 import axios from 'axios';
@@ -12,7 +12,7 @@ const initChart = async () => {
     chartInstance = echarts.init(chartRef.value);
 
     try {
-        const res = await axios.get(`${API_BASE}/charts/correlation_matrix`);
+        const res = await axios.get(`${API_BASE}/charts/correlation`);
         const { dimensions, matrix } = res.data;
 
         // 转换数据为热力图格式
@@ -27,7 +27,7 @@ const initChart = async () => {
             tooltip: {
                 position: 'top',
                 formatter: function(params: any) {
-                    return `${dimensions[params.value[1]]} × ${dimensions[params.value[0]]}<br/>相关�? ${params.value[2]}`;
+                    return `${dimensions[params.value[1]]} × ${dimensions[params.value[0]]}<br/>相关性: ${params.value[2]}`;
                 }
             },
             grid: {
@@ -69,7 +69,7 @@ const initChart = async () => {
                 }
             },
             series: [{
-                name: '相关�?,
+                name: '相关性',
                 type: 'heatmap',
                 data: data,
                 label: {
@@ -89,7 +89,8 @@ const initChart = async () => {
         chartInstance.setOption(option);
     } catch (e) {
         console.warn("[CorrelationHeatmap] Init fail:", e);
-        // 显示空状�?        chartInstance.setOption({
+        // 显示空状态
+        chartInstance.setOption({
             title: {
                 text: '暂无数据',
                 left: 'center',

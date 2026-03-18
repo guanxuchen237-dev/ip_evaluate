@@ -735,6 +735,125 @@ class AIService:
             print(f"[ERROR] Stream generator failed: {e}")
             yield f"\n\n*(分析流意外中断: {str(e)})*"
 
+    def analyze_six_dimensions(self, title: str, abstract: str, category: str, word_count: int = 0, author: str = "") -> dict:
+        """
+        使用大模型进行专业六维度独立评分
+        维度：故事、角色、世界观、商业、改编、安全
+        """
+        system_prompt = """你是一位资深网络文学IP评估专家，拥有10年以上影视改编、游戏改编、动漫改编项目评估经验。
+
+请对提供的网络文学作品进行专业六维度评分（0-100分），评分标准如下：
+
+【故事维度】(story_score)
+- 叙事结构完整性、情节张力、节奏把控、冲突设计
+- 90-100: 叙事大师级，结构精密，情节跌宕，节奏完美
+- 70-89: 故事优秀，有亮点， minor flaws
+- 50-69: 故事合格，套路化严重或节奏问题
+- 30-49: 故事薄弱，逻辑漏洞多
+- 0-29: 故事混乱，无法阅读
+
+【角色维度】(character_score)
+- 人物塑造深度、主角魅力、配角层次、情感共鸣
+- 90-100: 角色鲜活立体，令人难忘，情感深度极强
+- 70-89: 角色鲜明，有魅力， minor development issues
+- 50-69: 角色标签化，缺乏深度
+- 30-49: 角色单薄，行为逻辑混乱
+- 0-29: 角色苍白，令人反感
+
+【世界观维度】(world_score)
+- 设定创新性、世界观完整性、规则自洽性、沉浸感
+- 90-100: 原创性强，设定精密，沉浸感极佳
+- 70-89: 设定有亮点，世界观完整
+- 50-69: 套路设定，但能自洽
+- 30-49: 设定混乱，规则矛盾
+- 0-29: 东拼西凑，毫无逻辑
+
+【商业维度】(commercial_score)
+- 市场定位精准度、付费转化潜力、粉丝吸引力、爆款可能性
+- 90-100: 商业爆款潜质，市场定位精准，变现能力强
+- 70-89: 商业价值高，有较好的变现前景
+- 50-69: 商业价值中等，有风险
+- 30-49: 商业价值低，受众狭窄
+- 0-29: 几乎无商业价值
+
+【改编维度】(adaptation_score)
+- 影视化/游戏化/动漫化潜力、视觉化难度、受众迁移成本
+- 90-100: 多维度改编潜力极强，视觉化程度高
+- 70-89: 改编潜力良好，某一领域特别突出
+- 50-69: 可以改编，但有明显局限
+- 30-49: 改编难度大，需要大幅魔改
+- 0-29: 几乎无法改编
+
+【安全维度】(safety_score)
+- 内容合规性、政策风险、价值观导向、敏感元素
+- 90-100: 完全合规，价值观正向，零风险
+- 70-89: 基本安全，minor concerns
+- 50-69: 有潜在风险点需要关注
+- 30-49: 风险较高，需要大幅修改
+- 0-29: 高风险，可能无法过审
+
+请只返回JSON格式：
+{
+    "story_score": 85,
+    "character_score": 78,
+    "world_score": 82,
+    "commercial_score": 88,
+    "adaptation_score": 75,
+    "safety_score": 92,
+    "reasoning": "简要评分理由（50字内）"
+}"""
+
+        user_prompt = f"""作品名称：《{title}》
+作者：{author}
+题材类型：{category}
+字数：{word_count}字
+
+作品简介：
+{abstract[:1000]}
+
+请根据作品信息进行专业六维度评分。"""
+
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt}
+        ]
+        
+        try:
+            print(f"[AI] 开始六维度评分: {title}", flush=True)
+            response = self._call_model('chat', messages, temperature=0.4, max_tokens=800, json_mode=True)
+            
+            if response:
+                # 解析JSON
+                try:
+                    result = json.loads(response)
+                    # 确保所有字段存在
+                    scores = {
+                        'story_score': float(result.get('story_score', 60)),
+                        'character_score': float(result.get('character_score', 60)),
+                        'world_score': float(result.get('world_score', 60)),
+                        'commercial_score': float(result.get('commercial_score', 60)),
+                        'adaptation_score': float(result.get('adaptation_score', 60)),
+                        'safety_score': float(result.get('safety_score', 60)),
+                        'reasoning': result.get('reasoning', '')
+                    }
+                    # 限制范围
+                    for key in scores:
+                        if key != 'reasoning':
+                            scores[key] = max(0, min(100, scores[key]))
+                    
+                    print(f"[AI] 评分完成: {title} - 故事{scores['story_score']}/角色{scores['character_score']}/世界观{scores['world_score']}/商业{scores['commercial_score']}/改编{scores['adaptation_score']}/安全{scores['safety_score']}")
+                    return scores
+                except json.JSONDecodeError:
+                    print(f"[ERROR] JSON解析失败: {response[:200]}")
+                    return self._default_six_dim_scores()
+            else:
+                print("[ERROR] AI模型无响应")
+                return self._default_six_dim_scores()
+                
+        except Exception as e:
+            print(f"[ERROR] 六维度评分失败: {e}")
+            return self._default_six_dim_scores()
+
     def _call_gemini(self, messages, temperature=0.7, max_tokens=1024):
         """备用：使用本地 Gemini CLI (OpenAI 兼容格式)"""
         if not self.gemini_client:
@@ -804,6 +923,18 @@ class AIService:
         print("[INFO] Re-initializing AI Service with new config...", flush=True)
         self.__init__()
         return {"status": "success", "config": self.config}
+
+    def _default_six_dim_scores(self) -> dict:
+        """默认六维分数（失败时返回）"""
+        return {
+            'story_score': 65.0,
+            'character_score': 65.0,
+            'world_score': 65.0,
+            'commercial_score': 65.0,
+            'adaptation_score': 65.0,
+            'safety_score': 80.0,
+            'reasoning': 'AI评分失败，返回默认值'
+        }
 
     def _mock_response(self, *args, **kwargs):
         # Deprecated
