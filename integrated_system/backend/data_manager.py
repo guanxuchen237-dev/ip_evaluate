@@ -1678,7 +1678,7 @@ class DataManager:
                         if match:
                             matched_title = match['title']
                             cur.execute("""
-                                SELECT title, year, month, monthly_ticket_count AS monthly_tickets
+                                SELECT title, year, month, MAX(monthly_tickets_on_list) AS monthly_tickets
                                 FROM novel_monthly_stats
                                 WHERE title = %s GROUP BY title, year, month ORDER BY year, month
                             """, (matched_title,))
@@ -1689,7 +1689,7 @@ class DataManager:
                         if match:
                             matched_title = match['title']
                             cur.execute("""
-                                SELECT title, year, month, monthly_ticket_count AS monthly_tickets
+                                SELECT title, year, month, MAX(monthly_tickets_on_list) AS monthly_tickets
                                 FROM novel_monthly_stats
                                 WHERE title = %s GROUP BY title, year, month ORDER BY year, month
                             """, (matched_title,))
@@ -1748,7 +1748,7 @@ class DataManager:
             # 融入模型动态基线
             has_model = False
             try:
-                if not self.df.empty and self.model and self.scaler and final_title:
+                if not self.df.empty and self.model and self.pipeline_v2 and final_title:
                     base_book = self.df[self.df['title'] == final_title]
                     if not base_book.empty:
                         base_row = base_book.iloc[0].to_dict()
@@ -1774,7 +1774,7 @@ class DataManager:
                         for c in cols:
                             if c not in df_enc.columns: df_enc[c] = 0
                             
-                        X_scaled = self.scaler.transform(df_enc[cols])
+                        X_scaled = self.pipeline_v2['scaler'].transform(df_enc[cols])
                         import pandas as pd
                         import xgboost as xgb
                         X_df = pd.DataFrame(X_scaled, columns=cols)

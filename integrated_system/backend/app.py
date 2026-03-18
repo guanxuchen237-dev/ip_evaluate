@@ -82,7 +82,7 @@ def track_metrics():
                 from auth import SECRET_KEY, get_auth_db
                 try:
                     payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
-                    user_id = payload.get('id')
+                    user_id = payload.get('user_id')
                     if user_id:
                         auth_conn = get_auth_db()
                         with auth_conn.cursor() as auth_cursor:

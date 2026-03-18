@@ -559,9 +559,14 @@ class QidianSpider:
         
         def _fetch_one_page():
             # 移动端历史榜单 URL
-            url = f"https://m.qidian.com/rank/yuepiao/catid-1/{year}{month:02d}/?pageNum={page}"
             if page == 1 and datetime.now().year == year and datetime.now().month == month:
-                 url = "https://m.qidian.com/rank/yuepiao/" # 当前月
+                url = "https://m.qidian.com/rank/yuepiao/" # 当前月第1页
+            else:
+                # 移动端分页格式: /rank/yuepiao/p2/ 或 /rank/yuepiao/?page=2
+                url = f"https://m.qidian.com/rank/yuepiao/p{page}/"
+                if datetime.now().year != year or datetime.now().month != month:
+                    # 历史月份
+                    url = f"https://m.qidian.com/rank/yuepiao/catid-1/{year}{month:02d}/p{page}/"
             
             resp_text = None
             try:

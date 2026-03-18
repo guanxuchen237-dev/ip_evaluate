@@ -2,7 +2,7 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuth } from '@/composables/useAuth'
-import EditorialLayout from '@/components/layout/EditorialLayout.vue'
+import AdminSidebar from '@/components/layout/AdminSidebar.vue'
 import {
   Users, Activity, Shield, Server, Globe, Bell, Search, 
   MoreHorizontal, CheckCircle2, AlertTriangle, Clock, LogOut,
@@ -215,6 +215,7 @@ async function fetchBooks() {
 const platformFilter = ref('all') // 'all', 'qidian', 'zongheng'
 const selectedBookTrend = ref('') // 显式指定的书籍走势名
 const trendSearchQuery = ref('')
+const trendGranularity = ref('day') // 'day', 'month', 'year' - 时间粒度
 
 function searchTrendBook() {
     selectedBookTrend.value = trendSearchQuery.value.trim()
@@ -232,6 +233,10 @@ watch(selectedBookTrend, () => {
     fetchRealtimeTracking()
 })
 
+watch(trendGranularity, () => {
+    fetchRealtimeTracking()
+})
+
 // 实时追踪模型数据
 const realtimeTrackingData = ref<any>({ title: '', dates: [], monthly_tickets: [], collection_count: [], predicted_tickets: [] })
 const realtimeLoading = ref(false)
@@ -241,6 +246,7 @@ async function fetchRealtimeTracking() {
        const params = new URLSearchParams()
        if (platformFilter.value !== 'all') params.append('source', platformFilter.value)
        if (selectedBookTrend.value) params.append('title', selectedBookTrend.value)
+       params.append('granularity', trendGranularity.value)
 
        const res = await fetch(`${API_BASE}/admin/realtime_tracking?${params}`)
        if (res.ok) {
@@ -317,10 +323,15 @@ async function fetchSpiderSchedulerStatus() {
 
 async function toggleSpiderScheduler(action: string) {
   try {
+    const body: any = { action }
+    // 如果是触发立即执行，同时传递当前选中的平台
+    if (action === 'trigger') {
+      body.target_platform = spiderSchedulerStatus.value.target_platform
+    }
     const res = await fetch(`${API_BASE}/admin/spider_scheduler/toggle`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action })
+      body: JSON.stringify(body)
     })
     if (res.ok) fetchSpiderSchedulerStatus()
   } catch(e) { console.error('操作爬虫失败', e) }
@@ -591,10 +602,22 @@ const platformLoading = ref(false)
 const weeklyGrowthData = ref<any[]>([])
 const weeklyGrowthLoading = ref(false)
 const realtimeTicketRanking = ref<any[]>([])
+const ticketPlatform = ref<'qidian' | 'zongheng'>('qidian')
+
+// 过滤后的月票排行榜
+const filteredTicketRanking = computed(() => {
+    if (!realtimeTicketRanking.value.length) return []
+    return realtimeTicketRanking.value.filter(item => {
+        if (ticketPlatform.value === 'qidian') return item.platform === '起点'
+        if (ticketPlatform.value === 'zongheng') return item.platform === '纵横'
+        return true
+    })
+})
 
 async function fetchRealtimeRanking() {
     try {
-        const res = await fetch(`${API_BASE}/admin/realtime_ticket_ranking?limit=20`)
+        const platform = ticketPlatform.value || 'qidian'
+        const res = await fetch(`${API_BASE}/admin/realtime_ticket_ranking?limit=20&platform=${platform}`)
         if (res.ok) {
             const data = await res.json()
             realtimeTicketRanking.value = data.items || []
@@ -1130,8 +1153,10 @@ const formatPeriod = (period: string) => {
 </script>
 
 <template>
-  <EditorialLayout :showDock="true" :dockItems="adminDockItems">
-    <div class="min-h-screen p-6 pb-24 text-slate-900 relative z-10 flex flex-col">
+  <div class="min-h-screen w-full bg-slate-50">
+    <AdminSidebar />
+    <main class="ml-64 min-h-screen overflow-y-auto">
+      <div class="p-6 text-slate-900 flex flex-col">
       
       <!-- Header -->
       <header class="flex justify-between items-center mb-8">
@@ -2562,20 +2587,28 @@ const formatPeriod = (period: string) => {
                      <Activity class="w-4 h-4 text-indigo-600" />
                      专属书籍走势洞察
                   </h3>
-                  <!-- 书籍搜索框 -->
-                  <div class="relative flex items-center shadow-sm rounded-lg">
-                     <div class="relative">
-                        <Search class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                        <input v-model="trendSearchQuery" @keyup.enter="searchTrendBook" placeholder="输入书名搜索走势..." class="appearance-none bg-white border border-slate-200 text-slate-700 font-bold text-sm py-1.5 pl-9 pr-4 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all w-48 sm:w-64">
-                     </div>
-                     <button @click="searchTrendBook" class="px-4 py-1.5 bg-indigo-600 border border-indigo-600 text-white font-bold text-sm rounded-r-lg hover:bg-indigo-700 transition-all flex items-center gap-1">
-                        <Search class="w-3.5 h-3.5" /> 搜索
-                     </button>
+                  <!-- 书籍搜索框 + 时间粒度切换 -->
+                  <div class="flex items-center gap-2">
+                      <div class="relative flex items-center shadow-sm rounded-lg">
+                         <div class="relative">
+                            <Search class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                            <input v-model="trendSearchQuery" @keyup.enter="searchTrendBook" placeholder="输入书名搜索走势..." class="appearance-none bg-white border border-slate-200 text-slate-700 font-bold text-sm py-1.5 pl-9 pr-4 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all w-48 sm:w-64">
+                         </div>
+                         <button @click="searchTrendBook" class="px-4 py-1.5 bg-indigo-600 border border-indigo-600 text-white font-bold text-sm rounded-r-lg hover:bg-indigo-700 transition-all flex items-center gap-1">
+                            <Search class="w-3.5 h-3.5" /> 搜索
+                         </button>
+                      </div>
+                      <!-- 时间粒度切换 -->
+                      <div class="flex bg-slate-100 rounded-lg p-0.5">
+                          <button @click="trendGranularity = 'day'" :class="trendGranularity === 'day' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'" class="px-3 py-1 text-xs font-bold rounded-md transition-all">日</button>
+                          <button @click="trendGranularity = 'month'" :class="trendGranularity === 'month' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'" class="px-3 py-1 text-xs font-bold rounded-md transition-all">月</button>
+                          <button @click="trendGranularity = 'year'" :class="trendGranularity === 'year' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'" class="px-3 py-1 text-xs font-bold rounded-md transition-all">年</button>
+                      </div>
                   </div>
                </div>
                <div class="flex gap-5 text-[11px] font-medium pr-2">
                   <span class="flex items-center gap-1.5"><span class="w-3 h-1 rounded-full bg-amber-500"></span> 实际月票</span>
-                  <span class="flex items-center gap-1.5"><span class="w-3 h-1 rounded-full bg-indigo-400 opacity-60"></span> 预测基准</span>
+                  <span class="flex items-center gap-1.5"><span class="w-3 h-1 rounded-full bg-indigo-400 opacity-60"></span> 预测趋势</span>
                </div>
             </div>
             
@@ -2826,10 +2859,25 @@ const formatPeriod = (period: string) => {
                   实时月票排行榜
                   <span v-if="realtimeTicketRanking.length" class="text-xs font-normal text-slate-400 ml-1">基于爬虫实时采集数据</span>
                </h3>
-               <button @click="fetchRealtimeRanking" class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">刷新</button>
+               <div class="flex items-center gap-3">
+                  <!-- 平台切换按钮 -->
+                  <div class="flex items-center gap-1 bg-slate-100 rounded-lg p-1">
+                     <button @click="ticketPlatform = 'qidian'; fetchRealtimeRanking()" 
+                             :class="ticketPlatform === 'qidian' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'"
+                             class="px-3 py-1 rounded-md text-xs font-medium transition-all">
+                        起点
+                     </button>
+                     <button @click="ticketPlatform = 'zongheng'; fetchRealtimeRanking()" 
+                             :class="ticketPlatform === 'zongheng' ? 'bg-white text-rose-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'"
+                             class="px-3 py-1 rounded-md text-xs font-medium transition-all">
+                        纵横
+                     </button>
+                  </div>
+                  <button @click="fetchRealtimeRanking" class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">刷新</button>
+               </div>
             </div>
-            <div v-if="realtimeTicketRanking.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-0 divide-y md:divide-y-0 md:divide-x divide-slate-100">
-               <div v-for="(item, idx) in realtimeTicketRanking.slice(0, 10)" :key="item.title"
+            <div v-if="realtimeTicketRanking.length > 0" class="divide-y divide-slate-100 max-h-[500px] overflow-y-auto">
+               <div v-for="(item, idx) in realtimeTicketRanking.slice(0, 20)" :key="item.title"
                     class="flex items-center gap-3 px-6 py-3 hover:bg-amber-50/30 transition-colors">
                   <span class="w-7 h-7 rounded-lg text-xs font-extrabold flex items-center justify-center flex-shrink-0 shadow-sm"
                         :class="idx < 3 ? 'bg-gradient-to-br from-amber-100 to-amber-200 text-amber-700 border border-amber-300' : 'bg-slate-100 text-slate-500 border border-slate-200'">
@@ -2838,8 +2886,8 @@ const formatPeriod = (period: string) => {
                   <div class="flex-1 min-w-0">
                      <div class="text-sm font-bold text-slate-800 truncate">{{ item.title }}</div>
                      <span class="text-[10px] px-1.5 py-0.5 rounded font-bold"
-                           :class="item.platform === '起点' ? 'text-blue-600 bg-blue-50' : 'text-rose-600 bg-rose-50'">
-                        {{ item.platform }}
+                           :class="ticketPlatform === 'qidian' ? 'text-blue-600 bg-blue-50' : 'text-rose-600 bg-rose-50'">
+                        {{ ticketPlatform === 'qidian' ? '起点' : '纵横' }}
                      </span>
                   </div>
                   <div class="text-right flex-shrink-0">
@@ -2847,22 +2895,6 @@ const formatPeriod = (period: string) => {
                         {{ formatNum(item.monthly_tickets) }}
                      </div>
                      <div class="text-[10px] text-slate-400">{{ item.last_crawl }}</div>
-                  </div>
-               </div>
-               <div v-for="(item, idx) in realtimeTicketRanking.slice(10, 20)" :key="'r2-'+item.title"
-                    class="flex items-center gap-3 px-6 py-3 hover:bg-slate-50/50 transition-colors">
-                  <span class="w-7 h-7 rounded-lg text-xs font-bold flex items-center justify-center flex-shrink-0 bg-slate-100 text-slate-500 border border-slate-200">
-                     {{ idx + 11 }}
-                  </span>
-                  <div class="flex-1 min-w-0">
-                     <div class="text-sm font-bold text-slate-700 truncate">{{ item.title }}</div>
-                     <span class="text-[10px] px-1.5 py-0.5 rounded font-bold"
-                           :class="item.platform === '起点' ? 'text-blue-600 bg-blue-50' : 'text-rose-600 bg-rose-50'">
-                        {{ item.platform }}
-                     </span>
-                  </div>
-                  <div class="text-right flex-shrink-0">
-                     <div class="text-sm font-mono font-bold text-slate-500">{{ formatNum(item.monthly_tickets) }}</div>
                   </div>
                </div>
             </div>
@@ -3171,7 +3203,8 @@ const formatPeriod = (period: string) => {
       </div>
 
     </div>
-  </EditorialLayout>
+  </main>
+</div>
 </template>
 
 <style scoped>

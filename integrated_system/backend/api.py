@@ -316,8 +316,9 @@ def chart_ticket_top():
 
 @api_bp.route('/admin/realtime_ticket_ranking')
 def admin_realtime_ticket_ranking():
-    """从实时 tracking 表获取当月月票排行榜 TOP N（合并双平台）"""
+    """从实时 tracking 表获取当月月票排行榜 TOP N（支持按平台过滤）"""
     limit = request.args.get('limit', 20, type=int)
+    platform = request.args.get('platform', 'all')  # all, qidian, zongheng
     try:
         from datetime import datetime as _dt
         try:
@@ -330,54 +331,56 @@ def admin_realtime_ticket_ranking():
         items = []
 
         # 起点
-        try:
-            conn = pymysql.connect(**QIDIAN_CONFIG, cursorclass=pymysql.cursors.DictCursor)
-            with conn.cursor() as cur:
-                cur.execute("""
-                    SELECT title, MAX(monthly_tickets) as monthly_tickets,
-                           MIN(monthly_ticket_rank) as rank_val,
-                           MAX(crawl_time) as last_crawl
-                    FROM novel_realtime_tracking
-                    WHERE record_year = %s AND record_month = %s
-                    GROUP BY title
-                    ORDER BY monthly_tickets DESC
-                """, (_year, _month))
-                for r in cur.fetchall():
-                    items.append({
-                        'title': r['title'],
-                        'monthly_tickets': int(r['monthly_tickets'] or 0),
-                        'rank': int(r['rank_val'] or 999),
-                        'platform': '起点',
-                        'last_crawl': r['last_crawl'].strftime('%m-%d %H:%M') if r['last_crawl'] else ''
-                    })
-            conn.close()
-        except Exception as e:
-            print(f"[WARN] Realtime Qidian ranking: {e}")
+        if platform in ('all', 'qidian'):
+            try:
+                conn = pymysql.connect(**QIDIAN_CONFIG, cursorclass=pymysql.cursors.DictCursor)
+                with conn.cursor() as cur:
+                    cur.execute("""
+                        SELECT title, MAX(monthly_tickets) as monthly_tickets,
+                               MIN(monthly_ticket_rank) as rank_val,
+                               MAX(crawl_time) as last_crawl
+                        FROM novel_realtime_tracking
+                        WHERE record_year = %s AND record_month = %s
+                        GROUP BY title
+                        ORDER BY monthly_tickets DESC
+                    """, (_year, _month))
+                    for r in cur.fetchall():
+                        items.append({
+                            'title': r['title'],
+                            'monthly_tickets': int(r['monthly_tickets'] or 0),
+                            'rank': int(r['rank_val'] or 999),
+                            'platform': '起点',
+                            'last_crawl': r['last_crawl'].strftime('%m-%d %H:%M') if r['last_crawl'] else ''
+                        })
+                conn.close()
+            except Exception as e:
+                print(f"[WARN] Realtime Qidian ranking: {e}")
 
         # 纵横
-        try:
-            conn = pymysql.connect(**ZONGHENG_CONFIG, cursorclass=pymysql.cursors.DictCursor)
-            with conn.cursor() as cur:
-                cur.execute("""
-                    SELECT title, MAX(monthly_tickets) as monthly_tickets,
-                           MIN(monthly_ticket_rank) as rank_val,
-                           MAX(crawl_time) as last_crawl
-                    FROM zongheng_realtime_tracking
-                    WHERE record_year = %s AND record_month = %s
-                    GROUP BY title
-                    ORDER BY monthly_tickets DESC
-                """, (_year, _month))
-                for r in cur.fetchall():
-                    items.append({
-                        'title': r['title'],
-                        'monthly_tickets': int(r['monthly_tickets'] or 0),
-                        'rank': int(r['rank_val'] or 999),
-                        'platform': '纵横',
-                        'last_crawl': r['last_crawl'].strftime('%m-%d %H:%M') if r['last_crawl'] else ''
-                    })
-            conn.close()
-        except Exception as e:
-            print(f"[WARN] Realtime Zongheng ranking: {e}")
+        if platform in ('all', 'zongheng'):
+            try:
+                conn = pymysql.connect(**ZONGHENG_CONFIG, cursorclass=pymysql.cursors.DictCursor)
+                with conn.cursor() as cur:
+                    cur.execute("""
+                        SELECT title, MAX(monthly_tickets) as monthly_tickets,
+                               MIN(monthly_ticket_rank) as rank_val,
+                               MAX(crawl_time) as last_crawl
+                        FROM zongheng_realtime_tracking
+                        WHERE record_year = %s AND record_month = %s
+                        GROUP BY title
+                        ORDER BY monthly_tickets DESC
+                    """, (_year, _month))
+                    for r in cur.fetchall():
+                        items.append({
+                            'title': r['title'],
+                            'monthly_tickets': int(r['monthly_tickets'] or 0),
+                            'rank': int(r['rank_val'] or 999),
+                            'platform': '纵横',
+                            'last_crawl': r['last_crawl'].strftime('%m-%d %H:%M') if r['last_crawl'] else ''
+                        })
+                conn.close()
+            except Exception as e:
+                print(f"[WARN] Realtime Zongheng ranking: {e}")
 
         # 按月票降序合并排序
         items.sort(key=lambda x: x['monthly_tickets'], reverse=True)
@@ -1872,16 +1875,6 @@ def admin_books_categories():
         return jsonify({'categories': []}), 500
 
 
-@api_bp.route('/admin/realtime_tracking')
-def chart_realtime_tracking():
-    novel_id = request.args.get('novel_id', '')
-    title = request.args.get('title', '')
-    source = request.args.get('source', 'all')
-    data = data_manager.get_realtime_tracking_data(novel_id, title, source)
-    return jsonify(data)
-
-
-
 import pymysql
 import psutil
 from datetime import datetime, timedelta, timezone
@@ -2248,20 +2241,20 @@ def toggle_spider_scheduler():
     action = data.get('action')
     from scheduler import scheduler_instance
     
-    if action == 'start':
-        scheduler_instance.start()
-    elif action == 'stop':
-        scheduler_instance.stop()
-    elif action == 'trigger':
-        scheduler_instance.trigger_now()
-    
-    # 支持更新间隔和平台
+    # 支持更新间隔和平台 - 必须在trigger之前设置
     interval = data.get('interval_minutes')
     if interval:
         scheduler_instance.set_interval(int(interval))
     platform = data.get('target_platform')
     if platform:
         scheduler_instance.set_platform(platform)
+    
+    if action == 'start':
+        scheduler_instance.start()
+    elif action == 'stop':
+        scheduler_instance.stop()
+    elif action == 'trigger':
+        scheduler_instance.trigger_now()
         
     return jsonify(scheduler_instance.get_status_dict())
 
@@ -2345,13 +2338,11 @@ def admin_weekly_ticket_growth():
                 conn_qd = pymysql.connect(**_QD, cursorclass=pymysql.cursors.DictCursor)
                 with conn_qd.cursor() as cur:
                     cur.execute("""
-                        SELECT title, as_source, novel_id, year, month,
+                        SELECT title, 'qidian' as as_source, novel_id, year, month,
                                MAX(monthly_tickets_on_list) AS monthly_max_tickets,
                                MIN(rank_on_list) AS best_rank
-                        FROM (
-                            SELECT *, 'qidian' as as_source FROM novel_monthly_stats
-                        ) t
-                        GROUP BY title, as_source, novel_id, year, month
+                        FROM novel_monthly_stats
+                        GROUP BY title, novel_id, year, month
                         ORDER BY title, year, month
                     """)
                     rows.extend(cur.fetchall())
@@ -2365,13 +2356,11 @@ def admin_weekly_ticket_growth():
                 conn_zh = pymysql.connect(**_ZH, cursorclass=pymysql.cursors.DictCursor)
                 with conn_zh.cursor() as cur:
                     cur.execute("""
-                        SELECT title, as_source, book_id as novel_id, year, month,
+                        SELECT title, 'zongheng' as as_source, book_id as novel_id, year, month,
                                MAX(monthly_ticket) AS monthly_max_tickets,
                                MIN(rank_num) AS best_rank
-                        FROM (
-                            SELECT *, 'zongheng' as as_source FROM zongheng_book_ranks
-                        ) t
-                        GROUP BY title, as_source, book_id, year, month
+                        FROM zongheng_book_ranks
+                        GROUP BY title, book_id, year, month
                         ORDER BY title, year, month
                     """)
                     rows.extend(cur.fetchall())
@@ -2564,7 +2553,7 @@ def admin_weekly_ticket_growth():
             predicted_growth_rate = 0
             has_model_power = False
             
-            if base_row and data_manager.model and data_manager.scaler:
+            if base_row and data_manager.model and data_manager.pipeline_v2:
                 try:
                     import pandas as pd
                     temp = base_row.copy()
@@ -2586,7 +2575,7 @@ def admin_weekly_ticket_growth():
                         if c not in df_encoded.columns: df_encoded[c] = 0
                         
                     X = df_encoded[feature_cols]
-                    X_scaled = data_manager.scaler.transform(X)
+                    X_scaled = data_manager.pipeline_v2['scaler'].transform(X)
                     
                     import pandas as pd
                     import xgboost as xgb
@@ -2698,6 +2687,13 @@ def admin_weekly_ticket_growth():
         # 按月票总量降序排列展示
         items.sort(key=lambda x: x['total_tickets'], reverse=True)
         
+        # --- 全部模式下，每个平台各取一部分再合并 ---
+        if source_filter == 'all':
+            qidian_items = [i for i in items if i['source'] == 'qidian'][:15]
+            zongheng_items = [i for i in items if i['source'] == 'zongheng'][:15]
+            items = qidian_items + zongheng_items
+            items.sort(key=lambda x: x['total_tickets'], reverse=True)
+        
         # --- 全网热度去重与实时 DB 多维度 IP 补充 ---
         if items:
             max_t = max(item['total_tickets'] for item in items[:1] + items)  # 寻找头部月票数据
@@ -2728,9 +2724,10 @@ def admin_weekly_ticket_growth():
 @api_bp.route('/admin/realtime_tracking')
 @api_bp.route('/admin/book_ticket_trend')
 def admin_realtime_tracking():
-    """获取单本书的实时趋势数据，并借助全局模型特征底图进行动态期望值预测"""
+    """获取单本书的实时趋势数据，支持日/月/年粒度切换，并借助模型进行预测"""
     title = request.args.get('title', '')
     source = request.args.get('source', 'all')
+    granularity = request.args.get('granularity', 'day')  # day, month, year
     
     try:
         try:
@@ -2740,12 +2737,12 @@ def admin_realtime_tracking():
             
         rows = []
         
-        def fetch_tracking(config, table_name, q_title=title):
+        # 日粒度：从实时追踪表获取
+        def fetch_tracking_daily(config, table_name, q_title=title):
             try:
                 conn = pymysql.connect(**config, cursorclass=pymysql.cursors.DictCursor)
                 with conn.cursor() as cur:
                     if not q_title:
-                        # Find top book by ticket count
                         cur.execute(f"SELECT title FROM {table_name} GROUP BY title ORDER BY MAX(monthly_tickets) DESC LIMIT 1")
                         row = cur.fetchone()
                         if not row:
@@ -2753,77 +2750,163 @@ def admin_realtime_tracking():
                             return [], ""
                         q_title = row['title']
                     
-                    # Also fetch collection count, or total_recommend for zongheng if collection doesn't exist
                     col_field = "collection_count" if table_name == "novel_realtime_tracking" else "total_recommend as collection_count"
                     cur.execute(f"SELECT crawl_time, monthly_tickets, {col_field} FROM {table_name} WHERE title=%s ORDER BY crawl_time ASC", (q_title,))
                     data = cur.fetchall()
                 conn.close()
                 return data, q_title
             except Exception as e:
-                print(f"Fetch tracking err: {e}")
+                print(f"[DEBUG] Fetch daily tracking err: {e}")
+                return [], q_title
+        
+        # 月粒度：从历史月票统计表获取
+        def fetch_tracking_monthly(config, stats_table, q_title=title, is_qidian=True):
+            try:
+                conn = pymysql.connect(**config, cursorclass=pymysql.cursors.DictCursor)
+                with conn.cursor() as cur:
+                    if not q_title:
+                        order_col = "monthly_tickets_on_list" if is_qidian else "monthly_ticket"
+                        cur.execute(f"SELECT title FROM {stats_table} ORDER BY {order_col} DESC LIMIT 1")
+                        row = cur.fetchone()
+                        if not row:
+                            conn.close()
+                            return [], ""
+                        q_title = row['title']
+                    
+                    if is_qidian:
+                        cur.execute(f"""
+                            SELECT year, month, MAX(monthly_tickets_on_list) AS monthly_tickets
+                            FROM {stats_table} WHERE title=%s GROUP BY year, month ORDER BY year, month
+                        """, (q_title,))
+                    else:
+                        cur.execute(f"""
+                            SELECT year, month, MAX(monthly_ticket) AS monthly_tickets
+                            FROM {stats_table} WHERE title=%s GROUP BY year, month ORDER BY year, month
+                        """, (q_title,))
+                    data = cur.fetchall()
+                conn.close()
+                return data, q_title
+            except Exception as e:
+                print(f"[DEBUG] Fetch monthly tracking err: {e}")
+                return [], q_title
+        
+        # 年粒度：从历史表按年聚合
+        def fetch_tracking_yearly(config, stats_table, q_title=title, is_qidian=True):
+            try:
+                conn = pymysql.connect(**config, cursorclass=pymysql.cursors.DictCursor)
+                with conn.cursor() as cur:
+                    if not q_title:
+                        order_col = "monthly_tickets_on_list" if is_qidian else "monthly_ticket"
+                        cur.execute(f"SELECT title FROM {stats_table} ORDER BY {order_col} DESC LIMIT 1")
+                        row = cur.fetchone()
+                        if not row:
+                            conn.close()
+                            return [], ""
+                        q_title = row['title']
+                    
+                    if is_qidian:
+                        cur.execute(f"""
+                            SELECT year, SUM(monthly_tickets_on_list) AS monthly_tickets
+                            FROM {stats_table} WHERE title=%s GROUP BY year ORDER BY year
+                        """, (q_title,))
+                    else:
+                        cur.execute(f"""
+                            SELECT year, SUM(monthly_ticket) AS monthly_tickets
+                            FROM {stats_table} WHERE title=%s GROUP BY year ORDER BY year
+                        """, (q_title,))
+                    data = cur.fetchall()
+                conn.close()
+                return data, q_title
+            except Exception as e:
+                print(f"[DEBUG] Fetch yearly tracking err: {e}")
                 return [], q_title
 
-        # Try fetching from respective platforms
-        if source in ['all', 'qidian']:
-            rows, act_title = fetch_tracking(_QD2, "novel_realtime_tracking", title)
-            if rows: title = act_title
-            
-        if not rows and source in ['all', 'zongheng']:
-            rows, act_title = fetch_tracking(_ZH2, "zongheng_realtime_tracking", title)
-            if rows: title = act_title
+        # 根据粒度获取数据
+        if granularity == 'day':
+            if source in ['all', 'qidian']:
+                rows, act_title = fetch_tracking_daily(_QD2, "novel_realtime_tracking", title)
+                if rows: title = act_title
+            if not rows and source in ['all', 'zongheng']:
+                rows, act_title = fetch_tracking_daily(_ZH2, "zongheng_realtime_tracking", title)
+                if rows: title = act_title
+        elif granularity == 'month':
+            if source in ['all', 'qidian']:
+                rows, act_title = fetch_tracking_monthly(_QD2, "novel_monthly_stats", title, True)
+                if rows: title = act_title
+            if not rows and source in ['all', 'zongheng']:
+                rows, act_title = fetch_tracking_monthly(_ZH2, "zongheng_book_ranks", title, False)
+                if rows: title = act_title
+        elif granularity == 'year':
+            if source in ['all', 'qidian']:
+                rows, act_title = fetch_tracking_yearly(_QD2, "novel_monthly_stats", title, True)
+                if rows: title = act_title
+            if not rows and source in ['all', 'zongheng']:
+                rows, act_title = fetch_tracking_yearly(_ZH2, "zongheng_book_ranks", title, False)
+                if rows: title = act_title
             
         if not rows:
-            return jsonify({'title': title, 'dates': [], 'monthly_tickets': [], 'collection_count': [], 'predicted_tickets': []})
+            return jsonify({'title': title, 'dates': [], 'monthly_tickets': [], 'collection_count': [], 'predicted_tickets': [], 'granularity': granularity})
+        
+        # 格式化日期
+        if granularity == 'day':
+            dates = [r['crawl_time'].strftime('%m-%d %H:%M') for r in rows]
+            tickets = [int(r['monthly_tickets'] or 0) for r in rows]
+            collections = [int(r.get('collection_count') or 0) for r in rows]
+        elif granularity == 'month':
+            dates = [f"{r['year']}-{int(r['month']):02d}" for r in rows]
+            tickets = [int(r['monthly_tickets'] or 0) for r in rows]
+            collections = [0] * len(rows)
+        else:  # year
+            dates = [str(r['year']) for r in rows]
+            tickets = [int(r['monthly_tickets'] or 0) for r in rows]
+            collections = [0] * len(rows)
             
-        dates = [r['crawl_time'].strftime('%m-%d %H:%M') for r in rows]
-        tickets = [int(r['monthly_tickets'] or 0) for r in rows]
-        collections = [int(r['collection_count'] or 0) for r in rows]
         predicted = []
         
         # 尝试接入模型进行走势期望值推演
-        # 原理：取该书在总表 data_manager.df 里的其他静态固定特征（如字数、分类、标签等）
-        # 然后将这一个月走势上每一天的动态数值（月票/收藏/推荐）覆盖进去，过一遍 model 得出一个日打分
-        # 最后把分数等比例折算回月票量级形成【模型推断票数基线】
         has_model_power = False
         try:
-            if not data_manager.df.empty and data_manager.model and data_manager.scaler:
+            if not data_manager.df.empty and data_manager.model and data_manager.pipeline_v2['scaler']:
                 base_book = data_manager.df[data_manager.df['title'] == title]
                 if not base_book.empty:
                     base_row = base_book.iloc[0].to_dict()
                     import pandas as pd
                     import numpy as np
                     
-                    # 组装批量预测集
+                    # 组装批量预测集 - 使用模型实际的特征
+                    model_features = data_manager.pipeline_v2.get('features', [])
+                    if not model_features:
+                        raise ValueError("Model features not found")
+                    
                     predict_batch = []
-                    for r in rows:
-                        temp = base_row.copy()
-                        temp['finance'] = int(r['monthly_tickets'] or 0)
-                        temp['popularity'] = int(r['collection_count'] or 0)
-                        predict_batch.append(temp)
-                        
-                    df_batch = pd.DataFrame(predict_batch)
-                    df_encoded = data_manager._engineer_features_batch(df_batch)
+                    for i, r in enumerate(rows):
+                        # 构建符合模型特征的特征字典
+                        feat_dict = {
+                            'word_count': base_row.get('word_count', 0),
+                            'word_count_diff': 0,
+                            'cum_drop_months': 0,
+                            'popularity': collections[i],
+                            'pop_diff': 0,
+                            'retention_rate': 0.5,
+                            'fans_count': base_row.get('fans_count', 0),
+                            'fans_diff': 0,
+                            'recalc_finance': tickets[i],
+                            'finance_growth_rate': 0
+                        }
+                        predict_batch.append(feat_dict)
                     
-                    # 必须对齐训练时的 30 个特征维
-                    feature_cols = [
-                        'word_count', 'interaction', 'finance', 'popularity',
-                        'engagement_score', 'total_msgs',
-                        'word_count_log', 'popularity_log', 'interaction_log', 'finance_log',
-                        'cat_东方玄幻', 'cat_其他', 'cat_历史', 'cat_古典仙侠', 'cat_异世大陆',
-                        'cat_异术超能', 'cat_武侠仙侠', 'cat_玄幻奇幻', 'cat_科幻', 'cat_都市', 'cat_都市生活',
-                        'status_0', 'plat_qidian', 'plat_zongheng'
-                    ]
-                    for c in feature_cols:
-                        if c not in df_encoded.columns: df_encoded[c] = 0
-                        
-                    X = df_encoded[feature_cols]
-                    X_scaled = data_manager.scaler.transform(X)
+                    df_pred = pd.DataFrame(predict_batch)
+                    # 确保所有特征列存在
+                    for f in model_features:
+                        if f not in df_pred.columns:
+                            df_pred[f] = 0
+                    df_pred = df_pred[model_features]
                     
-                    import pandas as pd
+                    X_scaled = data_manager.pipeline_v2['scaler'].transform(df_pred)
+                    
                     import xgboost as xgb
-                    X_df = pd.DataFrame(X_scaled, columns=feature_cols)
-                    dmat = xgb.DMatrix(X_df)
-                    raw_scores = data_manager.model.predict(dmat)
+                    dmat = xgb.DMatrix(X_scaled, feature_names=model_features)
+                    raw_scores = data_manager.pipeline_v2['model'].predict(dmat)
                     
                     # 按照该书最高月票的量级，将模型的评分波动（通常预测区间比较紧凑）映射放大映射回票数区间
                     max_raw = max(raw_scores) if len(raw_scores) > 0 else 1
@@ -4560,7 +4643,7 @@ def admin_six_dimensions_radar():
                 SELECT 
                     platform,
                     AVG(story_score) as story,
-                    AVG(character_score) as character,
+                    AVG(character_score) as `character`,
                     AVG(world_score) as world,
                     AVG(commercial_score) as commercial,
                     AVG(adaptation_score) as adaptation,
@@ -4596,10 +4679,10 @@ def admin_six_dimensions_radar():
             
             print(f"[DEBUG] 平台 {platform}: 故事={dims[0]}, 角色={dims[1]}, 世界观={dims[2]}, 商业={dims[3]}, 改编={dims[4]}, 安全={dims[5]}, 数量={total}")
             
-            if platform == '起点' or platform == 'qidian':
+            if platform == '起点' or platform.lower() == 'qidian':
                 qidian_dimensions = dims
                 qidian_total = total
-            elif platform == '纵横' or platform == 'zongheng':
+            elif platform == '纵横' or platform.lower() == 'zongheng':
                 zongheng_dimensions = dims
                 zongheng_total = total
         

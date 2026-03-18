@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router'
 import { useAuth } from '@/composables/useAuth'
 import LiquidHero from '@/components/hero/LiquidHero.vue'
 import {
-  Lock, Mail, User, Eye, EyeOff, ArrowRight,
+  Lock, Mail, User, Eye, EyeOff, ArrowRight, X,
   TrendingUp, BarChart3, Shield, Sparkles, BookOpen, Zap, CheckCircle2
 } from 'lucide-vue-next'
 
@@ -15,6 +15,17 @@ const isLoginMode = ref(true)
 const showPassword = ref(false)
 const errorMsg = ref('')
 const ready = ref(false)
+
+// 忘记密码相关
+const showForgotModal = ref(false)
+const forgotEmail = ref('')
+const forgotCode = ref('')
+const forgotNewPassword = ref('')
+const forgotUsername = ref('')
+const forgotStep = ref(1) // 1: 输入邮箱, 2: 输入验证码和新密码
+const forgotLoading = ref(false)
+const forgotError = ref('')
+const forgotSuccess = ref('')
 
 const form = ref({
   username: '',
@@ -79,6 +90,110 @@ async function handleSubmit() {
       errorMsg.value = result.error || '注册失败'
     }
   }
+}
+
+// 忘记密码功能
+async function handleForgotPassword() {
+  forgotError.value = ''
+  forgotSuccess.value = ''
+  
+  if (forgotStep.value === 1) {
+    // 第一步：发送验证码
+    if (!forgotEmail.value) {
+      forgotError.value = '请输入邮箱地址'
+      return
+    }
+    
+    forgotLoading.value = true
+    try {
+      const res = await fetch('http://localhost:5000/api/auth/forgot_password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: forgotEmail.value })
+      })
+      
+      if (!res.ok) {
+        const errorText = await res.text()
+        throw new Error(`HTTP ${res.status}: ${errorText}`)
+      }
+      
+      const data = await res.json()
+      
+      if (data.success) {
+        forgotUsername.value = data.username || ''
+        forgotStep.value = 2
+        if (data.code) {
+          forgotCode.value = data.code // 开发环境自动填充
+        }
+        forgotSuccess.value = '验证码已发送'
+      } else {
+        forgotError.value = data.error || '发送失败'
+      }
+    } catch (e: any) {
+      console.error('Forgot password error:', e)
+      forgotError.value = '请求失败: ' + (e.message || '请检查后端服务是否运行')
+    } finally {
+      forgotLoading.value = false
+    }
+  } else {
+    // 第二步：重置密码
+    if (!forgotCode.value || !forgotNewPassword.value) {
+      forgotError.value = '请填写验证码和新密码'
+      return
+    }
+    if (forgotNewPassword.value.length < 6) {
+      forgotError.value = '密码至少需要6个字符'
+      return
+    }
+    
+    forgotLoading.value = true
+    try {
+      const res = await fetch('http://localhost:5000/api/auth/reset_password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: forgotEmail.value,
+          code: forgotCode.value,
+          new_password: forgotNewPassword.value
+        })
+      })
+      
+      if (!res.ok) {
+        const errorText = await res.text()
+        throw new Error(`HTTP ${res.status}: ${errorText}`)
+      }
+      
+      const data = await res.json()
+      
+      if (data.success) {
+        forgotSuccess.value = '密码重置成功！'
+        setTimeout(() => {
+          showForgotModal.value = false
+          forgotStep.value = 1
+          forgotEmail.value = ''
+          forgotCode.value = ''
+          forgotNewPassword.value = ''
+        }, 1500)
+      } else {
+        forgotError.value = data.error || '重置失败'
+      }
+    } catch (e: any) {
+      console.error('Reset password error:', e)
+      forgotError.value = '请求失败: ' + (e.message || '请检查后端服务是否运行')
+    } finally {
+      forgotLoading.value = false
+    }
+  }
+}
+
+function closeForgotModal() {
+  showForgotModal.value = false
+  forgotStep.value = 1
+  forgotEmail.value = ''
+  forgotCode.value = ''
+  forgotNewPassword.value = ''
+  forgotError.value = ''
+  forgotSuccess.value = ''
 }
 </script>
 
@@ -229,7 +344,7 @@ async function handleSubmit() {
           <div class="space-y-1.5">
             <div class="flex justify-between items-center ml-1">
               <label class="text-xs font-bold text-slate-700">密码</label>
-              <a v-if="isLoginMode" href="#" class="text-xs font-medium text-indigo-600 hover:text-indigo-700">忘记密码？</a>
+              <a v-if="isLoginMode" href="#" @click.prevent="showForgotModal = true" class="text-xs font-medium text-indigo-600 hover:text-indigo-700">忘记密码？</a>
             </div>
             <div class="relative group">
                <Lock class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300 group-focus-within:text-indigo-600 transition-colors" />
@@ -273,9 +388,74 @@ async function handleSubmit() {
         </div>
 
       </div>
-      
-    </div>
 
+      <!-- 忘记密码弹窗 -->
+      <Transition name="fade">
+        <div v-if="showForgotModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40" @click.self="closeForgotModal">
+          <div class="bg-white rounded-lg shadow-xl w-full max-w-sm mx-4">
+            <!-- 头部 -->
+            <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+              <h3 class="font-semibold text-slate-800">重置密码</h3>
+              <button @click="closeForgotModal" class="text-slate-400 hover:text-slate-600">
+                <X class="w-4 h-4" />
+              </button>
+            </div>
+            
+            <!-- 内容 -->
+            <div class="p-5 space-y-4">
+              <!-- 成功提示 -->
+              <div v-if="forgotSuccess" class="p-3 rounded bg-emerald-50 border border-emerald-100 text-emerald-600 text-sm">
+                {{ forgotSuccess }}
+              </div>
+              
+              <!-- 错误提示 -->
+              <div v-if="forgotError" class="p-3 rounded bg-red-50 border border-red-100 text-red-500 text-sm">
+                {{ forgotError }}
+              </div>
+              
+              <!-- 第一步：输入邮箱 -->
+              <div v-if="forgotStep === 1">
+                <label class="block text-sm font-medium text-slate-700 mb-1">注册邮箱</label>
+                <input v-model="forgotEmail" type="email" placeholder="your@email.com"
+                       class="w-full h-10 px-3 bg-white border border-slate-200 rounded text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-slate-400 text-sm" />
+              </div>
+              
+              <!-- 第二步：输入验证码和新密码 -->
+              <div v-else class="space-y-3">
+                <div class="text-sm text-slate-500">
+                  验证码已发送至 <span class="font-medium text-slate-700">{{ forgotEmail }}</span>
+                </div>
+                
+                <div>
+                  <label class="block text-sm font-medium text-slate-700 mb-1">验证码</label>
+                  <input v-model="forgotCode" type="text" placeholder="6位数字" maxlength="6"
+                         class="w-full h-10 px-3 bg-white border border-slate-200 rounded text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-slate-400 text-sm text-center tracking-widest" />
+                </div>
+                
+                <div>
+                  <label class="block text-sm font-medium text-slate-700 mb-1">新密码</label>
+                  <input v-model="forgotNewPassword" type="password" placeholder="至少6位字符"
+                         class="w-full h-10 px-3 bg-white border border-slate-200 rounded text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-slate-400 text-sm" />
+                </div>
+              </div>
+            </div>
+            
+            <!-- 底部按钮 -->
+            <div class="px-5 py-4 border-t border-slate-100 flex gap-3">
+              <button @click="closeForgotModal" class="flex-1 h-9 rounded border border-slate-200 text-slate-600 text-sm hover:bg-slate-50">
+                取消
+              </button>
+              <button @click="handleForgotPassword" :disabled="forgotLoading"
+                      class="flex-1 h-9 rounded bg-slate-800 text-white text-sm hover:bg-slate-700 disabled:opacity-50 flex items-center justify-center gap-1">
+                <span v-if="forgotLoading" class="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                <span>{{ forgotStep === 1 ? '发送验证码' : '重置密码' }}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </Transition>
+
+    </div>
   </div>
 </template>
 

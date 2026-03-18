@@ -696,3 +696,118 @@ def reset_user_tokens(user_id):
         return jsonify({'error': '用户不存在'}), 404
     except Exception as e:
         return jsonify({'error': f'重置失败: {str(e)}'}), 500
+
+
+# ============================================================
+#  忘记密码功能
+# ============================================================
+
+import secrets
+import string
+
+# 内存中存储重置token（生产环境应使用Redis或数据库）
+reset_tokens = {}
+
+@auth_bp.route('/forgot_password', methods=['POST'])
+def forgot_password():
+    """
+    忘记密码 - 发送重置验证码
+    由于是本地项目，返回验证码让用户输入
+    """
+    data = request.json or {}
+    email = data.get('email', '').strip().lower()
+    
+    if not email:
+        return jsonify({'error': '请输入邮箱地址'}), 400
+    
+    try:
+        conn = get_auth_db()
+        with conn.cursor() as cursor:
+            cursor.execute("SELECT id, username, email FROM users WHERE email = %s", (email,))
+            user = cursor.fetchone()
+        conn.close()
+        
+        if not user:
+            # 安全考虑：不透露邮箱是否存在
+            return jsonify({
+                'success': True,
+                'message': '如果该邮箱已注册，您将收到重置验证码'
+            })
+        
+        # 生成6位数字验证码
+        code = ''.join([str(secrets.randbelow(10)) for _ in range(6)])
+        
+        # 存储验证码（5分钟有效）
+        reset_tokens[email] = {
+            'code': code,
+            'user_id': user['id'],
+            'expires': datetime.now(timezone.utc) + timedelta(minutes=5)
+        }
+        
+        print(f"[AUTH] 忘记密码验证码: {email} -> {code}")
+        
+        # 返回验证码（本地开发环境，实际应发送邮件）
+        return jsonify({
+            'success': True,
+            'message': '验证码已生成',
+            'code': code,  # 仅开发环境返回
+            'username': user['username']
+        })
+        
+    except Exception as e:
+        print(f"[AUTH] 忘记密码错误: {e}")
+        return jsonify({'error': '操作失败，请稍后重试'}), 500
+
+
+@auth_bp.route('/reset_password', methods=['POST'])
+def reset_password():
+    """
+    重置密码 - 验证验证码并设置新密码
+    """
+    data = request.json or {}
+    email = data.get('email', '').strip().lower()
+    code = data.get('code', '').strip()
+    new_password = data.get('new_password', '')
+    
+    if not email or not code or not new_password:
+        return jsonify({'error': '请填写所有字段'}), 400
+    
+    if len(new_password) < 6:
+        return jsonify({'error': '密码至少需要6个字符'}), 400
+    
+    # 验证验证码
+    token_data = reset_tokens.get(email)
+    if not token_data:
+        return jsonify({'error': '验证码无效或已过期'}), 400
+    
+    if token_data['code'] != code:
+        return jsonify({'error': '验证码错误'}), 400
+    
+    if datetime.now(timezone.utc) > token_data['expires']:
+        del reset_tokens[email]
+        return jsonify({'error': '验证码已过期，请重新获取'}), 400
+    
+    try:
+        conn = get_auth_db()
+        with conn.cursor() as cursor:
+            # 更新密码
+            new_hash = generate_password_hash(new_password)
+            cursor.execute(
+                "UPDATE users SET password_hash = %s WHERE id = %s",
+                (new_hash, token_data['user_id'])
+            )
+            conn.commit()
+        conn.close()
+        
+        # 清除验证码
+        del reset_tokens[email]
+        
+        print(f"[AUTH] 密码重置成功: {email}")
+        return jsonify({
+            'success': True,
+            'message': '密码重置成功，请使用新密码登录'
+        })
+        
+    except Exception as e:
+        print(f"[AUTH] 重置密码错误: {e}")
+        return jsonify({'error': '重置失败，请稍后重试'}), 500
