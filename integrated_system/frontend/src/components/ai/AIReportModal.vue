@@ -3,6 +3,7 @@ import { ref, watch, onMounted, nextTick } from 'vue'
 import { X, Sparkles, Brain, Zap, AlertTriangle, Target, TrendingUp } from 'lucide-vue-next'
 import * as echarts from 'echarts'
 import axios from 'axios'
+import { parseAIError, isAuthError, showAIError } from '@/utils/aiErrorHandler'
 
 const props = defineProps<{
   show: boolean
@@ -14,11 +15,13 @@ const emit = defineEmits(['close'])
 const loading = ref(true)
 const report = ref<any>(null)
 const chartRef = ref<HTMLElement | null>(null)
+const errorMessage = ref<string | null>(null)
 let myChart: echarts.ECharts | null = null
 
 const fetchReport = async () => {
     loading.value = true
     report.value = null
+    errorMessage.value = null
     try {
         const res = await axios.post('http://localhost:5000/api/ai/report', {
             title: props.book.title,
@@ -29,8 +32,16 @@ const fetchReport = async () => {
         // 使用 nextTick 确保 DOM 更新后再初始化图表
         await nextTick()
         setTimeout(() => initChart(), 100) // 额外延迟确保渲染完成
-    } catch (e) {
+    } catch (e: any) {
         console.error(e)
+        errorMessage.value = parseAIError(e)
+        showAIError(e)
+        // 如果是认证错误，可以考虑跳转登录
+        if (isAuthError(e)) {
+            setTimeout(() => {
+                window.location.href = '/login'
+            }, 2000)
+        }
     } finally {
         loading.value = false
     }
@@ -122,6 +133,14 @@ watch(() => props.show, (val) => {
                 <div class="absolute inset-0 border-4 border-indigo-500 rounded-full border-t-transparent animate-spin"></div>
              </div>
              <p class="text-slate-500 font-medium animate-pulse">正在调用 NVIDIA GLM-4 进行深度分析...</p>
+          </div>
+          
+          <div v-else-if="errorMessage" class="flex flex-col items-center justify-center h-64 gap-4">
+             <div class="w-16 h-16 rounded-full bg-rose-100 flex items-center justify-center">
+                <AlertTriangle class="w-8 h-8 text-rose-500" />
+             </div>
+             <p class="text-rose-600 font-bold text-lg">{{ errorMessage }}</p>
+             <p class="text-slate-500 text-sm">请联系管理员处理</p>
           </div>
           
           <div v-else class="flex flex-col lg:flex-row gap-8">

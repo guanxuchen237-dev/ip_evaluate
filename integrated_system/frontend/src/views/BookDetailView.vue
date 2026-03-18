@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import EditorialLayout from '@/components/layout/EditorialLayout.vue'
 import axios from 'axios'
 import { useAuth } from '@/composables/useAuth'
+import { parseAIError, showAIError } from '@/utils/aiErrorHandler'
 const { isLoggedIn } = useAuth()
 import { 
     ArrowLeft, TrendingUp, TrendingDown, Sparkles, Star, Shield, Award, Globe, Crown, Send, RefreshCw, BookOpen,
@@ -89,8 +90,9 @@ const extractCharacters = async (forceRefresh = false) => {
         if (characters.value.length > 0 && !activeCharacter.value) {
             activeCharacter.value = characters.value[0] || null
         }
-    } catch (e) {
+    } catch (e: any) {
         console.error('角色提取失败:', e)
+        showAIError(e)
     } finally {
         isExtractingChars.value = false
     }
@@ -189,8 +191,10 @@ const sendMessage = async () => {
             chatHistory.value.push({ role: 'assistant', content: res.data.response })
             saveMessage('assistant', res.data.response)
         }
-    } catch (e) {
-        chatHistory.value.push({ role: 'assistant', content: '(连接中断...)' })
+    } catch (e: any) {
+        const errorMsg = parseAIError(e)
+        chatHistory.value.push({ role: 'assistant', content: `（错误：${errorMsg}）` })
+        showAIError(e)
     } finally {
         isSending.value = false
         scrollToBottom()
@@ -355,7 +359,16 @@ const triggerBookAudit = async () => {
         }
     } catch (e: any) {
         console.error('Audit failed:', e)
-        alert('审计流传输失败，请稍后重试。')
+        // 处理fetch API的错误响应
+        if (e.response) {
+            e.response.json().then((data: any) => {
+                showAIError({ response: { data } })
+            }).catch(() => {
+                showAIError(e)
+            })
+        } else {
+            showAIError(e)
+        }
     } finally {
         isAuditing.value = false
     }

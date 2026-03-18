@@ -4,6 +4,7 @@ import { Send, Sparkles, MessageSquare, ArrowLeft } from 'lucide-vue-next'
 import EditorialLayout from '@/components/layout/EditorialLayout.vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
+import { parseAIError, showAIError } from '@/utils/aiErrorHandler'
 
 const router = useRouter()
 
@@ -115,9 +116,11 @@ const sendMessage = async () => {
         if (res.data.response) {
             history.value.push({ role: 'assistant', content: res.data.response })
         }
-    } catch (e) {
+    } catch (e: any) {
         console.error(e)
-        history.value.push({ role: 'assistant', content: "（连接中断，神灵似乎暂时离开了...）" })
+        const errorMsg = parseAIError(e)
+        history.value.push({ role: 'assistant', content: `（错误：${errorMsg}）` })
+        showAIError(e)
     } finally {
         isLoading.value = false
         await nextTick()

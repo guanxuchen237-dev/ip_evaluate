@@ -3,6 +3,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuth } from '@/composables/useAuth'
 import AdminSidebar from '@/components/layout/AdminSidebar.vue'
+import { parseAIError, showAIError } from '@/utils/aiErrorHandler'
 import {
   Users, Activity, Shield, Server, Globe, Bell, Search, 
   MoreHorizontal, CheckCircle2, AlertTriangle, Clock, LogOut,
@@ -686,7 +687,16 @@ const trendColor = (t: string) => {
 
 const trafficData = ref<any[]>([])
 const recentCrawledBooks = ref<any[]>([])
-const pipelineExtra = ref({ qidian_total: 0, zongheng_total: 0, qidian_today: 0, zongheng_today: 0, last_crawl_time: '--' })
+const pipelineExtra = ref({ qidian_total: 0, zongheng_total: 0, qidian_today: 0, zongheng_today: 0, last_crawl_time: '--', qidian_count: 0, zongheng_count: 0 })
+
+// 去重和日期筛选
+const dedupEnabled = ref(true)  // 默认开启去重
+const dateFilter = ref('')  // 格式: YYYY-MM-DD 或 YYYY-MM 或 YYYY
+
+// 分页控制（platformFilter已在215行定义）
+const currentPage = ref(1)
+const pageSize = 20
+const pagination = ref({ page: 1, page_size: 20, total: 0, total_pages: 0 })
 
 const pipelineStats = computed(() => [
    { label: '在线数据源', value: '2/2', icon: Globe, color: 'text-indigo-600', bg: 'bg-indigo-50' },
@@ -698,22 +708,44 @@ const pipelineStats = computed(() => [
 async function fetchPipelineStats() {
     try {
         const token = localStorage.getItem('auth_token')
-        const res = await fetch(`${API_BASE}/admin/monitor/pipeline`, {
+        let url = `${API_BASE}/admin/monitor/pipeline?platform=${platformFilter.value}&page=${currentPage.value}&page_size=${pageSize}&dedup=${dedupEnabled.value}`
+        if (dateFilter.value) {
+            url += `&date=${dateFilter.value}`
+        }
+        const res = await fetch(url, {
             headers: { 'Authorization': `Bearer ${token}` }
         })
         if (res.ok) {
             const data = await res.json()
             trafficData.value = data.traffic_series || []
             recentCrawledBooks.value = data.recent_books || []
+            pagination.value = data.pagination || { page: 1, page_size: 20, total: 0, total_pages: 0 }
             pipelineExtra.value = {
                 qidian_total: data.qidian_total || 0,
                 zongheng_total: data.zongheng_total || 0,
                 qidian_today: data.qidian_today || 0,
                 zongheng_today: data.zongheng_today || 0,
-                last_crawl_time: data.last_crawl_time || '--'
+                last_crawl_time: data.last_crawl_time || '--',
+                qidian_count: data.qidian_count || 0,
+                zongheng_count: data.zongheng_count || 0
             }
         }
     } catch(e) { console.error('Error fetching pipeline stats:', e) }
+}
+
+// 切换平台时重置页码
+function switchPlatform(p: 'all' | 'qidian' | 'zongheng') {
+    platformFilter.value = p
+    currentPage.value = 1
+    fetchPipelineStats()
+}
+
+// 分页导航
+function goToPage(p: number) {
+    if (p >= 1 && p <= pagination.value.total_pages) {
+        currentPage.value = p
+        fetchPipelineStats()
+    }
 }
 
 // 图表交互状态
@@ -924,9 +956,9 @@ async function triggerDeepScan() {
       fetchAuditLogs()
       fetchMultiSourceOverview()
     } else {
-      alert('深度审计失败: ' + (data.error || '未知错误'))
+      showAIError({ response: { data, status: res.status } })
     }
-  } catch (e) { console.error('深度审计失败:', e); alert('网络错误') }
+  } catch (e: any) { console.error('深度审计失败:', e); showAIError(e) }
   finally { deepScanLoading.value = false }
 }
 
@@ -1181,8 +1213,9 @@ const formatPeriod = (period: string) => {
                   <div class="text-sm font-bold text-slate-900">{{ user?.username || 'Administrator' }}</div>
                   <div class="text-xs text-emerald-600 font-medium">● 在线</div>
                </div>
-               <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-indigo-600 to-purple-600 text-white flex items-center justify-center font-bold shadow-md shadow-indigo-500/20">
-                  A
+               <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-indigo-600 to-purple-600 text-white flex items-center justify-center font-bold shadow-md shadow-indigo-500/20 overflow-hidden">
+                  <img v-if="user?.avatar" :src="`http://localhost:5000${user.avatar}`" alt="Avatar" class="w-full h-full object-cover" />
+                  <span v-else>{{ user?.username?.charAt(0).toUpperCase() || 'A' }}</span>
                </div>
                <button @click="handleLogout" class="p-2 text-slate-400 hover:text-rose-500 transition-colors" title="退出登录">
                   <LogOut class="w-5 h-5" />
@@ -1536,9 +1569,10 @@ const formatPeriod = (period: string) => {
                         <tr v-for="u in recentUsers" :key="u.id" class="group hover:bg-indigo-50/30 transition-colors">
                            <td class="px-6 py-4">
                               <div class="flex items-center gap-3">
-                                 <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-slate-600 shadow-sm"
-                                      :class="u.role === 'admin' ? 'bg-gradient-to-br from-indigo-100 to-purple-100 text-indigo-700' : 'bg-slate-100'">
-                                    {{ u.name ? u.name.charAt(0).toUpperCase() : 'U' }}
+                                 <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-slate-600 shadow-sm overflow-hidden"
+                                      :class="u.role === 'admin' ? 'bg-gradient-to-br from-indigo-100 to-purple-100' : 'bg-slate-100'">
+                                    <img v-if="u.avatar" :src="`http://localhost:5000${u.avatar}`" alt="Avatar" class="w-full h-full object-cover" />
+                                    <span v-else :class="u.role === 'admin' ? 'text-indigo-700' : 'text-slate-600'">{{ u.name ? u.name.charAt(0).toUpperCase() : 'U' }}</span>
                                  </div>
                                  <div class="min-w-0 flex-1">
                                     <div class="text-sm font-bold text-slate-900 truncate flex items-center gap-2">
@@ -2011,7 +2045,46 @@ const formatPeriod = (period: string) => {
                     <BookOpen class="w-5 h-5 text-indigo-600" />
                     最近采集入库书籍
                  </h3>
-                 <span class="text-xs text-slate-400 font-mono">共 {{ recentCrawledBooks.length }} 条</span>
+                 <div class="flex items-center gap-3">
+                    <!-- 日期筛选 -->
+                    <div class="flex items-center gap-2">
+                       <input 
+                          v-model="dateFilter" 
+                          type="date" 
+                          @change="currentPage = 1; fetchPipelineStats()"
+                          class="px-2 py-1 text-xs border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                          placeholder="选择日期"
+                       />
+                       <button v-if="dateFilter" @click="dateFilter = ''; currentPage = 1; fetchPipelineStats()"
+                               class="text-xs text-slate-400 hover:text-slate-600">
+                          清除
+                       </button>
+                    </div>
+                    <!-- 去重开关 -->
+                    <label class="flex items-center gap-1.5 text-xs text-slate-600 cursor-pointer select-none">
+                       <input 
+                          type="checkbox" 
+                          v-model="dedupEnabled" 
+                          @change="currentPage = 1; fetchPipelineStats()"
+                          class="w-3.5 h-3.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                       />
+                       <span>去重</span>
+                    </label>
+                    <div class="w-px h-4 bg-slate-200 mx-1"></div>
+                    <!-- 平台切换按钮 -->
+                    <div class="flex items-center gap-1 bg-slate-100/80 rounded-lg p-1">
+                       <button @click="switchPlatform('all')" 
+                               :class="platformFilter === 'all' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'"
+                               class="px-3 py-1 text-xs font-bold rounded-md transition-all">全部</button>
+                       <button @click="switchPlatform('qidian')" 
+                               :class="platformFilter === 'qidian' ? 'bg-blue-500 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700'"
+                               class="px-3 py-1 text-xs font-bold rounded-md transition-all">起点</button>
+                       <button @click="switchPlatform('zongheng')" 
+                               :class="platformFilter === 'zongheng' ? 'bg-rose-500 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700'"
+                               class="px-3 py-1 text-xs font-bold rounded-md transition-all">纵横</button>
+                    </div>
+                    <span class="text-xs text-slate-400 font-mono">共 {{ pagination.total }} 条</span>
+                 </div>
               </div>
               <div v-if="recentCrawledBooks.length > 0">
                  <table class="w-full text-left">
@@ -2027,7 +2100,7 @@ const formatPeriod = (period: string) => {
                     </thead>
                     <tbody class="divide-y divide-slate-100">
                        <tr v-for="(book, idx) in recentCrawledBooks" :key="idx" class="hover:bg-indigo-50/30 transition-colors group">
-                          <td class="px-6 py-3 text-xs text-slate-400 font-mono">{{ idx + 1 }}</td>
+                          <td class="px-6 py-3 text-xs text-slate-400 font-mono">{{ (currentPage - 1) * pageSize + idx + 1 }}</td>
                           <td class="px-4 py-3">
                              <span class="font-bold text-slate-900 text-sm truncate max-w-[240px] inline-block">{{ book.title }}</span>
                           </td>
@@ -2049,6 +2122,30 @@ const formatPeriod = (period: string) => {
                        </tr>
                     </tbody>
                  </table>
+                 <!-- 分页控件 -->
+                 <div v-if="pagination.total_pages > 1" class="px-6 py-4 flex items-center justify-between border-t border-slate-100 bg-slate-50/30">
+                    <div class="text-xs text-slate-400">
+                       第 {{ currentPage }} / {{ pagination.total_pages }} 页
+                    </div>
+                    <div class="flex items-center gap-1">
+                       <button @click="goToPage(currentPage - 1)" :disabled="currentPage <= 1"
+                               :class="currentPage <= 1 ? 'opacity-40 cursor-not-allowed' : 'hover:bg-slate-200'"
+                               class="px-3 py-1.5 text-xs font-bold text-slate-600 bg-white rounded-md border border-slate-200 transition-all">上一页</button>
+                       <div class="flex items-center gap-1 mx-2">
+                          <button v-for="p in Math.min(5, pagination.total_pages)" :key="p" 
+                                  @click="goToPage(p)"
+                                  :class="currentPage === p ? 'bg-indigo-500 text-white' : 'bg-white text-slate-600 hover:bg-slate-100'"
+                                  class="w-7 h-7 text-xs font-bold rounded-md border border-slate-200 transition-all">{{ p }}</button>
+                          <span v-if="pagination.total_pages > 5" class="text-slate-400 px-1">...</span>
+                          <button v-if="pagination.total_pages > 5" @click="goToPage(pagination.total_pages)"
+                                  :class="currentPage === pagination.total_pages ? 'bg-indigo-500 text-white' : 'bg-white text-slate-600 hover:bg-slate-100'"
+                                  class="w-7 h-7 text-xs font-bold rounded-md border border-slate-200 transition-all">{{ pagination.total_pages }}</button>
+                       </div>
+                       <button @click="goToPage(currentPage + 1)" :disabled="currentPage >= pagination.total_pages"
+                               :class="currentPage >= pagination.total_pages ? 'opacity-40 cursor-not-allowed' : 'hover:bg-slate-200'"
+                               class="px-3 py-1.5 text-xs font-bold text-slate-600 bg-white rounded-md border border-slate-200 transition-all">下一页</button>
+                    </div>
+                 </div>
               </div>
               <div v-else class="text-center py-16 text-slate-400">
                  <Database class="w-10 h-10 mx-auto mb-3 opacity-15" />

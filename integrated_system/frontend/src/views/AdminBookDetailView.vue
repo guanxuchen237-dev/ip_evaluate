@@ -2,6 +2,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
+import { parseAIError, showAIError } from '@/utils/aiErrorHandler'
 import { 
     ArrowLeft, Database, Activity, Server, CheckCircle2, AlertTriangle, FileJson,
     Cpu, User, BookOpen, BarChart, Clock, Zap, Wifi, Layers, MessageSquare, ShieldCheck,
@@ -120,7 +121,7 @@ const handleRePredict = async () => {
         }
         
     } catch (e: any) {
-        showToast(e.response?.data?.error || '重新预测失败', 'error')
+        showAIError(e)
     } finally {
         isPredicting.value = false
     }
@@ -182,7 +183,7 @@ const handleExtractCharacters = async () => {
         // 也可以选择将 res.data.characters 保存并更新到页面的 Mock 卡片中。
         showToast('已重新提取智能图谱实体关联', 'success')
     } catch (e: any) {
-        showToast(e.response?.data?.error || '提取失败', 'error')
+        showToast(parseAIError(e), 'error')
     } finally {
         isExtracting.value = false
     }

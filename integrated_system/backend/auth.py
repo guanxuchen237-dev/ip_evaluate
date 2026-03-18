@@ -199,6 +199,34 @@ def login_required(f):
     return decorated
 
 
+def token_limit_required(f):
+    """检查Token限额的装饰器 - 当用户超出限额时禁用AI接口"""
+    @wraps(f)
+    @login_required
+    def decorated(*args, **kwargs):
+        try:
+            conn = get_auth_db()
+            with conn.cursor() as cursor:
+                cursor.execute(
+                    "SELECT ai_tokens_used, IFNULL(token_limit, 0) as token_limit FROM users WHERE id = %s",
+                    (g.current_user_id,)
+                )
+                user = cursor.fetchone()
+                if user and user['token_limit'] > 0 and user['ai_tokens_used'] >= user['token_limit']:
+                    conn.close()
+                    return jsonify({
+                        'error': f'Token额度已用完 (已用: {user["ai_tokens_used"]:,} / 限额: {user["token_limit"]:,})', 
+                        'code': 'TOKEN_LIMIT_EXCEEDED',
+                        'used': user['ai_tokens_used'],
+                        'limit': user['token_limit']
+                    }), 403
+            conn.close()
+        except Exception:
+            pass  # 如果检查失败，允许继续访问
+        return f(*args, **kwargs)
+    return decorated
+
+
 def admin_required(f):
     """要求管理员权限的装饰器"""
     @wraps(f)

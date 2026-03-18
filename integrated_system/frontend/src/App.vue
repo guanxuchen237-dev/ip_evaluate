@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { useAuth } from '@/composables/useAuth'
+import Toast from '@/components/common/Toast.vue'
 
 const { fetchUser } = useAuth()
 
@@ -13,5 +14,6 @@ onMounted(() => {
 <template>
   <div class="min-h-screen bg-background font-sans antialiased">
     <router-view />
+    <Toast />
   </div>
 </template>

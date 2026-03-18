@@ -4,6 +4,7 @@ import { Send, MessageSquare, ArrowLeft, Plus, BookOpen, User } from 'lucide-vue
 import EditorialLayout from '@/components/layout/EditorialLayout.vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
+import { parseAIError, showAIError } from '@/utils/aiErrorHandler'
 
 const router = useRouter()
 
@@ -178,8 +179,10 @@ const sendMessage = async () => {
     if (res.data.response) {
       history.value.push({ role: 'assistant', content: res.data.response })
     }
-  } catch (e) {
-    history.value.push({ role: 'assistant', content: '(连接中断...)' })
+  } catch (e: any) {
+    const errorMsg = parseAIError(e)
+    history.value.push({ role: 'assistant', content: `（错误：${errorMsg}）` })
+    showAIError(e)
   } finally {
     isChatLoading.value = false
     await nextTick()

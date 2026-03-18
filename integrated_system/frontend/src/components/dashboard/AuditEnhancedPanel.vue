@@ -433,6 +433,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { parseAIError, showAIError } from '@/utils/aiErrorHandler'
 import { 
   Shield, RefreshCw, Settings, PieChart, TrendingUp, 
   CheckCircle, Download, Sparkles, X, Plus, Trash2,
@@ -627,18 +628,22 @@ async function handleMarkResolved(log: any) {
     
     // 本地更新状态，立即反馈
     log.status = 'RESOLVED'
-    alert(`�?{log.book_title}》已标记为已解决`)
+    if (typeof window !== 'undefined' && (window as any).$toast) {
+      (window as any).$toast.success(`《${log.book_title}》已标记为已解决`)
+    }
     
   } catch (e: any) {
     console.error('标记失败:', e)
-    alert(`标记失败: ${e.message || '请检查网络连�?}`)
+    if (typeof window !== 'undefined' && (window as any).$toast) {
+      (window as any).$toast.error(e.message || '标记失败，请检查网络连接')
+    }
   } finally {
     actionLoading.value = null
   }
 }
 
 async function handleReaudit(log: any) {
-  if (!confirm(`确定要重新审计�?{log.book_title}》吗？`)) return
+  if (!confirm(`确定要重新审计《${log.book_title}》吗？`)) return
   
   actionLoading.value = log.id
   try {
@@ -653,21 +658,25 @@ async function handleReaudit(log: any) {
     })
     
     if (!res.ok) {
-      throw new Error(`HTTP ${res.status}`)
+      const data = await res.json().catch(() => ({}))
+      showAIError({ response: { data, status: res.status } })
+      return
     }
     
-    alert(`�?{log.book_title}》重新审计任务已提交，请稍后刷新查看结果`)
+    if (typeof window !== 'undefined' && (window as any).$toast) {
+      (window as any).$toast.success(`《${log.book_title}》重新审计任务已提交，请稍后刷新查看结果`)
+    }
     
   } catch (e: any) {
     console.error('重新审计失败:', e)
-    alert(`重新审计失败: ${e.message || '请检查网络连�?}`)
+    showAIError(e)
   } finally {
     actionLoading.value = null
   }
 }
 
 async function handleDelete(log: any) {
-  if (!confirm(`确定要删除�?{log.book_title}》的审计记录吗？此操作不可恢复。`)) return
+  if (!confirm(`确定要删除《${log.book_title}》的审计记录吗？此操作不可恢复。`)) return
   
   actionLoading.value = log.id
   try {
@@ -682,11 +691,15 @@ async function handleDelete(log: any) {
     
     // 从列表中移除
     auditLogs.value = auditLogs.value.filter(l => l.id !== log.id)
-    alert(`�?{log.book_title}》已删除`)
+    if (typeof window !== 'undefined' && (window as any).$toast) {
+      (window as any).$toast.success(`《${log.book_title}》已删除`)
+    }
     
   } catch (e: any) {
     console.error('删除失败:', e)
-    alert(`删除失败: ${e.message || '请检查网络连�?}`)
+    if (typeof window !== 'undefined' && (window as any).$toast) {
+      (window as any).$toast.error(e.message || '删除失败，请检查网络连接')
+    }
   } finally {
     actionLoading.value = null
   }
