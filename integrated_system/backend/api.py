@@ -3500,7 +3500,7 @@ def audit_deep_scan():
                 conn = pymysql.connect(**QIDIAN_CONFIG, cursorclass=pymysql.cursors.DictCursor)
                 with conn.cursor() as cur:
                     cur.execute("""
-                        SELECT title, author, category, monthly_ticket_count as finance, recommendation_count as interaction, word_count
+                        SELECT title, author, category, monthly_tickets_on_list as finance, recommendation_count as interaction, word_count
                         FROM novel_monthly_stats WHERE title = %s ORDER BY year DESC, month DESC LIMIT 1
                     """, (book_title,))
                     row = cur.fetchone()
@@ -3697,8 +3697,7 @@ def audit_deep_scan_stream():
                 conn = pymysql.connect(**QIDIAN_CONFIG, cursorclass=pymysql.cursors.DictCursor)
                 with conn.cursor() as cur:
                     # 修正：不使用 MAX() 避免抓到历史巅峰值，改取最新月份记录。
-                    # 使用 monthly_ticket_count 替代 monthly_tickets_on_list 以反映真实当前票数
-                    cur.execute("SELECT title, author, category, monthly_ticket_count as finance, recommendation_count as interaction, word_count FROM novel_monthly_stats WHERE title = %s ORDER BY year DESC, month DESC LIMIT 1", (book_title,))
+                    cur.execute("SELECT title, author, category, monthly_tickets_on_list as finance, recommendation_count as interaction, word_count FROM novel_monthly_stats WHERE title = %s ORDER BY year DESC, month DESC LIMIT 1", (book_title,))
                     row = cur.fetchone()
                     if row:
                         base_stats.update({'author': row['author'], 'category': row['category'] or '未知', 'platform': 'Qidian', 'finance': row['finance'] or 0, 'interaction': row['interaction'] or 0, 'word_count': row['word_count'] or 0})
@@ -3992,10 +3991,10 @@ def admin_long_term_trending():
                 cur.execute("""
                     SELECT title, author, category,
                            COUNT(DISTINCT CONCAT(year, '-', month)) as month_count,
-                           AVG(monthly_ticket_count) as avg_tickets,
-                           MAX(monthly_ticket_count) as max_tickets
+                           AVG(monthly_tickets_on_list) as avg_tickets,
+                           MAX(monthly_tickets_on_list) as max_tickets
                     FROM novel_monthly_stats
-                    WHERE monthly_ticket_count > 1000
+                    WHERE monthly_tickets_on_list > 1000
                     GROUP BY title, author, category
                     HAVING month_count >= %s
                     ORDER BY max_tickets DESC
@@ -4008,7 +4007,7 @@ def admin_long_term_trending():
                 for book in long_term_books:
                     cur.execute("""
                         SELECT title, year, month, 
-                               monthly_ticket_count as tickets,
+                               monthly_tickets_on_list as tickets,
                                recommendation_count as recommends,
                                rank_on_list as rank_val
                         FROM novel_monthly_stats
@@ -4339,7 +4338,7 @@ def predict_simple():
         
         config = QIDIAN_CONFIG if platform_key == 'Qidian' else ZONGHENG_CONFIG
         table = 'novel_monthly_stats' if platform_key == 'Qidian' else 'zongheng_book_ranks'
-        tkt_col = 'monthly_ticket_count' if platform_key == 'Qidian' else 'monthly_ticket'
+        tkt_col = 'monthly_tickets_on_list' if platform_key == 'Qidian' else 'monthly_ticket'
         
         try:
             conn = pymysql.connect(**config, cursorclass=pymysql.cursors.DictCursor)
@@ -4453,7 +4452,14 @@ def predict_simple():
         if len(chapter) >= 5000:
             content_score += 2
         dimensions['内容质量'] = min(30, content_score)
-        dimension_details['内容质量'] = f"字数{word_count/10000:.0f}万{'，内容丰富' if word_count >= 1000000 else '，内容适中'}"
+        content_detail_parts = []
+        if word_count >= 10000:
+            content_detail_parts.append(f"{word_count/10000:.0f}万字")
+        if len(synopsis) >= 100:
+            content_detail_parts.append("简介完整")
+        if len(chapter) >= 1000:
+            content_detail_parts.append("章节充实")
+        dimension_details['内容质量'] = '，'.join(content_detail_parts) if content_detail_parts else '基础评估'
         
         # 维度2: 商业价值 (基于月票、收藏、推荐)
         commercial_score = 10
@@ -4466,7 +4472,16 @@ def predict_simple():
         if collections >= 100000:
             commercial_score += 5
         dimensions['商业价值'] = min(30, commercial_score)
-        dimension_details['商业价值'] = f"月票{monthly_tickets}，收藏{collections}，{'头部作品' if monthly_tickets >= 5000 else '潜力作品' if monthly_tickets >= 1000 else '待观察'}"
+        commercial_parts = []
+        if monthly_tickets > 0:
+            commercial_parts.append(f"月票{monthly_tickets:,}")
+        if collections > 0:
+            commercial_parts.append(f"收藏{collections:,}")
+        if monthly_tickets >= 5000:
+            commercial_parts.append("头部作品")
+        elif monthly_tickets >= 1000:
+            commercial_parts.append("潜力作品")
+        dimension_details['商业价值'] = '，'.join(commercial_parts) if commercial_parts else '基础评估'
         
         # 维度3: 读者粘性 (基于评论、粉丝、互动)
         comments = data.get('comments', 0) or 0
@@ -4479,7 +4494,16 @@ def predict_simple():
         if followers >= 50000:
             stickiness_score += 5
         dimensions['读者粘性'] = min(25, stickiness_score)
-        dimension_details['读者粘性'] = f"评论{comments}，粉丝{followers}，{'互动活跃' if comments >= 1000 else '互动一般'}"
+        stickiness_parts = []
+        if comments > 0:
+            stickiness_parts.append(f"评论{comments:,}")
+        if followers > 0:
+            stickiness_parts.append(f"粉丝{followers:,}")
+        if comments >= 1000 or followers >= 10000:
+            stickiness_parts.append("互动活跃")
+        elif comments > 0:
+            stickiness_parts.append("有互动基础")
+        dimension_details['读者粘性'] = '，'.join(stickiness_parts) if stickiness_parts else '基础评估'
         
         # 维度4: 更新稳定性 (基于状态、增长率)
         stability_score = 15 if status == '连载' else (10 if status == '完本' else 5)
@@ -4489,7 +4513,10 @@ def predict_simple():
         elif growth > 10:
             stability_score += 3
         dimensions['更新稳定性'] = min(20, stability_score)
-        dimension_details['更新稳定性'] = f"状态{status}，周增长{growth}%，{'稳定更新' if status == '连载' else '已完结'}"
+        if growth > 0:
+            dimension_details['更新稳定性'] = f"{status}，周增长{growth}%"
+        else:
+            dimension_details['更新稳定性'] = f"{status}"
         
         # 维度5: 市场潜力 (基于题材热度、平台竞争)
         hot_categories = ['玄幻', '都市', '仙侠', '科幻', '悬疑']
@@ -4497,7 +4524,12 @@ def predict_simple():
         if ranking > 0 and ranking <= 100:
             potential_score += 5
         dimensions['市场潜力'] = min(20, potential_score)
-        dimension_details['市场潜力'] = f"题材{category}，{'热门题材' if category in hot_categories else '小众题材'}"
+        market_parts = [category]
+        if category in hot_categories:
+            market_parts.append("热门题材")
+        if ranking > 0 and ranking <= 100:
+            market_parts.append(f"榜单前{ranking}")
+        dimension_details['市场潜力'] = '，'.join(market_parts)
         
         # 维度6: IP延展性 (基于题材适配度、字数规模)
         adaptable_categories = ['玄幻', '仙侠', '都市', '科幻', '悬疑']
@@ -4505,7 +4537,14 @@ def predict_simple():
         if word_count >= 1000000:
             extend_score += 5
         dimensions['IP延展性'] = min(15, extend_score)
-        dimension_details['IP延展性'] = f"{'适合改编' if category in adaptable_categories else '改编难度较高'}，内容体量{'充足' if word_count >= 1000000 else '适中'}"
+        extend_parts = []
+        if category in adaptable_categories:
+            extend_parts.append("适合改编")
+        if word_count >= 1000000:
+            extend_parts.append("内容充足")
+        elif word_count >= 500000:
+            extend_parts.append("体量适中")
+        dimension_details['IP延展性'] = '，'.join(extend_parts) if extend_parts else "需积累内容"
         
         # ================================================================
         #  4. AI大模型生成详细报告
@@ -4515,6 +4554,8 @@ def predict_simple():
         
         # 分析历史数据趋势
         history_trend = "无历史数据"
+        future_predictions = []  # 未来预测数值
+        
         if history_data and len(history_data) > 1:
             # 计算趋势
             first = history_data[0]
@@ -4550,12 +4591,67 @@ def predict_simple():
             volatility = "波动较大" if variance > avg * 0.5 else "波动较小"
             
             history_trend = f"【{len(history_data)}个月历史数据】起始月票{ticket_start}→当前{ticket_end}，整体{trend_type}（{growth_rate:+.1f}%），{volatility}。中间值{ticket_mid}，平均值{avg:.0f}。"
+            
+            # ================================================================
+            #  基于历史数据的数值预测
+            # ================================================================
+            from datetime import datetime, timedelta
+            
+            # 计算月均增长率
+            if len(tickets) >= 2 and tickets[-2] > 0:
+                month_growth_rate = (tickets[-1] - tickets[-2]) / tickets[-2]
+            elif avg > 0:
+                month_growth_rate = (avg - tickets[0]) / (tickets[0] * len(tickets)) if tickets[0] > 0 else 0.05
+            else:
+                month_growth_rate = 0
+            
+            # 计算预测值（考虑趋势和波动）
+            last_year = last.get('year', datetime.now().year)
+            last_month = last.get('month', datetime.now().month)
+            
+            for i in range(1, 4):  # 预测未来3个月
+                pred_month = last_month + i
+                pred_year = last_year
+                if pred_month > 12:
+                    pred_month -= 12
+                    pred_year += 1
+                
+                # 预测月票（考虑增长率衰减）
+                decay_factor = 0.85 ** i  # 增长率逐月衰减
+                if trend_type in ["快速增长", "稳步上升"]:
+                    pred_tickets = int(ticket_end * (1 + month_growth_rate * decay_factor))
+                elif trend_type == "趋于平稳":
+                    pred_tickets = int(ticket_end * (1 + month_growth_rate * 0.3 * decay_factor))
+                else:  # 下滑趋势
+                    pred_tickets = int(ticket_end * (1 + month_growth_rate * 0.5 * decay_factor))
+                
+                # 确保预测值合理
+                pred_tickets = max(0, pred_tickets)
+                
+                future_predictions.append({
+                    'year': pred_year,
+                    'month': pred_month,
+                    'predicted_tickets': pred_tickets,
+                    'confidence': 'high' if volatility == "波动较小" else 'medium',
+                    'trend': trend_type
+                })
+            
         elif history_data and len(history_data) == 1:
             h = history_data[0]
             history_trend = f"【1条历史记录】{h['year']}/{h['month']}月票{h.get('monthly_tickets', 0) or 0}，数据有限仅供参考。"
         
-        # 构建AI提示词
-        prompt = f"""你是一位专业的网络文学IP价值评估专家。请对以下作品进行**详细的六维度深度分析**，重点结合历史数据趋势：
+        # 构建AI提示词 - 使用纯文本格式，避免Markdown符号
+        # 先构建预测部分（避免f-string中的反斜杠问题）
+        future_pred_text = ""
+        if future_predictions:
+            pred_parts = [f"{p['year']}/{p['month']}月预计{p['predicted_tickets']:,}票" for p in future_predictions]
+            future_pred_text = f"未来3个月预测：{', '.join(pred_parts)}"
+        
+        # JSON示例中的换行符
+        newline_char = chr(10)
+        json_example = '{"report": "综合评价报告完整内容...", "suggestions": ["建议1：针对XX维度，...具体措施...预期效果", "建议2...", ...], "prediction": "短期预测：...' + newline_char + '中期预测：...' + newline_char + '风险提示：...' + newline_char + '机会展望：..."}'
+        
+        prompt = f"""你是一位专业的网络文学IP价值评估专家。请对以下作品进行全面深度分析：
 
 作品信息：
 - 书名：《{title}》
@@ -4564,54 +4660,61 @@ def predict_simple():
 - 题材：{category}
 - 状态：{status}
 - 字数：{word_count/10000:.1f}万字
-- 月票：{monthly_tickets}
-- 收藏：{collections}
-- 推荐：{total_recommend}
-- 排名：{ranking if ranking > 0 else '未知'}
+- 月票：{monthly_tickets if monthly_tickets > 0 else '未提供'}
+- 收藏：{collections if collections > 0 else '未提供'}
+- 推荐：{total_recommend if total_recommend > 0 else '未提供'}
+- 排名：{f'第{ranking}名' if ranking > 0 else '未上榜'}
 
-六维度评分数据：
-1. 内容质量：{dimensions['内容质量']}/30 分 - {dimension_details['内容质量']}
-2. 商业价值：{dimensions['商业价值']}/30 分 - {dimension_details['商业价值']}
-3. 读者粘性：{dimensions['读者粘性']}/25 分 - {dimension_details['读者粘性']}
-4. 更新稳定性：{dimensions['更新稳定性']}/20 分 - {dimension_details['更新稳定性']}
-5. 市场潜力：{dimensions['市场潜力']}/20 分 - {dimension_details['市场潜力']}
-6. IP延展性：{dimensions['IP延展性']}/15 分 - {dimension_details['IP延展性']}
+六维度评分：
+1. 内容质量：{dimensions['内容质量']}/30分 - {dimension_details['内容质量']}
+2. 商业价值：{dimensions['商业价值']}/30分 - {dimension_details['商业价值']}
+3. 读者粘性：{dimensions['读者粘性']}/25分 - {dimension_details['读者粘性']}
+4. 更新稳定性：{dimensions['更新稳定性']}/20分 - {dimension_details['更新稳定性']}
+5. 市场潜力：{dimensions['市场潜力']}/20分 - {dimension_details['市场潜力']}
+6. IP延展性：{dimensions['IP延展性']}/15分 - {dimension_details['IP延展性']}
 
-历史数据趋势分析：
+历史趋势：
 {history_trend}
+{future_pred_text}
 
 综合评分：{score:.1f}分 ({_score_to_grade(score)}级)
 
-请严格按照以下格式生成**详细报告**，必须结合历史趋势进行深度分析：
+请生成【详细完整】的评估报告，要求如下：
 
-1. **综合评价报告**（必须包含）：
-   - 总体表现概述（50字）
-   - 历史数据解读：分析历史趋势（上升/下降/波动），说明变化原因（100字）
-   - 六维度逐一分析：解释每个维度为什么是那个分数，结合历史趋势说明（每个维度30-50字）
-   - 核心结论（30字）
-   总字数控制在500-600字
+【综合评价报告】（600-800字）：
+1. 总体表现概述（80字）：概括作品整体表现和市场定位
+2. 历史数据深度解读（150字）：分析月票变化趋势、增长原因、波动特征
+3. 六维度逐一深度分析（每个维度50-80字）：
+   - 内容质量：分析字数规模、内容深度、故事架构
+   - 商业价值：分析月票收藏表现、变现能力、商业前景
+   - 读者粘性：分析粉丝互动、评论活跃度、留存能力
+   - 更新稳定性：分析更新节奏、完结风险、读者期待
+   - 市场潜力：分析题材热度、竞争格局、增长空间
+   - IP延展性：分析改编潜力、衍生价值、跨媒介可能
+4. 核心结论（50字）：总结作品定位和发展建议
 
-2. **具体改进建议**（3-5条，必须结合历史趋势）：
-   - 基于历史趋势给出具体改进方向
-   - 明确指出针对哪个维度
-   - 给出可操作的改进措施
+【具体改进建议】（5-7条）：
+每条建议需包含：针对维度 + 具体问题 + 可操作措施 + 预期效果
 
-3. **未来发展预测**（基于历史趋势推断）：
-   - 短期预测（1-3个月）：根据当前趋势推断
-   - 中期预测（3-6个月）：考虑平台季节性因素
-   - 风险提示：指出可能导致趋势变化的风险点
-   总字数250-350字
+【未来发展预测】（300-400字）：
+1. 短期预测（1-3个月）：月票走势、榜单变化、读者增长（结合预测数值分析）
+2. 中期预测（3-6个月）：市场表现、竞争态势、IP进展
+3. 风险提示：潜在风险点和应对策略
+4. 机会展望：值得把握的发展机会
 
-请用JSON格式返回，注意report字段要包含历史数据解读：
-{{"report": "## 综合评价\\n\\n《{title}》综合评分{score:.1f}分（{_score_to_grade(score)}级）。\\n\\n### 历史数据解读\\n\\n【历史趋势】...\\n\\n### 六维度深度分析\\n\\n**内容质量**（{dimensions['内容质量']}/30分）：...\\n\\n**商业价值**（{dimensions['商业价值']}/30分）：...\\n\\n**读者粘性**（{dimensions['读者粘性']}/25分）：...\\n\\n**更新稳定性**（{dimensions['更新稳定性']}/20分）：...\\n\\n**市场潜力**（{dimensions['市场潜力']}/20分）：...\\n\\n**IP延展性**（{dimensions['IP延展性']}/15分）：...\\n\\n### 核心结论\\n...", "suggestions": ["建议1（基于历史趋势）：具体措施...", "建议2..."], "prediction": "## 发展预测\\n\\n**短期（1-3个月）**：根据{history_trend[:20]}...\\n\\n**中期（3-6个月）**：...\\n\\n**风险提示**：..."}}"""
+注意：使用中文标点，不要使用Markdown符号（如##、**等），直接输出纯文本内容。
+
+请用JSON格式返回：
+{json_example}"""
 
         try:
             # 使用 _call_model 方法，model_key='chat'
             messages = [{"role": "user", "content": prompt}]
-            response = ai_service._call_model('chat', messages, temperature=0.7, max_tokens=1200, json_mode=False)
+            response = ai_service._call_model('chat', messages, temperature=0.7, max_tokens=2000, json_mode=False)
             
             if response:
                 import re
+                import json
                 # response 可能是字符串或包含 content 的字典
                 if isinstance(response, dict):
                     content = response.get('content', str(response))
@@ -4681,6 +4784,7 @@ def predict_simple():
             'suggestions': suggestions,
             'report': ai_report.get('report', ''),
             'prediction': ai_report.get('prediction', ''),
+            'future_predictions': future_predictions,  # 未来3个月预测数值
             'platform': platform,
             'mode': mode,
             'confidence': confidence,
@@ -4695,6 +4799,37 @@ def predict_simple():
                 'word_count': h['word_count']
             } for h in history_data] if history_data else []
         }
+        
+        # 保存预测记录到数据库（用于管理员端训练回流池）
+        try:
+            import json
+            try:
+                from backend.auth import decode_token, get_auth_db
+            except ImportError:
+                from auth import decode_token, get_auth_db
+            user_id = None
+            auth_header = request.headers.get('Authorization', '')
+            if auth_header.startswith('Bearer '):
+                token = auth_header[7:]
+                try:
+                    payload = decode_token(token)
+                    user_id = payload.get('user_id')
+                except Exception:
+                    pass
+            
+            conn = get_auth_db()
+            with conn.cursor() as cursor:
+                cursor.execute(
+                    "INSERT INTO user_predictions (user_id, title, category, score, details) VALUES (%s, %s, %s, %s, %s)",
+                    (user_id, title, category, float(score), json.dumps(result.get('dimension_details', {}), ensure_ascii=False))
+                )
+                conn.commit()
+            conn.close()
+            print(f"✅ Saved prediction to DB: {title} (score: {score})")
+        except Exception as e:
+            print(f"⚠️ Failed to save user prediction to DB: {e}")
+            import traceback
+            traceback.print_exc()
         
         return jsonify(result)
         

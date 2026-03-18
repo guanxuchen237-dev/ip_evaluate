@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, reactive } from 'vue';
-import { Sparkles, Loader2, AlertTriangle, Trophy, Heart, BarChart3, BookOpen, TrendingUp, Award, Zap, ChevronRight, RefreshCw, Star, Target, FileText, Users, Crown, Upload, X, Database, LineChart, Lightbulb } from "lucide-vue-next";
+import { Sparkles, Loader2, AlertTriangle, Trophy, Heart, BarChart3, BookOpen, TrendingUp, Award, Zap, ChevronRight, RefreshCw, Star, Target, FileText, Users, Crown, Upload, X, Database, LineChart, Lightbulb, Download } from "lucide-vue-next";
 import axios from 'axios';
 
 type PredictionMode = 'basic' | 'ranking' | 'engagement' | 'content';
@@ -101,6 +101,57 @@ const reset = () => {
     collections: 0, recommendations: 0, comments: 0, followers: 0,
     chapterContent: '', synopsis: ''
   });
+};
+
+const exportReport = () => {
+  if (!result.value) return;
+  
+  // 格式化未来预测
+  const futurePredText = result.value.future_predictions?.length 
+    ? `未来3个月预测：\n${result.value.future_predictions.map((p: any) => `- ${p.year}/${p.month}月：预计${p.predicted_tickets?.toLocaleString()}票（${p.trend}）`).join('\n')}`
+    : '';
+  
+  // 格式化历史数据
+  const historyText = result.value.history?.length
+    ? `历史月票数据：\n${result.value.history.map((h: any) => `- ${h.year}/${h.month}月：${h.monthly_tickets?.toLocaleString()}票`).join('\n')}`
+    : '';
+  
+  const reportContent = `IP价值评估报告
+================
+
+作品信息：
+- 书名：《${formData.title}》
+- 平台：${formData.platform}
+- 题材：${formData.category}
+- 状态：${formData.status}
+- 综合评分：${result.value.score?.toFixed(1)}分（${result.value.grade}级）
+
+六维度评分：
+${Object.entries(result.value.dimensions || {}).map(([k, v]) => `- ${k}：${v}分 - ${result.value.dimension_details?.[k] || ''}`).join('\n')}
+
+${historyText}
+
+${futurePredText}
+
+评估报告：
+${result.value.report || '暂无'}
+
+${result.value.prediction ? `发展预测：\n${result.value.prediction}` : ''}
+
+${result.value.suggestions?.length ? `优化建议：\n${result.value.suggestions.map((s: string, i: number) => `${i + 1}. ${s}`).join('\n')}` : ''}
+
+生成时间：${new Date().toLocaleString()}
+`;
+
+  const blob = new Blob([reportContent], { type: 'text/markdown;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `IP评估报告_${formData.title}_${new Date().toISOString().slice(0, 10)}.md`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 };
 
 const predictedLevel = computed(() => {
@@ -388,36 +439,75 @@ const removeFile = () => {
           </div>
         </div>
 
-        <!-- AI Report -->
-        <div class="bg-gradient-to-br from-indigo-50/80 to-purple-50/80 backdrop-blur-xl border border-indigo-100 rounded-xl shadow-sm p-5">
-          <h4 class="text-sm font-semibold text-indigo-700 mb-3 flex items-center gap-2">
-            <Sparkles class="w-4 h-4" />
-            AI 分析报告
-          </h4>
-          <div class="text-sm text-slate-600 leading-relaxed" v-html="renderMarkdown(result.report)"></div>
+        <!-- Report Section -->
+        <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+          <div class="px-5 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+            <h4 class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+              <FileText class="w-4 h-4 text-indigo-500" />
+              评估报告
+            </h4>
+            <button 
+              @click="exportReport"
+              class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-colors"
+            >
+              <Download class="w-3.5 h-3.5" />
+              导出报告
+            </button>
+          </div>
+          <div class="p-5">
+            <div class="text-sm text-slate-600 leading-relaxed whitespace-pre-line">{{ result.report }}</div>
+          </div>
         </div>
 
-        <!-- Prediction -->
-        <div v-if="result.prediction" class="bg-purple-50/60 backdrop-blur-xl border border-purple-200 rounded-xl shadow-sm p-5">
-          <h4 class="text-sm font-semibold text-purple-700 mb-3 flex items-center gap-2">
-            <Lightbulb class="w-4 h-4" />
-            未来预测
-          </h4>
-          <div class="text-sm text-slate-600 leading-relaxed" v-html="renderMarkdown(result.prediction)"></div>
+        <!-- Prediction Section -->
+        <div v-if="result.prediction || result.future_predictions?.length" class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+          <div class="px-5 py-3 bg-purple-50 border-b border-purple-100">
+            <h4 class="text-sm font-semibold text-purple-700 flex items-center gap-2">
+              <TrendingUp class="w-4 h-4" />
+              发展预测
+            </h4>
+          </div>
+          <div class="p-5">
+            <!-- 未来预测数值 -->
+            <div v-if="result.future_predictions?.length" class="mb-4 p-4 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-lg border border-purple-100">
+              <h5 class="text-xs font-semibold text-purple-600 mb-3 flex items-center gap-1">
+                <TrendingUp class="w-3 h-3" />
+                未来3个月月票预测
+              </h5>
+              <div class="grid grid-cols-3 gap-3">
+                <div v-for="(pred, i) in result.future_predictions" :key="i" 
+                     class="text-center p-3 bg-white rounded-lg shadow-sm border border-purple-100">
+                  <div class="text-xs text-slate-500 mb-1">{{ pred.year }}/{{ pred.month }}月</div>
+                  <div class="text-lg font-bold text-purple-600">{{ pred.predicted_tickets?.toLocaleString() }}</div>
+                  <div class="text-xs text-slate-400">预计月票</div>
+                  <div class="mt-1">
+                    <span class="text-xs px-1.5 py-0.5 rounded" 
+                          :class="pred.trend?.includes('增长') || pred.trend?.includes('上升') ? 'bg-emerald-100 text-emerald-600' : pred.trend?.includes('下滑') ? 'bg-rose-100 text-rose-600' : 'bg-slate-100 text-slate-600'">
+                      {{ pred.trend }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- 预测文字 -->
+            <div v-if="result.prediction" class="text-sm text-slate-600 leading-relaxed whitespace-pre-line">{{ result.prediction }}</div>
+          </div>
         </div>
 
-        <!-- Suggestions -->
-        <div v-if="result.suggestions?.length" class="bg-amber-50/60 backdrop-blur-xl border border-amber-200 rounded-xl shadow-sm p-5">
-          <h4 class="text-sm font-semibold text-amber-700 mb-3 flex items-center gap-2">
-            <Zap class="w-4 h-4" />
-            优化建议
-          </h4>
-          <div class="space-y-2">
-            <div v-for="(s, i) in result.suggestions" :key="i" class="flex items-start gap-3 p-3 rounded-lg bg-white/60">
-              <span class="w-6 h-6 rounded-full bg-amber-500 text-white text-xs font-bold flex items-center justify-center flex-shrink-0">
+        <!-- Suggestions Section -->
+        <div v-if="result.suggestions?.length" class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+          <div class="px-5 py-3 bg-amber-50 border-b border-amber-100">
+            <h4 class="text-sm font-semibold text-amber-700 flex items-center gap-2">
+              <Target class="w-4 h-4" />
+              优化建议
+            </h4>
+          </div>
+          <div class="p-5 space-y-3">
+            <div v-for="(s, i) in result.suggestions" :key="i" class="flex items-start gap-3">
+              <span class="w-6 h-6 rounded-full bg-amber-500 text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
                 {{ Number(i) + 1 }}
               </span>
-              <span class="text-sm text-slate-600 leading-relaxed pt-0.5">{{ s }}</span>
+              <span class="text-sm text-slate-600 leading-relaxed">{{ s }}</span>
             </div>
           </div>
         </div>
