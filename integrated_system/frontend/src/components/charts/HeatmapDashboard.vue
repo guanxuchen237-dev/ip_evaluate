@@ -61,13 +61,14 @@ const renderChart = () => {
     return
   }
   
-  // 收集所有月�?  const allMonths = new Set<string>()
+  // 收集所有月份
+  const allMonths: Set<string> = new Set()
   books.forEach(book => {
     book.dates.forEach((date: string) => allMonths.add(date))
   })
   const sortedMonths = Array.from(allMonths).sort()
   
-  // 构建热力图数�?[x, y, value]
+  // 构建热力图数据 [x, y, value]
   const data: [number, number, number][] = []
   books.forEach((book, yIndex) => {
     const dateMap = new Map<string, number>()
@@ -75,13 +76,14 @@ const renderChart = () => {
       dateMap.set(date, book.tickets[i] || 0)
     })
     
-    sortedMonths.forEach((month, xIndex) => {
+    sortedMonths.forEach((month: string, xIndex: number) => {
       const value = dateMap.get(month) || 0
       data.push([xIndex, yIndex, value])
     })
   })
   
-  // 计算最大值用于颜色映�?  const maxValue = Math.max(...data.map(d => d[2]))
+  // 计算最大值用于颜色映射
+  const maxValue = Math.max(...data.map(d => d[2]), 1)
   
   const option = {
     tooltip: {

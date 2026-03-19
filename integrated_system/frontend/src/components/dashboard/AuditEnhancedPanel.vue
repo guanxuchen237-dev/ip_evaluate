@@ -19,7 +19,7 @@
             <div class="w-11 h-6 rounded-full transition-colors duration-300" :class="autoRefresh ? 'bg-emerald-500' : 'bg-slate-300'"></div>
             <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-300 shadow-sm" :class="autoRefresh ? 'translate-x-5' : 'translate-x-0'"></div>
           </div>
-          <span class="font-medium">{{ autoRefresh ? '自动刷新已开�? : '自动刷新已关�? }}</span>
+          <span class="font-medium">{{ autoRefresh ? '自动刷新已开启' : '自动刷新已关闭' }}</span>
           <span class="text-xs text-slate-400">(30s)</span>
           <span v-if="lastRefreshTime" class="text-xs text-slate-400">| 上次: {{ lastRefreshTime }}</span>
         </label>
@@ -80,7 +80,7 @@
                       @click="trendRange = range"
                       class="px-2 py-1 text-xs rounded font-medium transition-colors"
                       :class="trendRange === range ? 'bg-indigo-100 text-indigo-600' : 'text-slate-400 hover:text-slate-600'">
-                {{ range === '7d' ? '7�? : '30�? }}
+                {{ range === '7d' ? '7天' : '30天' }}
               </button>
             </div>
           </div>
@@ -142,7 +142,7 @@
                     @click="toggleFilter('riskLevels', level)"
                     class="px-3 py-1.5 text-xs rounded-lg font-medium transition-all"
                     :class="filters.riskLevels.includes(level) ? getRiskLevelClass(level) : 'bg-slate-100 text-slate-500'">
-              {{ level === 'HIGH' ? '�? : level === 'MEDIUM' ? '�? : '�? }}
+              {{ level === 'HIGH' ? '高' : level === 'MEDIUM' ? '中' : '低' }}
             </button>
           </div>
         </div>
@@ -259,7 +259,7 @@
                         'bg-amber-100 text-amber-700': log.risk_level === 'MEDIUM',
                         'bg-emerald-100 text-emerald-700': log.risk_level === 'LOW'
                       }">
-                  {{ log.risk_level === 'HIGH' ? '高风�? : log.risk_level === 'MEDIUM' ? '中风�? : '低风�? }}
+                  {{ log.risk_level === 'HIGH' ? '高风险' : log.risk_level === 'MEDIUM' ? '中风险' : '低风险' }}
                 </span>
               </td>
               <td class="px-4 py-3">
@@ -281,7 +281,7 @@
                         'bg-blue-100 text-blue-700': log.status === 'REVIEWED',
                         'bg-slate-100 text-slate-600': log.status === 'PENDING'
                       }">
-                  {{ log.status === 'RESOLVED' ? '已解�? : log.status === 'REVIEWED' ? '已查�? : '待处�? }}
+                  {{ log.status === 'RESOLVED' ? '已解决' : log.status === 'REVIEWED' ? '已查阅' : '待处理' }}
                 </span>
               </td>
               <td class="px-4 py-3 text-right">
@@ -289,7 +289,7 @@
                   <button 
                     @click="handleMarkResolved(log)" 
                     :disabled="log.status === 'RESOLVED'"
-                    title="标记已解�? 
+                    title="标记已解决" 
                     class="p-1.5 rounded-lg transition-colors"
                     :class="log.status === 'RESOLVED' ? 'text-slate-300 cursor-not-allowed' : 'text-emerald-600 hover:bg-emerald-50'"
                   >
@@ -326,13 +326,16 @@
       <!-- 分页 -->
       <div class="px-4 py-3 border-t border-slate-100 flex items-center justify-between">
         <div class="text-xs text-slate-500">
-          显示 {{ (currentPage - 1) * pageSize + 1 }} - {{ Math.min(currentPage * pageSize, filteredAuditLogs.length) }} �?{{ filteredAuditLogs.length }} �?        </div>
+          显示 {{ (currentPage - 1) * pageSize + 1 }} - {{ Math.min(currentPage * pageSize, filteredAuditLogs.length) }} 条记录 / {{ filteredAuditLogs.length }} 条
+        </div>
         <div class="flex items-center gap-2">
           <button @click="currentPage--" :disabled="currentPage <= 1" class="px-3 py-1.5 text-xs rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed">
-            上一�?          </button>
-          <span class="text-xs text-slate-500">�?{{ currentPage }} / {{ totalPages }} �?/span>
+            上一页
+          </button>
+          <span class="text-xs text-slate-500">第 {{ currentPage }} 页 / 共 {{ totalPages }} 页</span>
           <button @click="currentPage++" :disabled="currentPage >= totalPages" class="px-3 py-1.5 text-xs rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed">
-            下一�?          </button>
+            下一页
+          </button>
         </div>
       </div>
     </div>
@@ -401,8 +404,8 @@
                   <div>
                     <label class="text-xs text-slate-500">触发条件</label>
                     <select v-model="rule.condition" class="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500/20 outline-none">
-                      <option value="riskLevel === 'HIGH'">高风险等�?/option>
-                      <option value="riskLevel === 'HIGH' && score > 80">高风�?+ 高分书籍</option>
+                      <option value="riskLevel === 'HIGH'">高风险等级</option>
+                      <option value="riskLevel === 'HIGH' && score > 80">高风险等级 + 高分书籍</option>
                       <option value="score < 30">低分书籍 (评分 < 30)</option>
                       <option value="riskType === 'PLOT_TOXIC'">争议剧情类型</option>
                     </select>
@@ -412,13 +415,14 @@
                     <select v-model="rule.action" class="w-full mt-1 px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500/20 outline-none">
                       <option value="email">邮件通知</option>
                       <option value="dingtalk">钉钉 webhook</option>
-                      <option value="console">控制台提�?/option>
+                      <option value="console">控制台提示</option>
                     </select>
                   </div>
                 </div>
               </div>
               <button @click="addAlertRule" class="w-full py-3 border-2 border-dashed border-slate-200 text-slate-500 rounded-xl hover:border-indigo-300 hover:text-indigo-600 transition-colors flex items-center justify-center gap-2">
-                <Plus class="w-4 h-4" /> 添加新规�?              </button>
+                <Plus class="w-4 h-4" /> 添加新规则
+              </button>
             </div>
           </div>
           <div class="p-6 border-t border-slate-100 flex justify-end gap-3">
@@ -442,7 +446,7 @@ import {
 
 const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:5000/api'
 
-// ==================== 状态管�?====================
+// ==================== 状态管理 =====================
 const auditLogs = ref<any[]>([])
 const auditLogsLoading = ref(false)
 const autoRefresh = ref(false)
@@ -457,7 +461,8 @@ const aiInsights = ref<any[]>([])
 const trendRange = ref('7d')
 const hoveredTrendPoint = ref<any>(null)
 
-// 增强筛选器状�?const filters = ref({
+// 增强筛选器状态
+const filters = ref({
   riskLevels: [] as string[],
   riskTypes: [] as string[],
   platform: 'all',
@@ -474,7 +479,7 @@ const alertRules = ref([
 ])
 
 // ==================== 自动刷新机制 ====================
-let refreshTimer: NodeJS.Timeout | null = null
+let refreshTimer: ReturnType<typeof setInterval> | null = null
 
 function toggleAutoRefresh() {
   if (autoRefresh.value) {
@@ -488,7 +493,8 @@ function startAutoRefresh() {
   if (refreshTimer) clearInterval(refreshTimer)
   refreshTimer = setInterval(() => {
     fetchAuditLogs()
-  }, 30000) // 30�?}
+  }, 30000) // 30 秒
+}
 
 function stopAutoRefresh() {
   if (refreshTimer) {
@@ -517,23 +523,32 @@ async function fetchAuditLogs() {
 // ==================== 筛选逻辑 ====================
 const filteredAuditLogs = computed(() => {
   return auditLogs.value.filter(log => {
-    // 风险等级筛�?    if (filters.value.riskLevels.length > 0 && !filters.value.riskLevels.includes(log.risk_level)) {
+    // 风险等级筛选
+    if (filters.value.riskLevels.length > 0 && !filters.value.riskLevels.includes(log.risk_level)) {
       return false
     }
-    // 风险类型筛�?    if (filters.value.riskTypes.length > 0 && !filters.value.riskTypes.includes(log.risk_type)) {
+    // 风险类型筛选
+    if (filters.value.riskTypes.length > 0 && !filters.value.riskTypes.includes(log.risk_type)) {
       return false
     }
-    // 平台筛�?    if (filters.value.platform !== 'all' && log.platform !== filters.value.platform) {
+    // 平台筛选
+    if (filters.value.platform !== 'all' && log.platform !== filters.value.platform) {
       return false
     }
-    // 日期范围筛�?    if (filters.value.dateRange.start && new Date(log.created_at) < new Date(filters.value.dateRange.start)) {
+    // 日期范围筛选
+    const dateStart = filters.value.dateRange?.start
+    const dateEnd = filters.value.dateRange?.end
+    if (dateStart && new Date(log.created_at) < new Date(dateStart)) {
       return false
     }
-    if (filters.value.dateRange.end && new Date(log.created_at) > new Date(filters.value.dateRange.end)) {
+    if (dateEnd && new Date(log.created_at) > new Date(dateEnd)) {
       return false
     }
-    // 评分范围筛�?    const score = log.score || 0
-    if (score < filters.value.scoreRange[0] || score > filters.value.scoreRange[1]) {
+    // 评分范围筛选
+    const score = log.score || 0
+    const scoreMin = filters.value.scoreRange?.[0] ?? 0
+    const scoreMax = filters.value.scoreRange?.[1] ?? 100
+    if (score < scoreMin || score > scoreMax) {
       return false
     }
     return true
@@ -582,7 +597,8 @@ function toggleSelectAll() {
 }
 
 async function batchMarkResolved() {
-  // 批量标记已解�?  for (const id of selectedLogs.value) {
+  // 批量标记已解决
+  for (const id of selectedLogs.value) {
     await markResolved(id, false)
   }
   selectedLogs.value = []
@@ -601,9 +617,9 @@ async function batchReaudit() {
 async function batchExport() {
   // 批量导出
   const selected = auditLogs.value.filter(log => selectedLogs.value.includes(log.id))
-  let markdown = '# 批量审计报告\\n\\n'
+  let markdown = '# 批量审计报告\n\n'
   for (const log of selected) {
-    markdown += `## �?{log.book_title}》\\n- 风险等级: ${log.risk_level}\\n- 风险类型: ${log.risk_type}\\n- 评分: ${log.score?.toFixed(1)}\\n- 时间: ${log.created_at}\\n\\n---\\n\\n`
+    markdown += `## 《${log.book_title}》\n- 风险等级: ${log.risk_level}\n- 风险类型: ${log.risk_type}\n- 评分: ${log.score?.toFixed(1)}\n- 时间: ${log.created_at}\n\n---\n\n`
   }
   downloadFile(markdown, `批量审计报告_${new Date().toISOString().split('T')[0]}.md`, 'text/markdown')
   selectedLogs.value = []
@@ -740,31 +756,31 @@ function exportSingleReport(log: any) {
   const aiAnalysis = log.ai_analysis || {}
   const marketAnalysis = log.market_analysis || {}
   const dimensions = [
-    { name: '题材市场契合�?, score: marketAnalysis.market_heat || 70, desc: '都市题材当前市场热度100，市场竞争较为激烈，需要更强的差异化内容才能突�? },
+    { name: '题材市场契合度', score: marketAnalysis.market_heat || 70, desc: '都市题材当前市场热度100，市场竞争较为激烈，需要更强的差异化内容才能突围' },
     { name: '运营数据表现', score: marketAnalysis.fan_loyalty || 60, desc: `月票${marketAnalysis.fan_loyalty || 74008}表现一般，建议加强粉丝运营。未提供排名数据。` },
-    { name: '内容质量评估', score: marketAnalysis.content_quality || 65, desc: '简介描述较为简略，建议补充更多亮点。内容储备相对较少，建议保持更新节奏�? },
-    { name: '商业价值潜�?, score: marketAnalysis.commercial_value || 100, desc: '具备较高的IP改编潜力，建议优先考虑影视、动漫改编。连载状态有利于持续积累粉丝和热度�? }
+    { name: '内容质量评估', score: marketAnalysis.content_quality || 65, desc: '简介描述较为简略，建议补充更多亮点。内容储备相对较少，建议保持更新节奏。' },
+    { name: '商业价值潜力', score: marketAnalysis.commercial_value || 100, desc: '具备较高的IP改编潜力，建议优先考虑影视、动漫改编。连载状态有利于持续积累粉丝和热度。' }
   ]
   
   const shortTerm = [
     '加强粉丝互动，通过定期加更、读者活动提升月票转化率',
     '完善作品简介，突出核心卖点和差异化特色',
-    '保持稳定的更新频率，培养读者追读习�?
+    '保持稳定的更新频率，培养读者追读习惯'
   ]
   
   const longTerm = [
-    '优化剧情节奏，增强章节卡点设�?,
+    '优化剧情节奏，增强章节卡点设计',
     '扩展内容题材，适当融入热点元素',
-    '关注用户反馈，及时调整创作方�?
+    '关注用户反馈，及时调整创作方向'
   ]
   
-  const markdown = `# �?{log.book_title}》IP价值审计报�?
+  const markdown = `# 《${log.book_title}》IP价值审计报告
 ---
 
-## 📊 基础信息
+## 基础信息
 
 - **书名**: ${log.book_title}
-- **作�?*: ${log.book_author || '未知'}
+- **作者**: ${log.book_author || '未知'}
 - **平台**: ${log.platform || '未知'}
 - **生成日期**: ${new Date().toISOString().split('T')[0]}
 - **IP评分**: ${log.score?.toFixed(1) || 'N/A'}
@@ -773,20 +789,20 @@ function exportSingleReport(log: any) {
 
 ---
 
-## 🤖 AI 深度分析总结
+## AI 深度分析总结
 
-${aiAnalysis.summary || '该作品展现出良好的市场潜力和内容质量，在当前都市题材中具有较强的竞争力。建议重点关注粉丝运营和内容更新策略，以最大化商业价值�?}
+${aiAnalysis.summary || '该作品展现出良好的市场潜力和内容质量，在当前都市题材中具有较强的竞争力。建议重点关注粉丝运营和内容更新策略，以最大化商业价值。'}
 
 ---
 
-## 📈 评分维度详解
+## 评分维度详解
 
 ${dimensions.map(d => `### ${d.name}: ${d.score}
 ${d.desc}`).join('\n\n')}
 
 ---
 
-## 💡 提升建议
+## 提升建议
 
 ### 短期优化 (1-3个月)
 
@@ -841,8 +857,8 @@ function generateAiInsights(log: any) {
     insights.push({
       type: 'warning',
       icon: AlertTriangle,
-      title: '高风险警�?,
-      content: `�?{log.book_title}》被标记为高风险，可能存在严重的内容合规问题，建议立即审查。`
+      title: '高风险警报',
+      content: `《${log.book_title}》被标记为高风险，可能存在严重的内容合规问题，建议立即审查。`
     })
   }
   
@@ -851,7 +867,7 @@ function generateAiInsights(log: any) {
       type: 'suggestion',
       icon: Lightbulb,
       title: '潜力建议',
-      content: '该书评分较高但存在风险，建议优先处理争议内容，有望成为爆款作品�?
+      content: '该书评分较高但存在风险，建议优先处理争议内容，有望成为爆款作品。'
     })
   }
   
@@ -859,34 +875,38 @@ function generateAiInsights(log: any) {
     type: 'info',
     icon: Info,
     title: '趋势分析',
-    content: `基于虚拟读者反馈，该书${log.risk_type === 'PLOT_TOXIC' ? '剧情争议�? : '风险指标'}呈现${Math.random() > 0.5 ? '上升' : '下降'}趋势。`
+    content: `基于虚拟读者反馈，该书${log.risk_type === 'PLOT_TOXIC' ? '剧情争议较大' : '风险指标'}呈现${Math.random() > 0.5 ? '上升' : '下降'}趋势。`
   })
   
   return insights
 }
 
-// ==================== 数据可视�?====================
+// ==================== 数据可视化 ====================
 const riskDistribution = computed(() => {
   const counts = { HIGH: 0, MEDIUM: 0, LOW: 0 }
   auditLogs.value.forEach(log => {
     const level = (log.risk_level || '').toUpperCase()
-    if (level === 'HIGH' || level === '高风�?) counts.HIGH++
-    else if (level === 'MEDIUM' || level === '�? || level === '中风�?) counts.MEDIUM++
-    else if (level === 'LOW' || level === '�? || level === '低风�?) counts.LOW++
-    else counts.LOW++ // 默认低风�?  })
+    if (level === 'HIGH' || level === '高风险') counts.HIGH++
+    else if (level === 'MEDIUM' || level === '中' || level === '中风险') counts.MEDIUM++
+    else if (level === 'LOW' || level === '低' || level === '低风险') counts.LOW++
+    else counts.LOW++ // 默认低风险
+  })
   const total = auditLogs.value.length || 1
   
   return [
-    { level: 'HIGH', label: '�?, count: counts.HIGH, percentage: (counts.HIGH / total) * 100, color: '#f43f5e', textColor: 'text-rose-600' },
-    { level: 'MEDIUM', label: '�?, count: counts.MEDIUM, percentage: (counts.MEDIUM / total) * 100, color: '#f59e0b', textColor: 'text-amber-600' },
-    { level: 'LOW', label: '�?, count: counts.LOW, percentage: (counts.LOW / total) * 100, color: '#10b981', textColor: 'text-emerald-600' }
+    { level: 'HIGH', label: '高', count: counts.HIGH, percentage: (counts.HIGH / total) * 100, color: '#f43f5e', textColor: 'text-rose-600' },
+    { level: 'MEDIUM', label: '中', count: counts.MEDIUM, percentage: (counts.MEDIUM / total) * 100, color: '#f59e0b', textColor: 'text-amber-600' },
+    { level: 'LOW', label: '低', count: counts.LOW, percentage: (counts.LOW / total) * 100, color: '#10b981', textColor: 'text-emerald-600' }
   ]
 })
 
 function getPieOffset(index: number) {
   let offset = 0
   for (let i = 0; i < index; i++) {
-    offset += riskDistribution.value[i].percentage * 4.4
+    const item = riskDistribution.value[i]
+    if (item) {
+      offset += item.percentage * 4.4
+    }
   }
   return offset
 }
@@ -895,16 +915,18 @@ const trendData = computed(() => {
   const days = trendRange.value === '7d' ? 7 : 30
   const today = new Date()
   
-  // 第一遍：收集每天的计�?  const counts = []
+  // 第一遍：收集每天的计数
+  const counts = []
   for (let i = days - 1; i >= 0; i--) {
     const date = new Date(today)
     date.setDate(date.getDate() - i)
-    const dateStr = date.toISOString().split('T')[0]
+    const dateStr = date.toISOString().split('T')[0] || ''
     const count = auditLogs.value.filter(log => log.created_at?.startsWith(dateStr)).length
     counts.push({ date: dateStr.slice(5), count })
   }
   
-  // 计算最大值用于归一�?  const maxCount = Math.max(...counts.map(d => d.count), 1)
+  // 计算最大值用于归一化
+  const maxCount = Math.max(...counts.map(d => d.count), 1)
   
   // 第二遍：计算坐标
   return counts.map((item, index) => ({
@@ -966,14 +988,16 @@ function addAlertRule() {
 }
 
 function saveAlertRules() {
-  // 保存�?localStorage 或后�?  localStorage.setItem('audit_alert_rules', JSON.stringify(alertRules.value))
+  // 保存配置到 localStorage 或后端
+  localStorage.setItem('audit_alert_rules', JSON.stringify(alertRules.value))
   showConfigModal.value = false
 }
 
 // ==================== 生命周期 ====================
 onMounted(() => {
   fetchAuditLogs()
-  // 加载保存的规�?  const saved = localStorage.getItem('audit_alert_rules')
+  // 加载保存的规则
+  const saved = localStorage.getItem('audit_alert_rules')
   if (saved) {
     alertRules.value = JSON.parse(saved)
   }
@@ -983,7 +1007,8 @@ onUnmounted(() => {
   stopAutoRefresh()
 })
 
-// 监听筛选变化重置页�?watch(() => filters.value, () => {
+// 监听筛选变化重置页码
+watch(() => filters.value, () => {
   currentPage.value = 1
 }, { deep: true })
 </script>

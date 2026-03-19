@@ -318,7 +318,15 @@ const triggerBookAudit = async () => {
             }
         }
         
-        const response = await fetch(`http://localhost:5000/api/admin/audit/deep_scan_stream?${queryParams}`)
+        const token = localStorage.getItem('auth_token')
+        const headers: Record<string, string> = {}
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`
+        }
+        
+        const response = await fetch(`http://localhost:5000/api/admin/audit/deep_scan_stream?${queryParams}`, {
+            headers
+        })
         
         if (!response.body) throw new Error('ReadableStream API is not supported')
         
@@ -764,11 +772,11 @@ onMounted(() => {
                             <div class="flex items-center gap-2">
                                 <div v-if="isPotentialGem" class="flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-full shadow-lg shadow-amber-200 animate-pulse">
                                     <Award class="w-4 h-4 fill-white" />
-                                    <span class="text-[11px] font-black tracking-widest uppercase">S-Class Potential Gem</span>
+                                    <span class="text-[11px] font-black tracking-widest">S级潜力遗珠</span>
                                 </div>
                                 <div v-if="hasRisk" class="flex items-center gap-1 px-3 py-1 bg-rose-600 text-white rounded-full shadow-lg shadow-rose-200">
                                     <ShieldAlert class="w-4 h-4" />
-                                    <span class="text-[11px] font-black tracking-widest uppercase">High Risk Warning</span>
+                                    <span class="text-[11px] font-black tracking-widest">高风险预警</span>
                                 </div>
                                 <div class="flex items-center gap-1.5 self-start mt-1.5">
                                     <span class="bg-amber-100 p-0.5 rounded-full"><div class="w-4 h-4 rounded-full bg-amber-500 flex items-center justify-center text-white text-[9px] font-bold">V</div></span>
@@ -1479,11 +1487,11 @@ onMounted(() => {
                                         class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border"
                                         :class="log.risk_type === 'GLOBAL_GEM' ? 'bg-indigo-600 border-indigo-500 text-white shadow-md shadow-indigo-200' : log.risk_type === 'POTENTIAL_GEM' ? 'bg-amber-100 border-amber-200 text-amber-700' : log.risk_type === 'NORMAL' ? 'bg-emerald-50 border-emerald-100 text-emerald-600' : 'bg-rose-50 border-rose-100 text-rose-600'"
                                     >
-                                        {{ log.risk_type === 'GLOBAL_GEM' ? 'Global Strategy' : log.risk_type === 'POTENTIAL_GEM' ? 'Business Potential' : log.risk_type === 'NORMAL' ? 'Healthy Status' : 'Risk Warning' }}
+                                        {{ log.risk_type === 'GLOBAL_GEM' ? '全球战略' : log.risk_type === 'POTENTIAL_GEM' ? '商业潜力' : log.risk_type === 'NORMAL' ? '健康状态' : '风险预警' }}
                                     </div>
                                     <div class="flex items-center gap-1.5" :class="log.risk_type === 'GLOBAL_GEM' ? 'text-indigo-600' : log.risk_level === 'High' ? 'text-rose-500' : log.risk_level === 'Low' ? 'text-emerald-500' : 'text-amber-500'">
                                         <div class="w-1.5 h-1.5 rounded-full bg-current animate-ping"></div>
-                                        <span class="text-[11px] font-black uppercase tracking-widest">{{ log.risk_level }}</span>
+                                        <span class="text-[11px] font-black tracking-widest">{{ log.risk_level === 'High' ? '高风险' : log.risk_level === 'Medium' ? '中风险' : log.risk_level === 'Low' ? '低风险' : log.risk_level }}</span>
                                     </div>
                                 </div>
 
@@ -1547,7 +1555,7 @@ onMounted(() => {
                                         <span v-for="(v, k) in latestAuditReport.data_sources" :key="k"
                                               class="px-2 py-0.5 rounded text-[10px] font-bold"
                                               :class="v ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-400'">
-                                            {{ k === 'vr_comments' ? '虚拟读者' : k === 'ai_eval' ? 'AI评分' : k === 'global_stats' ? '出海' : k === 'realtime_trend' ? '实时' : 'XGBoost' }}
+                                            {{ String(k) === 'vr_comments' ? '虚拟读者' : String(k) === 'ai_eval' ? 'AI评分' : String(k) === 'global_stats' ? '出海' : String(k) === 'realtime_trend' ? '实时' : 'XGBoost' }}
                                             {{ v ? '✓' : '✗' }}
                                         </span>
                                     </div>

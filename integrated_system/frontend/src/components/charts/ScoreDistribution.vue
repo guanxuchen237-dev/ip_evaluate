@@ -22,7 +22,9 @@ const initChart = async () => {
                 confine: false,
                 position: function (point: any, params: any, dom: any, rect: any, size: any) {
                     const obj: any = { top: 60 };
-                    obj[['left', 'right'][+(point[0] < size.viewSize[0] / 2)]] = 10;
+                    const side = +(point[0] < size.viewSize[0] / 2);
+                    const positions = ['left', 'right'] as const;
+                    obj[positions[side] ?? 'left'] = 10;
                     return obj;
                 }
             },

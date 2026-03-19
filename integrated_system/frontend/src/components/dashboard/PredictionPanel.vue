@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import { ref, computed, reactive } from 'vue';
-import { Sparkles, Loader2, AlertTriangle, Trophy, Heart, BarChart3, BookOpen, TrendingUp, Award, Zap, ChevronRight, RefreshCw, Star, Target, FileText, Users, Crown, Upload, X, Database, LineChart, Lightbulb, Download } from "lucide-vue-next";
+import { Loader2, AlertTriangle, BarChart3, TrendingUp, ChevronRight, RefreshCw, Target, FileText, Upload, X, Database, LineChart, Download, Info, Activity, Users, BookOpen, Award } from "lucide-vue-next";
 import axios from 'axios';
 
-type PredictionMode = 'basic' | 'ranking' | 'engagement' | 'content';
+type PredictionMode = 'basic' | 'operation' | 'engagement' | 'content';
 
 const currentMode = ref<PredictionMode>('basic');
 
 const modes = [
-  { id: 'basic' as PredictionMode, label: '基本信息', icon: FileText, color: 'indigo' },
-  { id: 'ranking' as PredictionMode, label: '月票排名', icon: Crown, color: 'amber' },
-  { id: 'engagement' as PredictionMode, label: '收藏推荐', icon: Heart, color: 'rose' },
-  { id: 'content' as PredictionMode, label: '内容质量', icon: BarChart3, color: 'emerald' },
+  { id: 'basic' as PredictionMode, label: '基本信息', icon: FileText, color: 'indigo', desc: '作品基础数据' },
+  { id: 'operation' as PredictionMode, label: '运营数据', icon: Activity, color: 'amber', desc: '月票与排名趋势' },
+  { id: 'engagement' as PredictionMode, label: '收藏推荐', icon: Users, color: 'rose', desc: '用户互动指标' },
+  { id: 'content' as PredictionMode, label: '内容质量', icon: BookOpen, color: 'emerald', desc: '文本质量分析' },
 ];
 
 const formData = reactive({
@@ -63,6 +63,7 @@ const submitPrediction = async () => {
 
   try {
     const payload = { mode: currentMode.value, ...formData };
+    console.log('[Frontend] Submitting payload:', payload); // 调试输出
     const res = await axios.post(`${API_BASE}/predict/simple`, payload);
     result.value = res.data;
     
@@ -156,12 +157,12 @@ ${result.value.suggestions?.length ? `优化建议：\n${result.value.suggestion
 
 const predictedLevel = computed(() => {
   const s = result.value?.score || 0;
-  if (s >= 90) return { label: 'S级', sub: '神作', text: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-200', ring: 'text-amber-500' };
-  if (s >= 80) return { label: 'A+级', sub: '爆款', text: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-200', ring: 'text-indigo-500' };
-  if (s >= 70) return { label: 'A级', sub: '精品', text: 'text-sky-600', bg: 'bg-sky-50', border: 'border-sky-200', ring: 'text-sky-500' };
-  if (s >= 60) return { label: 'B级', sub: '潜力', text: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-200', ring: 'text-emerald-500' };
-  if (s >= 50) return { label: 'C级', sub: '普通', text: 'text-slate-600', bg: 'bg-slate-50', border: 'border-slate-200', ring: 'text-slate-500' };
-  return { label: 'D级', sub: '待观察', text: 'text-rose-600', bg: 'bg-rose-50', border: 'border-rose-200', ring: 'text-rose-500' };
+  // 与后端 _score_to_grade 函数保持一致
+  if (s >= 88) return { label: 'S级', sub: '顶级IP', text: 'text-rose-600', bg: 'bg-rose-50', border: 'border-rose-200', ring: 'text-rose-500' };
+  if (s >= 80) return { label: 'A级', sub: '优质IP', text: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-200', ring: 'text-indigo-500' };
+  if (s >= 70) return { label: 'B级', sub: '良好IP', text: 'text-sky-600', bg: 'bg-sky-50', border: 'border-sky-200', ring: 'text-sky-500' };
+  if (s >= 60) return { label: 'C级', sub: '普通IP', text: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-200', ring: 'text-emerald-500' };
+  return { label: 'D级', sub: '低价值IP', text: 'text-slate-600', bg: 'bg-slate-50', border: 'border-slate-200', ring: 'text-slate-500' };
 });
 
 const getPlatformHint = () => {
@@ -281,48 +282,45 @@ const removeFile = () => {
 </script>
 
 <template>
-  <div class="prediction-panel h-full flex flex-col p-5">
-    
+  <div class="space-y-6">
     <!-- Header -->
-    <div class="flex items-center justify-between mb-6">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-md">
-          <Sparkles class="w-5 h-5 text-white" />
-        </div>
-        <div>
-          <h2 class="text-lg font-bold text-slate-900">IP价值预测</h2>
-          <p class="text-xs text-slate-500">基于多维度数据的智能评估</p>
-        </div>
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+          <BarChart3 class="w-6 h-6 text-indigo-600" />
+          IP价值评估
+        </h2>
+        <span class="text-xs text-slate-500">多维度数据综合分析</span>
       </div>
-      <div v-if="!result" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200">
-        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-        <span class="text-xs font-medium text-emerald-600">AI就绪</span>
+      <div v-if="!result" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-100 border border-slate-200">
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        <span class="text-xs font-medium text-slate-600">就绪</span>
       </div>
     </div>
 
     <!-- Result View -->
-    <div v-if="result" class="flex-1 flex flex-col overflow-hidden gap-4">
+    <div v-if="result" class="space-y-4">
       
-      <!-- Score Card -->
-      <div class="bg-white/60 backdrop-blur-xl border border-white/40 rounded-2xl shadow-sm p-6">
-        <div class="flex items-center gap-6">
+      <!-- Score Overview -->
+      <div class="bg-white/70 backdrop-blur-xl border border-white/50 rounded-2xl shadow-sm p-5">
+        <div class="flex items-center gap-5">
           <!-- Score Circle -->
-          <div class="relative w-28 h-28 flex-shrink-0">
+          <div class="relative w-24 h-24 flex-shrink-0">
             <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
-              <circle cx="50" cy="50" r="44" fill="none" stroke="rgb(241 245 249)" stroke-width="5" stroke-linecap="round" />
+              <circle cx="50" cy="50" r="44" fill="none" stroke="rgb(241 245 249)" stroke-width="4" stroke-linecap="round" />
               <circle 
                 cx="50" cy="50" r="44" 
                 fill="none" 
                 :stroke="'currentColor'"
                 :class="predictedLevel.ring"
-                stroke-width="5" 
+                stroke-width="4" 
                 stroke-linecap="round"
                 :stroke-dasharray="`${276 * (animatingScore / 100)}, 276`"
                 class="transition-all duration-500"
               />
             </svg>
             <div class="absolute inset-0 flex flex-col items-center justify-center">
-              <span class="text-3xl font-bold text-slate-900">{{ animatingScore.toFixed(1) }}</span>
+              <span class="text-2xl font-bold text-slate-900">{{ animatingScore.toFixed(1) }}</span>
               <span class="text-[10px] text-slate-400">综合评分</span>
             </div>
           </div>
@@ -521,250 +519,215 @@ const removeFile = () => {
     </div>
 
     <!-- Input Form -->
-    <div v-else class="flex-1 flex flex-col overflow-hidden">
+    <div v-else class="space-y-4">
       
       <!-- Mode Tabs -->
-      <div class="flex gap-2 mb-5 overflow-x-auto pb-1 scrollbar-hide">
-        <button 
-          v-for="mode in modes" 
-          :key="mode.id" 
-          @click="switchMode(mode.id)"
-          class="flex items-center gap-2 px-4 py-3 rounded-xl border transition-all whitespace-nowrap"
-          :class="currentMode === mode.id 
-            ? mode.color === 'indigo' ? 'bg-indigo-50 border-indigo-300 text-indigo-700' 
-              : mode.color === 'amber' ? 'bg-amber-50 border-amber-300 text-amber-700'
-              : mode.color === 'rose' ? 'bg-rose-50 border-rose-300 text-rose-700'
-              : 'bg-emerald-50 border-emerald-300 text-emerald-700'
-            : 'bg-white/60 border-slate-200 text-slate-600 hover:bg-white/80'"
-        >
-          <div class="w-7 h-7 rounded-lg flex items-center justify-center text-white"
-               :class="mode.color === 'indigo' ? 'bg-indigo-500'
-                 : mode.color === 'amber' ? 'bg-amber-500'
-                 : mode.color === 'rose' ? 'bg-rose-500'
-                 : 'bg-emerald-500'">
-            <component :is="mode.icon" class="w-4 h-4" />
-          </div>
-          <span class="text-sm font-medium">{{ mode.label }}</span>
-        </button>
+      <div class="bg-white/70 backdrop-blur-xl border border-white/50 rounded-xl p-2">
+        <div class="grid grid-cols-4 gap-1">
+          <button 
+            v-for="mode in modes" 
+            :key="mode.id" 
+            @click="switchMode(mode.id)"
+            class="flex flex-col items-center gap-1 px-3 py-2.5 rounded-lg transition-all"
+            :class="currentMode === mode.id 
+              ? mode.color === 'indigo' ? 'bg-indigo-50 text-indigo-700' 
+                : mode.color === 'amber' ? 'bg-amber-50 text-amber-700'
+                : mode.color === 'rose' ? 'bg-rose-50 text-rose-700'
+                : 'bg-emerald-50 text-emerald-700'
+              : 'text-slate-500 hover:bg-slate-50'"
+          >
+            <component :is="mode.icon" class="w-5 h-5" />
+            <span class="text-xs font-medium">{{ mode.label }}</span>
+          </button>
+        </div>
       </div>
 
-      <!-- Platform Notice -->
-      <div class="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-amber-50 border border-amber-200 mb-5">
-        <Award class="w-5 h-5 text-amber-500 flex-shrink-0" />
-        <span class="text-sm text-amber-700">{{ getPlatformHint() }}</span>
+      <!-- Platform Info -->
+      <div class="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 border border-slate-200">
+        <Info class="w-4 h-4 text-slate-400 flex-shrink-0" />
+        <span class="text-xs text-slate-600">{{ getPlatformHint() }}</span>
       </div>
 
       <!-- Form Fields -->
-      <div class="flex-1 overflow-y-auto pr-1 space-y-4 custom-scrollbar">
+      <div class="bg-white/70 backdrop-blur-xl border border-white/50 rounded-xl p-4 space-y-4">
         
         <!-- Basic Mode -->
         <template v-if="currentMode === 'basic'">
-          <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1.5">
+              作品名称 <span class="text-rose-500">*</span>
+            </label>
+            <input 
+              v-model="formData.title" 
+              type="text" 
+              placeholder="输入作品名称进行评估"
+              class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all text-sm"
+            />
+          </div>
+          
+          <div class="grid grid-cols-2 gap-3">
             <div>
-              <label class="block text-sm font-medium text-slate-700 mb-2">
-                <span class="inline-flex items-center gap-1.5">
-                  <Star class="w-4 h-4 text-amber-500" />
-                  作品名称
-                </span>
-                <span class="text-rose-500">*</span>
-              </label>
-              <input 
-                v-model="formData.title" 
-                type="text" 
-                placeholder="请输入小说标题"
-                class="w-full px-4 py-3 bg-white/70 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all"
-              />
+              <label class="block text-sm font-medium text-slate-700 mb-1.5">平台</label>
+              <select v-model="formData.platform" class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all appearance-none cursor-pointer text-sm">
+                <option v-for="p in platforms" :key="p" :value="p">{{ p }}</option>
+              </select>
             </div>
-            
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <label class="block text-sm font-medium text-slate-700 mb-2">平台</label>
-                <select v-model="formData.platform" class="w-full px-4 py-3 bg-white/70 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all appearance-none cursor-pointer">
-                  <option v-for="p in platforms" :key="p" :value="p">{{ p }}</option>
-                </select>
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-slate-700 mb-2">题材</label>
-                <select v-model="formData.category" class="w-full px-4 py-3 bg-white/70 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all appearance-none cursor-pointer">
-                  <option v-for="c in categories" :key="c" :value="c">{{ c }}</option>
-                </select>
-              </div>
-            </div>
-
             <div>
-              <label class="block text-sm font-medium text-slate-700 mb-2">作者笔名</label>
-              <input v-model="formData.author" type="text" placeholder="输入作者名称" 
-                class="w-full px-4 py-3 bg-white/70 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all" />
+              <label class="block text-sm font-medium text-slate-700 mb-1.5">题材</label>
+              <select v-model="formData.category" class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all appearance-none cursor-pointer text-sm">
+                <option v-for="c in categories" :key="c" :value="c">{{ c }}</option>
+              </select>
             </div>
+          </div>
 
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <label class="block text-sm font-medium text-slate-700 mb-2">当前字数</label>
-                <input v-model.number="formData.wordCount" type="number" placeholder="0" 
-                  class="w-full px-4 py-3 bg-white/70 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all" />
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-slate-700 mb-2">状态</label>
-                <select v-model="formData.status" class="w-full px-4 py-3 bg-white/70 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all appearance-none cursor-pointer">
-                  <option v-for="s in statusOptions" :key="s" :value="s">{{ s }}</option>
-                </select>
-              </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1.5">作者</label>
+              <input v-model="formData.author" type="text" placeholder="可选" 
+                class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all text-sm" />
             </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1.5">状态</label>
+              <select v-model="formData.status" class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all appearance-none cursor-pointer text-sm">
+                <option v-for="s in statusOptions" :key="s" :value="s">{{ s }}</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1.5">字数（万）</label>
+            <input v-model.number="formData.wordCount" type="number" placeholder="可选" 
+              class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all text-sm" />
           </div>
         </template>
 
-        <!-- Ranking Mode -->
-        <template v-if="currentMode === 'ranking'">
-          <div class="space-y-4">
+        <!-- Operation Mode -->
+        <template v-if="currentMode === 'operation'">
+          <div class="grid grid-cols-2 gap-3">
             <div>
-              <label class="block text-sm font-medium text-slate-700 mb-2">
-                <span class="inline-flex items-center gap-1.5">
-                  <TrendingUp class="w-4 h-4 text-amber-500" />
-                  月票数
-                </span>
-              </label>
-              <input v-model.number="formData.monthlyTickets" type="number" placeholder="0" 
-                class="w-full px-4 py-3 bg-white/70 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100 transition-all" />
-              <p class="mt-1.5 text-xs text-slate-400">
-                {{ formData.platform === '起点' ? '起点头部：50万+ ｜ 优秀：5万+' : '纵横头部：5万+ ｜ 优秀：1万+' }}
-              </p>
+              <label class="block text-sm font-medium text-slate-700 mb-1.5">月票数</label>
+              <input v-model.number="formData.monthlyTickets" type="number" placeholder="输入月票数" 
+                class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100 transition-all text-sm" />
+              <p class="mt-1 text-xs text-slate-400">{{ formData.platform === '起点' ? '头部50万+' : '头部5万+' }}</p>
             </div>
-
             <div>
-              <label class="block text-sm font-medium text-slate-700 mb-2">当前排名</label>
-              <input v-model.number="formData.ranking" type="number" placeholder="输入榜单排名" 
-                class="w-full px-4 py-3 bg-white/70 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100 transition-all" />
-              <p class="mt-1.5 text-xs text-slate-400">
-                {{ formData.platform === '起点' ? '前10头部 ｜ 前100优秀 ｜ 前500良好' : '前3头部 ｜ 前20优秀 ｜ 前50良好' }}
-              </p>
+              <label class="block text-sm font-medium text-slate-700 mb-1.5">榜单排名</label>
+              <input v-model.number="formData.ranking" type="number" placeholder="输入排名" 
+                class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100 transition-all text-sm" />
+              <p class="mt-1 text-xs text-slate-400">{{ formData.platform === '起点' ? '前10头部' : '前3头部' }}</p>
             </div>
-
-            <div>
-              <label class="block text-sm font-medium text-slate-700 mb-2">周增长率 (%)</label>
-              <input v-model.number="formData.weekOverWeekGrowth" type="number" placeholder="例如：15" 
-                class="w-full px-4 py-3 bg-white/70 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100 transition-all" />
-            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1.5">周环比增长 (%)</label>
+            <input v-model.number="formData.weekOverWeekGrowth" type="number" placeholder="例如：15" 
+              class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100 transition-all text-sm" />
           </div>
         </template>
 
         <!-- Engagement Mode -->
         <template v-if="currentMode === 'engagement'">
-          <div class="grid grid-cols-2 gap-4">
+          <div class="grid grid-cols-2 gap-3">
             <div>
-              <label class="block text-sm font-medium text-slate-700 mb-2">总收藏数</label>
-              <input v-model.number="formData.collections" type="number" placeholder="0" 
-                class="w-full px-4 py-3 bg-white/70 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-100 transition-all" />
+              <label class="block text-sm font-medium text-slate-700 mb-1.5">总收藏</label>
+              <input v-model.number="formData.collections" type="number" placeholder="收藏数" 
+                class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-100 transition-all text-sm" />
             </div>
             <div>
-              <label class="block text-sm font-medium text-slate-700 mb-2">推荐票数</label>
-              <input v-model.number="formData.recommendations" type="number" placeholder="0" 
-                class="w-full px-4 py-3 bg-white/70 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-100 transition-all" />
+              <label class="block text-sm font-medium text-slate-700 mb-1.5">推荐票</label>
+              <input v-model.number="formData.recommendations" type="number" placeholder="推荐数" 
+                class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-100 transition-all text-sm" />
             </div>
             <div>
-              <label class="block text-sm font-medium text-slate-700 mb-2">评论数</label>
-              <input v-model.number="formData.comments" type="number" placeholder="0" 
-                class="w-full px-4 py-3 bg-white/70 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-100 transition-all" />
+              <label class="block text-sm font-medium text-slate-700 mb-1.5">评论数</label>
+              <input v-model.number="formData.comments" type="number" placeholder="评论数" 
+                class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-100 transition-all text-sm" />
             </div>
             <div>
-              <label class="block text-sm font-medium text-slate-700 mb-2">粉丝数</label>
-              <input v-model.number="formData.followers" type="number" placeholder="0" 
-                class="w-full px-4 py-3 bg-white/70 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-100 transition-all" />
+              <label class="block text-sm font-medium text-slate-700 mb-1.5">粉丝数</label>
+              <input v-model.number="formData.followers" type="number" placeholder="粉丝数" 
+                class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-100 transition-all text-sm" />
             </div>
           </div>
         </template>
 
         <!-- Content Mode -->
         <template v-if="currentMode === 'content'">
-          <div class="space-y-4">
-            <div>
-              <label class="block text-sm font-medium text-slate-700 mb-2">作品简介</label>
-              <textarea 
-                v-model="formData.synopsis" 
-                rows="3" 
-                placeholder="输入作品简介，帮助AI理解故事核心..."
-                class="w-full px-4 py-3 bg-white/70 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 transition-all resize-none"
-              ></textarea>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1.5">作品简介</label>
+            <textarea 
+              v-model="formData.synopsis" 
+              rows="3" 
+              placeholder="输入作品简介..."
+              class="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 transition-all resize-none text-sm"
+            ></textarea>
+          </div>
+
+          <!-- File Upload Zone -->
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1.5">章节内容</label>
+            
+            <!-- Upload Zone -->
+            <div 
+              v-if="!uploadedFile"
+              class="upload-zone relative border-2 border-dashed border-slate-200 rounded-lg p-6 text-center hover:border-emerald-400 hover:bg-emerald-50/50 transition-all cursor-pointer"
+              :class="{ 'border-emerald-400 bg-emerald-50': isDragging }"
+              @drop="handleDrop"
+              @dragover="handleDragOver"
+              @dragleave="handleDragLeave"
+            >
+              <input 
+                type="file" 
+                accept=".txt,.md,.doc,.docx"
+                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                @change="handleFileUpload"
+              />
+              <Upload class="w-8 h-8 text-slate-400 mx-auto mb-2" />
+              <p class="text-sm text-slate-600">拖拽文件或点击上传</p>
+              <p class="text-xs text-slate-400 mt-1">支持 .txt, .md 格式</p>
             </div>
 
-            <!-- File Upload Zone -->
-            <div>
-              <label class="block text-sm font-medium text-slate-700 mb-2">章节内容</label>
-              
-              <!-- Upload Zone -->
-              <div 
-                v-if="!uploadedFile"
-                class="upload-zone relative"
-                :class="{ 'dragging': isDragging }"
-                @drop="handleDrop"
-                @dragover="handleDragOver"
-                @dragleave="handleDragLeave"
+            <!-- Uploaded File Display -->
+            <div v-else class="flex items-center justify-between p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-emerald-500 rounded-lg flex items-center justify-center">
+                  <FileText class="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <p class="text-sm font-medium text-slate-700">{{ uploadedFile.name }}</p>
+                  <p class="text-xs text-slate-400">{{ (uploadedFile.size / 1024).toFixed(1) }} KB · {{ formData.chapterContent.length.toLocaleString() }} 字</p>
+                </div>
+              </div>
+              <button @click="removeFile" class="p-2 hover:bg-rose-50 rounded-lg transition-colors">
+                <X class="w-4 h-4 text-slate-400 hover:text-rose-500" />
+              </button>
+            </div>
+
+            <!-- Manual Input Toggle -->
+            <div class="mt-3">
+              <button 
+                @click="showTextarea = !showTextarea"
+                class="text-xs text-slate-500 hover:text-emerald-600 transition-colors flex items-center gap-1"
               >
-                <input 
-                  type="file" 
-                  accept=".txt,.md,.doc,.docx"
-                  class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                  @change="handleFileUpload"
-                />
-                <div class="upload-content">
-                  <div class="upload-icon-wrapper">
-                    <Upload class="w-8 h-8 upload-icon" />
-                  </div>
-                  <div class="upload-text">
-                    <p class="upload-title">拖拽文件到此处，或点击上传</p>
-                    <p class="upload-desc">支持 .txt, .md, .doc, .docx 格式</p>
-                  </div>
-                  <div class="upload-hint">
-                    <span>建议上传3000-5000字的代表性章节</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Uploaded File Display -->
-              <div v-else class="uploaded-file">
-                <div class="file-info">
-                  <div class="file-icon">
-                    <FileText class="w-5 h-5" />
-                  </div>
-                  <div class="file-details">
-                    <p class="file-name">{{ uploadedFile.name }}</p>
-                    <p class="file-size">{{ (uploadedFile.size / 1024).toFixed(1) }} KB · 已读取 {{ formData.chapterContent.length.toLocaleString() }} 字</p>
-                  </div>
-                </div>
-                <button 
-                  @click="removeFile"
-                  class="remove-btn"
-                >
-                  <X class="w-4 h-4" />
-                </button>
-              </div>
-
-              <!-- Manual Input Toggle -->
-              <div class="mt-3">
-                <button 
-                  @click="$event => { uploadedFile ? removeFile() : null; showTextarea = !showTextarea }"
-                  class="text-xs text-slate-500 hover:text-emerald-600 transition-colors flex items-center gap-1"
-                >
-                  <span>{{ showTextarea ? '隐藏文本框' : '或手动粘贴文本' }}</span>
-                  <ChevronRight class="w-3 h-3" :class="{ 'rotate-90': showTextarea }" />
-                </button>
-              </div>
-
-              <!-- Textarea for manual input -->
-              <textarea 
-                v-if="showTextarea || formData.chapterContent"
-                v-model="formData.chapterContent" 
-                rows="6" 
-                placeholder="在此粘贴章节内容，或拖拽上传文件..."
-                class="w-full mt-3 px-4 py-3 bg-white/70 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 transition-all resize-none"
-              ></textarea>
+                <span>{{ showTextarea ? '隐藏文本框' : '或手动粘贴文本' }}</span>
+                <ChevronRight class="w-3 h-3" :class="{ 'rotate-90': showTextarea }" />
+              </button>
             </div>
+
+            <!-- Textarea for manual input -->
+            <textarea 
+              v-if="showTextarea || formData.chapterContent"
+              v-model="formData.chapterContent" 
+              rows="6" 
+              placeholder="在此粘贴章节内容..."
+              class="w-full mt-3 px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 transition-all resize-none text-sm"
+            ></textarea>
           </div>
         </template>
       </div>
 
       <!-- Error Message -->
-      <div v-if="error" class="mt-4 flex items-center gap-2 px-4 py-3 rounded-xl bg-rose-50 border border-rose-200">
-        <AlertTriangle class="w-5 h-5 text-rose-500" />
+      <div v-if="error" class="flex items-center gap-2 px-3 py-2.5 rounded-lg bg-rose-50 border border-rose-200">
+        <AlertTriangle class="w-4 h-4 text-rose-500" />
         <span class="text-sm text-rose-600">{{ error }}</span>
       </div>
 
@@ -772,167 +735,17 @@ const removeFile = () => {
       <button 
         @click="submitPrediction" 
         :disabled="loading || !formData.title"
-        class="mt-4 w-full py-3.5 rounded-xl font-semibold text-white text-base transition-all flex items-center justify-center gap-2"
-        :class="loading ? 'bg-slate-400 cursor-not-allowed' : 'bg-gradient-to-r from-indigo-500 to-purple-600 hover:shadow-lg hover:shadow-indigo-500/20'"
+        class="w-full py-3 rounded-lg font-medium text-white text-sm transition-all flex items-center justify-center gap-2"
+        :class="loading ? 'bg-slate-400 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700'"
       >
-        <Loader2 v-if="loading" class="w-5 h-5 animate-spin" />
-        <Sparkles v-else class="w-5 h-5" />
-        <span>{{ loading ? 'AI 分析中...' : '开始预测' }}</span>
+        <Loader2 v-if="loading" class="w-4 h-4 animate-spin" />
+        <span>{{ loading ? '分析中...' : '开始评估' }}</span>
       </button>
     </div>
   </div>
 </template>
 
 <style scoped>
-/* Custom scrollbar */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgb(203 213 225);
-  border-radius: 6px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgb(148 163 184);
-}
-
-/* Hide scrollbar for horizontal scroll */
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-/* Upload Zone Styles */
-.upload-zone {
-  border: 2px dashed rgb(203 213 225);
-  border-radius: 16px;
-  padding: 32px 24px;
-  background: rgb(255 255 255 / 0.5);
-  transition: all 0.2s ease;
-  text-align: center;
-}
-
-.upload-zone:hover {
-  border-color: rgb(16 185 129);
-  background: rgb(16 185 129 / 0.05);
-}
-
-.upload-zone.dragging {
-  border-color: rgb(16 185 129);
-  background: rgb(16 185 129 / 0.1);
-  transform: scale(1.02);
-}
-
-.upload-content {
-  pointer-events: none;
-}
-
-.upload-icon-wrapper {
-  width: 64px;
-  height: 64px;
-  background: rgb(16 185 129 / 0.1);
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 16px;
-}
-
-.upload-icon {
-  color: rgb(16 185 129);
-}
-
-.upload-title {
-  font-size: 15px;
-  font-weight: 600;
-  color: rgb(51 65 85);
-  margin-bottom: 4px;
-}
-
-.upload-desc {
-  font-size: 13px;
-  color: rgb(148 163 184);
-  margin-bottom: 12px;
-}
-
-.upload-hint {
-  display: inline-block;
-  padding: 6px 12px;
-  background: rgb(241 245 249);
-  border-radius: 20px;
-  font-size: 12px;
-  color: rgb(100 116 139);
-}
-
-/* Uploaded File Display */
-.uploaded-file {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px;
-  background: rgb(16 185 129 / 0.1);
-  border: 1px solid rgb(16 185 129 / 0.3);
-  border-radius: 12px;
-}
-
-.file-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.file-icon {
-  width: 40px;
-  height: 40px;
-  background: rgb(16 185 129);
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-}
-
-.file-name {
-  font-size: 14px;
-  font-weight: 600;
-  color: rgb(51 65 85);
-  margin-bottom: 2px;
-}
-
-.file-size {
-  font-size: 12px;
-  color: rgb(100 116 139);
-}
-
-.remove-btn {
-  width: 32px;
-  height: 32px;
-  background: rgb(255 255 255 / 0.8);
-  border: 1px solid rgb(203 213 225);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: rgb(100 116 139);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.remove-btn:hover {
-  background: rgb(244 63 94 / 0.1);
-  border-color: rgb(244 63 94);
-  color: rgb(244 63 94);
-}
 select {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
   background-repeat: no-repeat;

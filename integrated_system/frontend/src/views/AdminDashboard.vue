@@ -15,7 +15,7 @@ import {
 
 const router = useRouter()
 const route = useRoute()
-const { user, logout } = useAuth()
+const { user, logout, fetchUser } = useAuth()
 
 const currentTab = computed(() => route.query.tab || 'overview')
 
@@ -30,7 +30,6 @@ const adminDockItems = [
   { title: "平台监控", titleEn: "Platform", url: "/admin?tab=platform", icon: Globe },
   { title: "数据采集", titleEn: "Pipeline", url: "/admin?tab=monitor", icon: Database },
   { title: "智能审计", titleEn: "Audit", url: "/admin?tab=audit", icon: Shield },
-  { title: "模型训练", titleEn: "Model", url: "/admin?tab=model", icon: Cpu },
   { title: "设置", titleEn: "Settings", url: "/admin?tab=settings", icon: Settings },
 ]
 
@@ -449,6 +448,11 @@ watch(currentTab, (tab) => {
   }
   if (tab === 'settings') {
     fetchSettings()
+  }
+  if (tab === 'overview') {
+    fetchTrainingPoolData()
+    fetchLongTermTrending()
+    fetchRealtimeRanking()
   }
 })
 
@@ -895,18 +899,39 @@ async function triggerGemScan() {
         const token = localStorage.getItem('auth_token');
         const res = await fetch(`${API_BASE}/admin/scan_gems`, {
             method: 'POST',
-            headers: { 'Authorization': `Bearer ${token}` }
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({})
         });
         const data = await res.json();
         if (res.ok) {
-            alert(data.message);
+            const total_scanned = data.total_scanned || 0;
+            const gems_count = data.gems_count || 0;
+            const global_gems_count = data.global_gems_count || 0;
+            const inserted = data.inserted || 0;
+            
+            if (inserted > 0) {
+                let message = `扫描完成！扫描了 ${total_scanned} 本书`;
+                if (gems_count > 0) {
+                    message += `，发现 ${gems_count} 本潜力遗珠`;
+                }
+                if (global_gems_count > 0) {
+                    message += `，${global_gems_count} 本出海优选`;
+                }
+                showGemScanToast(message, 'success', inserted);
+            } else {
+                showGemScanToast(`扫描了 ${total_scanned} 本书，暂未发现新的潜力遗珠`, 'success', 0);
+            }
             fetchAuditLogs();
+            fetchMultiSourceOverview(); // 刷新概览数据
         } else {
-            alert('扫描失败: ' + data.error);
+            showGemScanToast(data.error || '扫描失败，请重试', 'error', 0);
         }
     } catch (e) {
         console.error('Trigger gem scan failed', e);
-        alert('网络错误，请稍后重试');
+        showGemScanToast('网络错误，请稍后重试', 'error', 0);
     }
 }
 
@@ -965,14 +990,26 @@ async function triggerDeepScan() {
 // AI 评分表
 const aiScores = ref<any[]>([])
 const aiScoresLoading = ref(false)
+const aiScoresPage = ref(1)
+const aiScoresPageSize = ref(15)
+const aiScoresTotal = ref(0)
+
+const paginatedAiScores = computed(() => {
+  const start = (aiScoresPage.value - 1) * aiScoresPageSize.value
+  const end = start + aiScoresPageSize.value
+  return aiScores.value.slice(start, end)
+})
+
+const aiScoresTotalPages = computed(() => Math.ceil(aiScores.value.length / aiScoresPageSize.value))
 
 async function fetchAiScores() {
   aiScoresLoading.value = true
   try {
-    const res = await fetch(`${API_BASE}/admin/audit/ai_scores?limit=15`)
+    const res = await fetch(`${API_BASE}/admin/audit/ai_scores?limit=100`)
     if (res.ok) {
       const json = await res.json()
       aiScores.value = json.data || []
+      aiScoresTotal.value = json.total || aiScores.value.length
     }
   } catch (e) { console.error('获取AI评分失败:', e) }
   finally { aiScoresLoading.value = false }
@@ -1007,6 +1044,19 @@ function exportAuditReport(report: string, bookTitle: string, score?: number) {
 const settingsLoading = ref(false)
 const settingsSaving = ref(false)
 const settingsToast = ref({ show: false, message: '', type: 'success' as 'success' | 'error' })
+
+// 卡片详情弹窗状态
+const showVrDetailModal = ref(false)
+const showAiEvalModal = ref(false)
+const showRealtimeModal = ref(false)
+
+// Gem Scan Toast
+const gemScanToast = ref({ show: false, message: '', type: 'success' as 'success' | 'error', count: 0 })
+
+function showGemScanToast(message: string, type: 'success' | 'error', count: number = 0) {
+  gemScanToast.value = { show: true, message, type, count }
+  setTimeout(() => { gemScanToast.value.show = false }, 3000)
+}
 const dbTestResult = ref<Record<'zongheng' | 'qidian', { status: string, message: string }>>({ zongheng: { status: '', message: '' }, qidian: { status: '', message: '' } })
 const dbTesting = ref<Record<'zongheng' | 'qidian', boolean>>({ zongheng: false, qidian: false })
 
@@ -1077,6 +1127,95 @@ async function testDbConnection(platform: 'zongheng' | 'qidian') {
 function showSettingsToast(message: string, type: 'success' | 'error') {
   settingsToast.value = { show: true, message, type }
   setTimeout(() => { settingsToast.value.show = false }, 3000)
+}
+
+// === 个人信息修改 ===
+const profileSaving = ref(false)
+const profileForm = ref({
+  username: '',
+  email: '',
+  password: ''
+})
+
+// 初始化个人信息表单
+function initProfileForm() {
+  if (user.value) {
+    profileForm.value = {
+      username: user.value.username || '',
+      email: user.value.email || '',
+      password: ''
+    }
+  }
+}
+
+// 监听 user 变化初始化表单
+watch(user, () => {
+  initProfileForm()
+}, { immediate: true })
+
+// 上传头像
+async function handleAvatarUpload(e: Event) {
+  const target = e.target as HTMLInputElement
+  const file = target.files?.[0]
+  if (!file) return
+  
+  const formData = new FormData()
+  formData.append('avatar', file)
+  
+  try {
+    const token = localStorage.getItem('auth_token')
+    const res = await fetch(`${API_BASE}/auth/upload_avatar`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}` },
+      body: formData
+    })
+    const data = await res.json()
+    if (data.success) {
+      showSettingsToast('头像上传成功', 'success')
+      // 刷新用户信息
+      fetchUser()
+    } else {
+      showSettingsToast(data.error || '上传失败', 'error')
+    }
+  } catch (e) {
+    showSettingsToast('网络错误', 'error')
+  }
+}
+
+// 保存个人信息
+async function saveAdminProfile() {
+  profileSaving.value = true
+  try {
+    const token = localStorage.getItem('auth_token')
+    const body: any = {
+      username: profileForm.value.username,
+      email: profileForm.value.email
+    }
+    if (profileForm.value.password) {
+      body.password = profileForm.value.password
+    }
+    
+    const res = await fetch(`${API_BASE}/auth/admin/users/${user.value?.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(body)
+    })
+    const data = await res.json()
+    if (data.success) {
+      showSettingsToast('个人信息已更新', 'success')
+      profileForm.value.password = ''
+      fetchUser()
+    } else {
+      showSettingsToast(data.error || '保存失败', 'error')
+    }
+  } catch (e) {
+    showSettingsToast('网络错误', 'error')
+  } finally {
+    profileSaving.value = false
+  }
 }
 
 // --- 周期长热度高作品趋势图 ---
@@ -1201,21 +1340,17 @@ const formatPeriod = (period: string) => {
         </div>
         
         <div class="flex items-center gap-4">
-           <!-- Search -->
-           <div class="relative hidden md:block">
-              <Search class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-              <input type="text" placeholder="全局搜索..." class="h-10 pl-10 pr-4 bg-white/50 border border-slate-200 rounded-full text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 w-64 transition-all shadow-sm" />
-           </div>
-           
            <!-- Admin Profile -->
            <div class="flex items-center gap-3 pl-4 border-l border-slate-200">
-               <div class="text-right hidden md:block">
-                  <div class="text-sm font-bold text-slate-900">{{ user?.username || 'Administrator' }}</div>
-                  <div class="text-xs text-emerald-600 font-medium">● 在线</div>
-               </div>
-               <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-indigo-600 to-purple-600 text-white flex items-center justify-center font-bold shadow-md shadow-indigo-500/20 overflow-hidden">
-                  <img v-if="user?.avatar" :src="`http://localhost:5000${user.avatar}`" alt="Avatar" class="w-full h-full object-cover" />
-                  <span v-else>{{ user?.username?.charAt(0).toUpperCase() || 'A' }}</span>
+               <div class="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity" @click="router.push('/admin?tab=settings')">
+                   <div class="text-right hidden md:block">
+                      <div class="text-sm font-bold text-slate-900">{{ user?.username || 'Administrator' }}</div>
+                      <div class="text-xs text-emerald-600 font-medium">● 在线</div>
+                   </div>
+                   <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-indigo-600 to-purple-600 text-white flex items-center justify-center font-bold shadow-md shadow-indigo-500/20 overflow-hidden">
+                      <img v-if="user?.avatar" :src="`http://localhost:5000${user.avatar}`" alt="Avatar" class="w-full h-full object-cover" />
+                      <span v-else>{{ user?.username?.charAt(0).toUpperCase() || 'A' }}</span>
+                   </div>
                </div>
                <button @click="handleLogout" class="p-2 text-slate-400 hover:text-rose-500 transition-colors" title="退出登录">
                   <LogOut class="w-5 h-5" />
@@ -1234,7 +1369,7 @@ const formatPeriod = (period: string) => {
                   <div class="relative z-10 flex justify-between items-start">
                      <div>
                         <div class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">{{ stat.label }}</div>
-                        <div class="text-3xl font-serif font-bold text-slate-900 mb-2">{{ stat.value }}</div>
+                        <div class="text-3xl font-bold text-slate-900 mb-2">{{ stat.value }}</div>
                         <div class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-600 border border-emerald-100">
                           {{ stat.change }}
                         </div>
@@ -1840,120 +1975,6 @@ const formatPeriod = (period: string) => {
            </div>
       </div>
 
-       <!-- ==================== TAB: MODEL TRAINING ==================== -->
-       <div v-if="currentTab === 'model'" class="animate-fade-in space-y-6">
-           <div class="grid grid-cols-12 gap-6">
-               <!-- 左侧：配置 -->
-               <div class="col-span-12 lg:col-span-4 space-y-6">
-                   <div class="bg-white/60 backdrop-blur-xl border border-white/40 rounded-2xl p-6 shadow-sm">
-                       <h3 class="font-bold text-slate-900 flex items-center gap-2 mb-6">
-                           <Settings class="w-5 h-5 text-indigo-600" />
-                           训练参数配置
-                       </h3>
-                       
-                       <div class="space-y-6">
-                           <!-- Learning Rate -->
-                           <div class="space-y-2">
-                               <div class="flex justify-between text-sm">
-                                   <label class="font-medium text-slate-700">学习率 (Learning Rate)</label>
-                                   <span class="font-mono text-indigo-600 font-bold">{{ trainConfig.learning_rate }}</span>
-                               </div>
-                               <input type="range" v-model.number="trainConfig.learning_rate" min="0.01" max="0.5" step="0.01" 
-                                   class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600" />
-                           </div>
-
-                           <!-- Max Depth -->
-                           <div class="space-y-2">
-                               <div class="flex justify-between text-sm">
-                                   <label class="font-medium text-slate-700">树深度 (Max Depth)</label>
-                                   <span class="font-mono text-indigo-600 font-bold">{{ trainConfig.max_depth }}</span>
-                               </div>
-                               <input type="range" v-model.number="trainConfig.max_depth" min="3" max="15" step="1" 
-                                   class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600" />
-                           </div>
-
-                           <!-- Estimators -->
-                           <div class="space-y-2">
-                               <div class="flex justify-between text-sm">
-                                   <label class="font-medium text-slate-700">迭代次数 (Estimators)</label>
-                                   <span class="font-mono text-indigo-600 font-bold">{{ trainConfig.n_estimators }}</span>
-                               </div>
-                               <input type="range" v-model.number="trainConfig.n_estimators" min="50" max="500" step="10" 
-                                   class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600" />
-                           </div>
-
-                           <div class="pt-4 border-t border-slate-100">
-                               <button @click="startTraining" :disabled="isTraining"
-                                   class="w-full py-3 rounded-xl flex items-center justify-center gap-2 font-bold transition-all shadow-lg shadow-indigo-500/20"
-                                   :class="isTraining ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-indigo-600 text-white hover:bg-indigo-700 active:scale-95'">
-                                   <div v-if="isTraining" class="w-5 h-5 border-2 border-slate-400 border-t-transparent rounded-full animate-spin"></div>
-                                   <Zap v-else class="w-5 h-5 fill-current" />
-                                   {{ isTraining ? '训练进行中...' : '开始训练' }}
-                               </button>
-                           </div>
-                       </div>
-                   </div>
-
-                   <!-- 说明卡片 -->
-                   <div class="bg-indigo-50/50 border border-indigo-100 rounded-2xl p-5">
-                       <h4 class="text-xs font-bold text-indigo-900 uppercase tracking-wider mb-2 flex items-center gap-2">
-                           <Cpu class="w-4 h-4 text-indigo-600" /> 模型说明
-                       </h4>
-                       <p class="text-xs text-indigo-800/80 leading-relaxed">
-                           当前使用 <strong>XGBoost Regressor</strong> 算法。
-                           训练数据包含爬虫采集的客观数据（点击、月票、字数）以及从交互日志中提取的主观特征（互动轮数、平均回复长度）。
-                       </p>
-                   </div>
-               </div>
-
-               <!-- 右侧：监控 -->
-               <div class="col-span-12 lg:col-span-8 space-y-6">
-                   <!-- 实时日志 -->
-                   <div class="bg-slate-900 rounded-2xl p-6 shadow-lg min-h-[400px] flex flex-col">
-                       <div class="flex items-center justify-between mb-4 border-b border-slate-700 pb-4">
-                           <h3 class="font-mono text-sm font-bold text-slate-400 flex items-center gap-2">
-                               <Activity class="w-4 h-4" /> RECENT LOGS
-                           </h3>
-                           <div class="flex items-center gap-2 text-xs">
-                               <span class="w-2 h-2 rounded-full" :class="isTraining ? 'bg-emerald-500 animate-pulse' : 'bg-slate-600'"></span>
-                               <span :class="isTraining ? 'text-emerald-400' : 'text-slate-600'">{{ isTraining ? 'RUNNING' : 'IDLE' }}</span>
-                           </div>
-                       </div>
-                       
-                       <div class="flex-1 font-mono text-xs space-y-1 overflow-y-auto max-h-[300px] pr-2 custom-scrollbar">
-                           <div v-if="trainLogs.length === 0" class="text-slate-600 italic">等待开始训练...</div>
-                           <div v-for="(log, i) in trainLogs" :key="i" class="text-emerald-400/90 whitespace-pre-wrap font-medium">
-                               <span class="opacity-50 mr-2">></span>{{ log }}
-                           </div>
-                       </div>
-                   </div>
-
-                   <!-- 评估指标 -->
-                   <div class="grid grid-cols-2 gap-4">
-                       <div class="bg-white/60 backdrop-blur-xl border border-white/40 rounded-xl p-4 shadow-sm flex items-center justify-between">
-                           <div>
-                               <div class="text-xs text-slate-500 font-bold uppercase">RMSE (均方根误差)</div>
-                               <div class="text-2xl font-serif font-bold text-slate-900 mt-1">--</div>
-                           </div>
-                           <div class="w-10 h-10 rounded-full bg-rose-50 flex items-center justify-center text-rose-600">
-                               <Activity class="w-5 h-5" />
-                           </div>
-                       </div>
-                       <div class="bg-white/60 backdrop-blur-xl border border-white/40 rounded-xl p-4 shadow-sm flex items-center justify-between">
-                           <div>
-                               <div class="text-xs text-slate-500 font-bold uppercase">R² Score (拟合优度)</div>
-                               <div class="text-2xl font-serif font-bold text-slate-900 mt-1">--</div>
-                           </div>
-                           <div class="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600">
-                               <CheckCircle2 class="w-5 h-5" />
-                           </div>
-                       </div>
-                   </div>
-               </div>
-           </div>
-       </div>
-
-      <!-- ==================== TAB: PIPELINE (Monitor) ==================== -->
       <div v-if="currentTab === 'monitor'" class="animate-fade-in space-y-6">
           <!-- Header Code -->
           <div class="text-center mb-8">
@@ -2193,6 +2214,22 @@ const formatPeriod = (period: string) => {
 
       <!-- ==================== TAB: AUDIT CENTER ==================== -->
       <div v-if="currentTab === 'audit'" class="animate-fade-in space-y-6">
+          <!-- Gem Scan Toast -->
+          <Transition name="toast">
+            <div v-if="gemScanToast.show" 
+                 class="fixed top-6 right-6 z-50 flex items-center gap-3 px-5 py-4 rounded-xl shadow-xl text-sm font-medium backdrop-blur-xl border"
+                 :class="gemScanToast.type === 'success' 
+                   ? (gemScanToast.count > 0 ? 'bg-amber-50/95 border-amber-200 text-amber-700' : 'bg-emerald-50/95 border-emerald-200 text-emerald-700')
+                   : 'bg-rose-50/95 border-rose-200 text-rose-700'">
+              <div class="flex items-center gap-2">
+                <Sparkles v-if="gemScanToast.type === 'success' && gemScanToast.count > 0" class="w-5 h-5 text-amber-500" />
+                <CheckCircle2 v-else-if="gemScanToast.type === 'success'" class="w-5 h-5 text-emerald-500" />
+                <AlertOctagon v-else class="w-5 h-5 text-rose-500" />
+                <span>{{ gemScanToast.message }}</span>
+              </div>
+            </div>
+          </Transition>
+
           <div class="flex items-center gap-4 mb-2">
              <div class="p-3 bg-indigo-600 rounded-xl text-white shadow-lg shadow-indigo-500/30">
                 <Shield class="w-6 h-6" />
@@ -2214,8 +2251,8 @@ const formatPeriod = (period: string) => {
           <!-- ▸ 多源数据仪表面板 -->
           <div class="grid grid-cols-12 gap-4">
              <!-- 虚拟读者 -->
-             <div class="col-span-6 lg:col-span-3">
-                <div class="bg-gradient-to-br from-violet-50 to-purple-50 border border-violet-100 rounded-2xl p-5 shadow-sm relative overflow-hidden">
+             <div class="col-span-6 lg:col-span-3 cursor-pointer" @click="showVrDetailModal = true">
+                <div class="bg-gradient-to-br from-violet-50 to-purple-50 border border-violet-100 rounded-2xl p-5 shadow-sm relative overflow-hidden hover:shadow-md transition-shadow">
                    <div class="absolute -right-4 -top-4 w-16 h-16 rounded-full bg-violet-400/10"></div>
                    <div class="relative z-10">
                       <div class="flex items-center gap-2 text-violet-600 text-xs font-bold uppercase mb-3">
@@ -2231,8 +2268,8 @@ const formatPeriod = (period: string) => {
                 </div>
              </div>
              <!-- AI 评分表 -->
-             <div class="col-span-6 lg:col-span-3">
-                <div class="bg-gradient-to-br from-sky-50 to-cyan-50 border border-sky-100 rounded-2xl p-5 shadow-sm relative overflow-hidden">
+             <div class="col-span-6 lg:col-span-3 cursor-pointer" @click="showAiEvalModal = true">
+                <div class="bg-gradient-to-br from-sky-50 to-cyan-50 border border-sky-100 rounded-2xl p-5 shadow-sm relative overflow-hidden hover:shadow-md transition-shadow">
                    <div class="absolute -right-4 -top-4 w-16 h-16 rounded-full bg-sky-400/10"></div>
                    <div class="relative z-10">
                       <div class="flex items-center gap-2 text-sky-600 text-xs font-bold uppercase mb-3">
@@ -2247,8 +2284,8 @@ const formatPeriod = (period: string) => {
                 </div>
              </div>
              <!-- 实时监控 -->
-             <div class="col-span-6 lg:col-span-3">
-                <div class="bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100 rounded-2xl p-5 shadow-sm relative overflow-hidden">
+             <div class="col-span-6 lg:col-span-3 cursor-pointer" @click="showRealtimeModal = true">
+                <div class="bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100 rounded-2xl p-5 shadow-sm relative overflow-hidden hover:shadow-md transition-shadow">
                    <div class="absolute -right-4 -top-4 w-16 h-16 rounded-full bg-emerald-400/10"></div>
                    <div class="relative z-10">
                       <div class="flex items-center gap-2 text-emerald-600 text-xs font-bold uppercase mb-3">
@@ -2262,8 +2299,8 @@ const formatPeriod = (period: string) => {
                 </div>
              </div>
              <!-- 审计报告 -->
-             <div class="col-span-6 lg:col-span-3">
-                <div class="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-100 rounded-2xl p-5 shadow-sm relative overflow-hidden">
+             <div class="col-span-6 lg:col-span-3 cursor-pointer" @click="router.push({ query: { tab: 'audit' } })">
+                <div class="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-100 rounded-2xl p-5 shadow-sm relative overflow-hidden hover:shadow-md transition-shadow">
                    <div class="absolute -right-4 -top-4 w-16 h-16 rounded-full bg-amber-400/10"></div>
                    <div class="relative z-10">
                       <div class="flex items-center gap-2 text-amber-600 text-xs font-bold uppercase mb-3">
@@ -2308,7 +2345,7 @@ const formatPeriod = (period: string) => {
                       <span v-for="(v, k) in deepScanResult.data_sources" :key="k" 
                             class="px-2 py-0.5 rounded text-[10px] font-bold"
                             :class="v ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-400'">
-                         {{ k === 'vr_comments' ? '虚拟读者' : k === 'ai_eval' ? 'AI评分' : k === 'global_stats' ? '出海分析' : k === 'realtime_trend' ? '实时监控' : 'XGBoost' }}
+                         {{ String(k) === 'vr_comments' ? '虚拟读者' : String(k) === 'ai_eval' ? 'AI评分' : String(k) === 'global_stats' ? '出海分析' : String(k) === 'realtime_trend' ? '实时监控' : 'XGBoost' }}
                          {{ v ? '✓' : '✗' }}
                       </span>
                    </div>
@@ -2472,10 +2509,10 @@ const formatPeriod = (period: string) => {
                       </tr>
                    </thead>
                    <tbody class="divide-y divide-slate-100">
-                      <tr v-for="(item, idx) in aiScores" :key="idx" class="hover:bg-sky-50/30 transition-colors">
+                      <tr v-for="(item, idx) in paginatedAiScores" :key="idx" class="hover:bg-sky-50/30 transition-colors">
                          <td class="px-6 py-3">
                             <span class="w-6 h-6 rounded-lg text-xs font-extrabold flex items-center justify-center shadow-sm"
-                                  :class="idx < 3 ? 'bg-amber-100 text-amber-700 border border-amber-200' : 'bg-slate-100 text-slate-500 border border-slate-200'">{{ idx + 1 }}</span>
+                                  :class="(aiScoresPage - 1) * aiScoresPageSize + idx < 3 ? 'bg-amber-100 text-amber-700 border border-amber-200' : 'bg-slate-100 text-slate-500 border border-slate-200'">{{ (aiScoresPage - 1) * aiScoresPageSize + idx + 1 }}</span>
                          </td>
                          <td class="px-4 py-3 font-bold text-sm text-slate-900 truncate max-w-[200px]">{{ item.title }}</td>
                          <td class="px-4 py-3 text-center">
@@ -2489,6 +2526,24 @@ const formatPeriod = (period: string) => {
                       </tr>
                    </tbody>
                 </table>
+                <!-- 分页控制 -->
+                <div class="flex items-center justify-between px-6 py-4 border-t border-slate-100">
+                   <div class="text-xs text-slate-500">
+                      共 {{ aiScores.length }} 条，第 {{ aiScoresPage }} / {{ aiScoresTotalPages }} 页
+                   </div>
+                   <div class="flex items-center gap-2">
+                      <button @click="aiScoresPage--" :disabled="aiScoresPage <= 1"
+                              class="px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors"
+                              :class="aiScoresPage <= 1 ? 'bg-slate-50 text-slate-300 border-slate-200 cursor-not-allowed' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'">
+                         上一页
+                      </button>
+                      <button @click="aiScoresPage++" :disabled="aiScoresPage >= aiScoresTotalPages"
+                              class="px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors"
+                              :class="aiScoresPage >= aiScoresTotalPages ? 'bg-slate-50 text-slate-300 border-slate-200 cursor-not-allowed' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'">
+                         下一页
+                      </button>
+                   </div>
+                </div>
              </div>
              <div v-else class="text-center py-12 text-slate-400">
                 <BarChart3 class="w-10 h-10 mx-auto mb-3 opacity-15" />
@@ -3026,6 +3081,56 @@ const formatPeriod = (period: string) => {
 
         <template v-else>
 
+        <!-- ===== 0. 个人信息 ===== -->
+        <div class="bg-white/60 backdrop-blur-xl border border-white/40 rounded-2xl p-6 shadow-sm">
+          <div class="flex items-center justify-between mb-5">
+            <div class="flex items-center gap-3">
+              <div class="p-2.5 rounded-xl bg-indigo-500/10"><Users class="w-5 h-5 text-indigo-600" /></div>
+              <div>
+                <h3 class="font-bold text-slate-900">个人信息</h3>
+                <p class="text-xs text-slate-400">修改管理员账户信息</p>
+              </div>
+            </div>
+            <button @click="saveAdminProfile" :disabled="profileSaving"
+                    class="flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50">
+              <Save class="w-4 h-4" /> 保存
+            </button>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- 头像上传 -->
+            <div class="flex flex-col items-center gap-3">
+              <div class="w-24 h-24 rounded-full bg-gradient-to-tr from-indigo-600 to-purple-600 text-white flex items-center justify-center font-bold shadow-lg shadow-indigo-500/20 overflow-hidden">
+                <img v-if="user?.avatar" :src="`http://localhost:5000${user.avatar}`" alt="Avatar" class="w-full h-full object-cover" />
+                <span v-else class="text-3xl">{{ user?.username?.charAt(0).toUpperCase() || 'A' }}</span>
+              </div>
+              <label class="cursor-pointer">
+                <input type="file" accept="image/*" @change="handleAvatarUpload" class="hidden" />
+                <span class="text-xs text-indigo-600 hover:text-indigo-700 font-medium">更换头像</span>
+              </label>
+            </div>
+            <!-- 基本信息 -->
+            <div class="md:col-span-2 space-y-4">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-500 mb-1.5">用户名</label>
+                  <input v-model="profileForm.username" type="text" placeholder="用户名"
+                         class="w-full h-10 px-3 bg-white border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none" />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-500 mb-1.5">邮箱</label>
+                  <input v-model="profileForm.email" type="email" placeholder="邮箱地址"
+                         class="w-full h-10 px-3 bg-white border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none" />
+                </div>
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 mb-1.5">新密码 <span class="text-slate-300">(留空则不修改)</span></label>
+                <input v-model="profileForm.password" type="password" placeholder="输入新密码"
+                       class="w-full h-10 px-3 bg-white border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none" />
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- ===== 1. AI 大模型配置 ===== -->
         <div class="bg-white/60 backdrop-blur-xl border border-white/40 rounded-2xl p-6 shadow-sm">
           <div class="flex items-center justify-between mb-5">
@@ -3228,41 +3333,7 @@ const formatPeriod = (period: string) => {
           </div>
         </div>
 
-        <!-- ===== 5. 模型训练参数 ===== -->
-        <div class="bg-white/60 backdrop-blur-xl border border-white/40 rounded-2xl p-6 shadow-sm">
-          <div class="flex items-center justify-between mb-5">
-            <div class="flex items-center gap-3">
-              <div class="p-2.5 rounded-xl bg-indigo-500/10"><Cpu class="w-5 h-5 text-indigo-600" /></div>
-              <div>
-                <h3 class="font-bold text-slate-900">IP 评分模型参数</h3>
-                <p class="text-xs text-slate-400">XGBoost 训练超参数（保存后下次训练生效）</p>
-              </div>
-            </div>
-            <button @click="saveSettings('model')" :disabled="settingsSaving" 
-                    class="flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50">
-              <Save class="w-4 h-4" /> 保存
-            </button>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label class="block text-xs font-semibold text-slate-500 mb-1.5">n_estimators (树数量)</label>
-              <input v-model.number="settingsData.model.n_estimators" type="number" min="10" max="1000" step="10" 
-                     class="w-full h-10 px-3 bg-white border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none" />
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-500 mb-1.5">max_depth (最大深度)</label>
-              <input v-model.number="settingsData.model.max_depth" type="number" min="1" max="20" 
-                     class="w-full h-10 px-3 bg-white border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none" />
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-500 mb-1.5">learning_rate (学习率)</label>
-              <input v-model.number="settingsData.model.learning_rate" type="number" min="0.001" max="1" step="0.01" 
-                     class="w-full h-10 px-3 bg-white border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none" />
-            </div>
-          </div>
-        </div>
-
-        <!-- ===== 6. 关于系统 ===== -->
+        <!-- ===== 5. 关于系统 ===== -->
         <div class="bg-white/60 backdrop-blur-xl border border-white/40 rounded-2xl p-6 shadow-sm">
           <div class="flex items-center gap-3 mb-5">
             <div class="p-2.5 rounded-xl bg-slate-500/10"><Info class="w-5 h-5 text-slate-600" /></div>
@@ -3273,15 +3344,15 @@ const formatPeriod = (period: string) => {
           </div>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div class="border border-slate-100 rounded-xl p-4 bg-white/40 text-center">
-              <div class="text-2xl font-serif font-bold text-indigo-600 mb-1">{{ settingsData.about.version }}</div>
+              <div class="text-2xl font-bold text-indigo-600 mb-1">{{ settingsData.about.version }}</div>
               <div class="text-[11px] text-slate-400 font-medium">系统版本</div>
             </div>
             <div class="border border-slate-100 rounded-xl p-4 bg-white/40 text-center">
-              <div class="text-2xl font-serif font-bold text-emerald-600 mb-1">{{ settingsData.about.total_books }}</div>
+              <div class="text-2xl font-bold text-emerald-600 mb-1">{{ settingsData.about.total_books }}</div>
               <div class="text-[11px] text-slate-400 font-medium">书籍总量</div>
             </div>
             <div class="border border-slate-100 rounded-xl p-4 bg-white/40 text-center">
-              <div class="text-2xl font-serif font-bold mb-1" :class="settingsData.about.model_loaded ? 'text-emerald-600' : 'text-rose-500'">{{ settingsData.about.model_loaded ? '✓' : '✗' }}</div>
+              <div class="text-2xl font-bold mb-1" :class="settingsData.about.model_loaded ? 'text-emerald-600' : 'text-rose-500'">{{ settingsData.about.model_loaded ? '✓' : '✗' }}</div>
               <div class="text-[11px] text-slate-400 font-medium">IP 模型状态</div>
             </div>
             <div class="border border-slate-100 rounded-xl p-4 bg-white/40 text-center">
@@ -3302,6 +3373,130 @@ const formatPeriod = (period: string) => {
     </div>
   </main>
 </div>
+
+<!-- 虚拟读者详情弹窗 -->
+<div v-if="showVrDetailModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm px-4">
+   <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[80vh] overflow-hidden animate-fade-in-up">
+      <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-violet-50/50">
+         <div class="flex items-center gap-2">
+            <MessageSquare class="w-5 h-5 text-violet-600" />
+            <h3 class="font-bold text-lg text-slate-800">虚拟读者预测详情</h3>
+         </div>
+         <button @click="showVrDetailModal = false" class="text-slate-400 hover:text-slate-600 p-1">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+         </button>
+      </div>
+      <div class="p-6 overflow-y-auto max-h-[60vh]">
+         <div class="grid grid-cols-3 gap-4 mb-6">
+            <div class="bg-emerald-50 rounded-xl p-4 text-center">
+               <div class="text-2xl font-bold text-emerald-600">{{ multiSourceOverview.vr.positive }}</div>
+               <div class="text-sm text-slate-500">正向评价 👍</div>
+            </div>
+            <div class="bg-slate-50 rounded-xl p-4 text-center">
+               <div class="text-2xl font-bold text-slate-600">{{ multiSourceOverview.vr.neutral }}</div>
+               <div class="text-sm text-slate-500">中性评价 😐</div>
+            </div>
+            <div class="bg-rose-50 rounded-xl p-4 text-center">
+               <div class="text-2xl font-bold text-rose-600">{{ multiSourceOverview.vr.negative }}</div>
+               <div class="text-sm text-slate-500">负向评价 👎</div>
+            </div>
+         </div>
+         <div class="text-sm text-slate-600 leading-relaxed">
+            <p class="mb-3">虚拟读者系统通过 AI 模拟真实读者反馈，对作品进行多维度评价。</p>
+            <p class="text-slate-400 text-xs">总预测数：{{ multiSourceOverview.vr.total }} 条</p>
+         </div>
+      </div>
+      <div class="px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex justify-end">
+         <button @click="showVrDetailModal = false" class="px-5 py-2 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100 transition-colors">
+            关闭
+         </button>
+      </div>
+   </div>
+</div>
+
+<!-- AI 评分表详情弹窗 -->
+<div v-if="showAiEvalModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm px-4">
+   <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[80vh] overflow-hidden animate-fade-in-up">
+      <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-sky-50/50">
+         <div class="flex items-center gap-2">
+            <BarChart3 class="w-5 h-5 text-sky-600" />
+            <h3 class="font-bold text-lg text-slate-800">AI 评分表详情</h3>
+         </div>
+         <button @click="showAiEvalModal = false" class="text-slate-400 hover:text-slate-600 p-1">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+         </button>
+      </div>
+      <div class="p-6 overflow-y-auto max-h-[60vh]">
+         <div class="text-3xl font-bold text-sky-600 mb-2">{{ multiSourceOverview.ai_eval.total }} <span class="text-lg text-slate-400">本</span></div>
+         <div class="grid grid-cols-2 gap-4 mb-6">
+            <div class="bg-sky-50 rounded-xl p-4">
+               <div class="text-sm text-slate-500 mb-1">综合均分</div>
+               <div class="text-2xl font-bold text-sky-600">{{ multiSourceOverview.ai_eval.avg_overall }}</div>
+            </div>
+            <div class="bg-cyan-50 rounded-xl p-4">
+               <div class="text-sm text-slate-500 mb-1">商业均分</div>
+               <div class="text-2xl font-bold text-cyan-600">{{ multiSourceOverview.ai_eval.avg_commercial }}</div>
+            </div>
+         </div>
+         <div class="space-y-2 text-sm">
+            <div class="flex justify-between py-2 border-b border-slate-100">
+               <span class="text-slate-500">故事均分</span>
+               <span class="font-bold">{{ multiSourceOverview.ai_eval.avg_story || '--' }}</span>
+            </div>
+            <div class="flex justify-between py-2 border-b border-slate-100">
+               <span class="text-slate-500">角色均分</span>
+               <span class="font-bold">{{ multiSourceOverview.ai_eval.avg_character || '--' }}</span>
+            </div>
+            <div class="flex justify-between py-2 border-b border-slate-100">
+               <span class="text-slate-500">世界观均分</span>
+               <span class="font-bold">{{ multiSourceOverview.ai_eval.avg_world || '--' }}</span>
+            </div>
+         </div>
+      </div>
+      <div class="px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex justify-end">
+         <button @click="showAiEvalModal = false" class="px-5 py-2 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100 transition-colors">
+            关闭
+         </button>
+      </div>
+   </div>
+</div>
+
+<!-- 实时监控详情弹窗 -->
+<div v-if="showRealtimeModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm px-4">
+   <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[80vh] overflow-hidden animate-fade-in-up">
+      <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-emerald-50/50">
+         <div class="flex items-center gap-2">
+            <Radar class="w-5 h-5 text-emerald-600" />
+            <h3 class="font-bold text-lg text-slate-800">实时监控详情</h3>
+         </div>
+         <button @click="showRealtimeModal = false" class="text-slate-400 hover:text-slate-600 p-1">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+         </button>
+      </div>
+      <div class="p-6 overflow-y-auto max-h-[60vh]">
+         <div class="text-3xl font-bold text-emerald-600 mb-2">{{ multiSourceOverview.realtime.active_books }} <span class="text-lg text-slate-400">本</span></div>
+         <div class="text-sm text-slate-500 mb-6">
+            最新采集时间：<span class="font-bold text-emerald-600">{{ multiSourceOverview.realtime.last_crawl }}</span>
+         </div>
+         <div class="grid grid-cols-2 gap-4">
+            <div class="bg-emerald-50 rounded-xl p-4">
+               <div class="text-sm text-slate-500 mb-1">起点中文网</div>
+               <div class="text-2xl font-bold text-emerald-600">{{ multiSourceOverview.realtime.qidian_count || 0 }} 本</div>
+            </div>
+            <div class="bg-teal-50 rounded-xl p-4">
+               <div class="text-sm text-slate-500 mb-1">纵横中文网</div>
+               <div class="text-2xl font-bold text-teal-600">{{ multiSourceOverview.realtime.zongheng_count || 0 }} 本</div>
+            </div>
+         </div>
+      </div>
+      <div class="px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex justify-end">
+         <button @click="showRealtimeModal = false" class="px-5 py-2 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100 transition-colors">
+            关闭
+         </button>
+      </div>
+   </div>
+</div>
+
 </template>
 
 <style scoped>
