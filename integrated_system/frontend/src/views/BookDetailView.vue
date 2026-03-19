@@ -1923,15 +1923,15 @@ onMounted(() => {
                                         :disabled="currentChapterNum <= 1 || isFetchingChapter"
                                         class="px-7 py-3 bg-white text-slate-700 border border-slate-200 rounded-xl font-bold hover:bg-slate-50 hover:border-slate-300 hover:shadow-sm disabled:opacity-50 disabled:hover:shadow-none disabled:hover:bg-white transition-all"
                                     >
-                                        上一章
+                                        上一页
                                     </button>
-                                    <span class="text-sm font-bold text-slate-400 tracking-widest">目前为您展示：第 <span class="text-slate-700 mx-1">{{ currentChapterNum }}</span> 章</span>
+                                    <span class="text-sm font-bold text-slate-400 tracking-widest">目前为您展示：第 <span class="text-slate-700 mx-1">{{ currentChapterNum }}</span> 页</span>
                                     <button 
                                         @click="fetchChapter(currentChapterNum + 1)"
                                         :disabled="isFetchingChapter"
                                         class="px-7 py-3 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:shadow-none disabled:hover:translate-y-0 transition-all"
                                     >
-                                        下一章
+                                        下一页
                                     </button>
                                 </div>
                             </div>
