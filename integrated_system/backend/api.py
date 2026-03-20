@@ -3613,9 +3613,14 @@ def get_audit_logs():
     risk_level = request.args.get('risk_level')
     risk_type = request.args.get('risk_type')
     book_title = request.args.get('book_title')
+    include_ignored = request.args.get('include_ignored', 'false').lower() == 'true'  # 是否包含已忽略的记录
     
     query = "SELECT * FROM ip_audit_logs WHERE 1=1"
     params = []
+    
+    # 默认排除已忽略的记录，除非明确指定包含
+    if not include_ignored:
+        query += " AND status != 'Ignored'"
     
     if status:
         query += " AND status = %s"
@@ -3639,31 +3644,32 @@ def get_audit_logs():
         with conn.cursor() as cursor:
             # 修改：对同一本书只返回最新的一条记录
             if book_title:
-                # 如果指定了书名，返回该书最新的记录
+                # 如果指定了书名，返回该书最新的记录（排除已忽略的）
                 cursor.execute("""
                     SELECT * FROM ip_audit_logs 
-                    WHERE book_title = %s
+                    WHERE book_title = %s AND status != 'Ignored'
                     ORDER BY created_at DESC 
                     LIMIT 1
                 """, (book_title,))
                 logs = cursor.fetchall()
                 total = len(logs)
             else:
-                # 如果没有指定书名，对每本书只返回最新的一条
+                # 如果没有指定书名，对每本书只返回最新的一条（排除已忽略的）
+                ignored_filter = " AND status != 'Ignored'"
                 cursor.execute("""
                     SELECT a.* FROM ip_audit_logs a
                     INNER JOIN (
                         SELECT book_title, MAX(created_at) as max_time 
                         FROM ip_audit_logs 
-                        WHERE 1=1
-                        """ + (" AND status = %s" if status else "") + 
+                        WHERE 1=1""" + ignored_filter + 
+                        (" AND status = %s" if status else "") + 
                         (" AND risk_level = %s" if risk_level else "") +
                         (" AND risk_type = %s" if risk_type else "") + 
                         """
                         GROUP BY book_title
                     ) b ON a.book_title = b.book_title AND a.created_at = b.max_time
-                    WHERE 1=1
-                    """ + (" AND a.status = %s" if status else "") + 
+                    WHERE 1=1""" + ignored_filter +
+                    (" AND a.status = %s" if status else "") + 
                     (" AND a.risk_level = %s" if risk_level else "") +
                     (" AND a.risk_type = %s" if risk_type else "") + 
                     """
@@ -3672,10 +3678,10 @@ def get_audit_logs():
                 """, tuple([p for p in [status, risk_level, risk_type, status, risk_level, risk_type] if p] + [limit, offset]))
                 logs = cursor.fetchall()
                 
-                # 统计总数（去重后的书籍数）
+                # 统计总数（去重后的书籍数，排除已忽略的）
                 count_query = """
                     SELECT COUNT(DISTINCT book_title) as cnt FROM ip_audit_logs 
-                    WHERE 1=1
+                    WHERE 1=1 AND status != 'Ignored'
                 """
                 count_params = []
                 if status:
