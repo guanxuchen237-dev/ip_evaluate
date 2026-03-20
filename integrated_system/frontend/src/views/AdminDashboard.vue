@@ -1050,7 +1050,11 @@ async function fetchAiScores() {
 
 // 报告展开状态
 const expandedLogId = ref<number | null>(null)
-const reportLoading = ref(false)
+const reportLoadingIds = ref<Set<number>>(new Set())
+
+function isReportLoading(logId: number): boolean {
+  return reportLoadingIds.value.has(logId)
+}
 
 async function toggleLogExpand(logId: number) {
   if (expandedLogId.value === logId) {
@@ -1064,7 +1068,7 @@ async function toggleLogExpand(logId: number) {
   
   // 如果报告为空或太短，调用API生成
   if (!log.markdown_report || log.markdown_report.length < 100) {
-    reportLoading.value = true
+    reportLoadingIds.value.add(logId)
     try {
       const token = localStorage.getItem('auth_token')
       const res = await fetch(`http://localhost:5000/api/admin/audit_logs/${logId}/generate_report`, {
@@ -1090,7 +1094,7 @@ async function toggleLogExpand(logId: number) {
     } catch (e) {
       console.error('[Audit] Generate report error:', e)
     } finally {
-      reportLoading.value = false
+      reportLoadingIds.value.delete(logId)
     }
   } else {
     expandedLogId.value = logId
@@ -2562,9 +2566,9 @@ const formatPeriod = (period: string) => {
                                  <FileText class="w-3 h-3" /> {{ expandedLogId === log.id ? '收起报告' : '展开报告' }}
                               </button>
                               <!-- 没有报告时显示生成按钮 -->
-                              <button v-else @click="toggleLogExpand(log.id)" :disabled="reportLoading"
+                              <button v-else @click="toggleLogExpand(log.id)" :disabled="isReportLoading(log.id)"
                                       class="flex-1 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-600 rounded drop-shadow-sm text-xs font-bold transition-colors flex items-center justify-center gap-1 disabled:opacity-50">
-                                 <Sparkles class="w-3 h-3" :class="{'animate-spin': reportLoading}" /> {{ reportLoading ? '生成中...' : 'AI分析' }}
+                                 <Sparkles class="w-3 h-3" :class="{'animate-spin': isReportLoading(log.id)}" /> {{ isReportLoading(log.id) ? '生成中...' : 'AI分析' }}
                               </button>
                           </div>
                        </div>
