@@ -4804,17 +4804,16 @@ def predict_simple():
                     """, (f"%{title}%",))
                     db_match = cur.fetchone()
                 else:
-                    # 纵横：从zongheng_book_ranks获取，使用crawl_time提取年月
+                    # 纵横：从zongheng_book_ranks获取，使用year/month字段
                     print(f"[DEBUG] 纵横查询: title={title.strip()}, LIKE='%{title.strip()}%'", flush=True)
                     cur.execute(f"""
                         SELECT title, author, category, status, word_count,
                                monthly_ticket as monthly_tickets,
                                total_rec as total_recommend,
-                               YEAR(crawl_time) as year,
-                               MONTH(crawl_time) as month
+                               year, month
                         FROM zongheng_book_ranks
                         WHERE title LIKE %s
-                        ORDER BY crawl_time DESC
+                        ORDER BY year DESC, month DESC
                         LIMIT 1
                     """, (f"%{title.strip()}%",))
                     db_match = cur.fetchone()
@@ -4833,17 +4832,17 @@ def predict_simple():
                         """, (db_match['title'],))
                         history_data = cur.fetchall()
                     else:
-                        # 纵横：从zongheng_book_ranks获取历史数据，使用crawl_time提取年月
+                        # 纵横：从zongheng_book_ranks获取历史数据，使用year/month字段
                         cur.execute(f"""
                             SELECT title, 
-                                   YEAR(crawl_time) as year, 
-                                   MONTH(crawl_time) as month,
+                                   year, 
+                                   month,
                                    monthly_ticket as monthly_tickets,
                                    total_rec as total_recommend,
                                    word_count
                             FROM zongheng_book_ranks
                             WHERE title = %s
-                            ORDER BY crawl_time
+                            ORDER BY year, month
                         """, (db_match['title'],))
                         history_data = cur.fetchall()
                     
