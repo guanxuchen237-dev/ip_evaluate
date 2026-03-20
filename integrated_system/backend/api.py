@@ -4803,17 +4803,41 @@ def predict_simple():
                 """, (f"%{title}%",))
                 db_match = cur.fetchone()
                 
+                # 纵横特殊处理：zongheng_book_ranks表没有year/month，需要从realtime表获取
+                if not db_match and platform_key == 'Zongheng':
+                    cur.execute(f"""
+                        SELECT title, author, category, status, word_count,
+                               monthly_tickets, total_recommend,
+                               record_year as year, record_month as month
+                        FROM zongheng_realtime_tracking
+                        WHERE title LIKE %s
+                        ORDER BY crawl_time DESC
+                        LIMIT 1
+                    """, (f"%{title}%",))
+                    db_match = cur.fetchone()
+                
                 if db_match:
                     # 获取历史数据
-                    cur.execute(f"""
-                        SELECT title, year, month, {tkt_col} as monthly_tickets,
-                               recommendation_count as total_recommend,
-                               word_count
-                        FROM {table}
-                        WHERE title = %s
-                        ORDER BY year, month
-                    """, (db_match['title'],))
-                    history_data = cur.fetchall()
+                    if platform_key == 'Qidian':
+                        cur.execute(f"""
+                            SELECT title, year, month, {tkt_col} as monthly_tickets,
+                                   recommendation_count as total_recommend,
+                                   word_count
+                            FROM {table}
+                            WHERE title = %s
+                            ORDER BY year, month
+                        """, (db_match['title'],))
+                        history_data = cur.fetchall()
+                    else:
+                        # 纵横：从realtime_tracking获取历史数据
+                        cur.execute(f"""
+                            SELECT title, record_year as year, record_month as month,
+                                   monthly_tickets, total_recommend, 0 as word_count
+                            FROM zongheng_realtime_tracking
+                            WHERE title = %s
+                            ORDER BY record_year, record_month
+                        """, (db_match['title'],))
+                        history_data = cur.fetchall()
                     
                     # 补充缺失数据
                     if not author and db_match.get('author'):
@@ -5383,6 +5407,49 @@ def predict_simple():
         elif history_data and len(history_data) == 1:
             h = history_data[0]
             history_trend = f"【1条历史记录】{h['year']}/{h['month']}月票{h.get('monthly_tickets', 0) or 0}，数据有限仅供参考。"
+            
+            # 即使只有1条历史数据，也生成预测
+            if monthly_tickets > 0:
+                for i in range(1, 4):
+                    pred_month = current_month + i
+                    pred_year = current_year
+                    if pred_month > 12:
+                        pred_month -= 12
+                        pred_year += 1
+                    
+                    # 基于当前月票预测，轻微衰减
+                    pred_tickets = int(monthly_tickets * (0.95 ** i))
+                    pred_tickets = max(pred_tickets, int(monthly_tickets * 0.7))
+                    
+                    future_predictions.append({
+                        'year': pred_year,
+                        'month': pred_month,
+                        'predicted_tickets': pred_tickets,
+                        'confidence': 'low',
+                        'trend': '数据有限',
+                        'model': 'simple_decay'
+                    })
+        
+        # 如果没有任何历史数据，但用户提供了月票，也生成预测
+        if not filtered_history and monthly_tickets > 0:
+            for i in range(1, 4):
+                pred_month = current_month + i
+                pred_year = current_year
+                if pred_month > 12:
+                    pred_month -= 12
+                    pred_year += 1
+                
+                pred_tickets = int(monthly_tickets * (0.95 ** i))
+                pred_tickets = max(pred_tickets, int(monthly_tickets * 0.7))
+                
+                future_predictions.append({
+                    'year': pred_year,
+                    'month': pred_month,
+                    'predicted_tickets': pred_tickets,
+                    'confidence': 'low',
+                    'trend': '无历史数据',
+                    'model': 'simple_decay'
+                })
         
         # 构建AI提示词 - 使用纯文本格式，避免Markdown符号
         # 先构建预测部分（避免f-string中的反斜杠问题）
