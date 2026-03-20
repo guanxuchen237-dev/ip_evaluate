@@ -160,10 +160,11 @@ df['genre_hotness'] = df['category'].map(lambda x: HOT_GENRES.get(str(x), 70)).f
 df = df.sort_values(['title', 'author', 'year', 'month'])
 df['months_active'] = df.groupby(['title', 'author']).cumcount() + 1
 
-# 特征列表
+# 特征列表 - 包含当前月票作为核心特征
 feature_cols = [
     'word_count', 'collection_count', 'total_recommend', 'fan_count',
-    'log_word_count', 'log_collection', 'log_recommend',
+    'monthly_tickets',  # 当前月票（核心特征）
+    'log_word_count', 'log_collection', 'log_recommend', 'log_tickets',
     'tickets_per_word', 'collection_per_word', 'heat_index',
     'genre_hotness', 'months_active'
 ]
@@ -367,30 +368,32 @@ print("\n【步骤6】测试预测...")
 
 # 测试样本
 test_samples = [
-    {'word_count': 500000, 'collections': 50000, 'recommendations': 5000, 'fans': 10000, 'months': 12},
-    {'word_count': 100000, 'collections': 5000, 'recommendations': 500, 'fans': 500, 'months': 3},
+    {'word_count': 500000, 'collections': 50000, 'recommendations': 5000, 'fans': 10000, 'months': 12, 'current_tickets': 30000},
+    {'word_count': 100000, 'collections': 5000, 'recommendations': 500, 'fans': 500, 'months': 3, 'current_tickets': 2000},
 ]
 
 for i, sample in enumerate(test_samples):
-    # 构建特征
+    # 构建特征（14个特征）
     x = np.array([[
         sample['word_count'],
         sample['collections'],
         sample['recommendations'],
         sample['fans'],
+        sample['current_tickets'],  # 当前月票
         np.log1p(sample['word_count']),
         np.log1p(sample['collections']),
         np.log1p(sample['recommendations']),
+        np.log1p(sample['current_tickets']),  # log_tickets
+        sample['current_tickets'] / (sample['word_count'] + 1) * 10000,  # tickets_per_word
         sample['collections'] / (sample['word_count'] + 1) * 10000,
-        sample['collections'] / (sample['word_count'] + 1) * 10000,
-        (sample['collections'] + sample['recommendations']) / 2,
+        (sample['current_tickets'] + sample['collections'] + sample['recommendations']) / 3,  # heat_index
         90,  # genre_hotness
         sample['months']
     ]])
     
     pred = engine.predict(x, [sample['months']])[0]
     engine_type = 'XGBoost' if sample['months'] >= 6 else 'K-Means'
-    print(f"  样本{i+1}: 预测月票={pred:.0f}, 引擎={engine_type}")
+    print(f"  样本{i+1}: 当前月票={sample['current_tickets']}, 预测月票={pred:.0f}, 引擎={engine_type}")
 
 print("\n" + "=" * 70)
 print("训练完成!")

@@ -140,25 +140,29 @@ def _predict_tickets_dual(engine, features_list, input_features):
         collections = input_features.get('collections', 0) or 0
         fans_count = input_features.get('fans_count', 0) or 0
         months = input_features.get('months', 6) or 6
+        current_tickets = input_features.get('monthly_tickets', 0) or 0  # 当前月票（核心特征）
         
         # 计算派生特征
         log_word_count = np.log1p(word_count)
         log_collection = np.log1p(collections)
         log_recommend = np.log1p(total_recommend)
-        tickets_per_word = collections / (word_count + 1) * 10000
+        log_tickets = np.log1p(current_tickets)
+        tickets_per_word = current_tickets / (word_count + 1) * 10000
         collection_per_word = collections / (word_count + 1) * 10000
-        heat_index = (collections + total_recommend) / 2
+        heat_index = (current_tickets + collections + total_recommend) / 3
         genre_hotness = 85  # 默认题材热度
         
-        # 构建特征向量
+        # 构建特征向量（14个特征）
         X = np.array([[
             word_count,
             collections,
             total_recommend,
             fans_count,
+            current_tickets,  # 当前月票
             log_word_count,
             log_collection,
             log_recommend,
+            log_tickets,
             tickets_per_word,
             collection_per_word,
             heat_index,
