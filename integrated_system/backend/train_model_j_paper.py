@@ -159,14 +159,33 @@ class IPWeightedScorer:
         self.scalers = {}
         
     def compute_commercial_score(self, df):
-        """计算商业分 (40%)"""
-        # 基于月票、收藏、推荐的归一化值
-        tickets_score = np.clip(df['monthly_tickets_normalized'] / df['monthly_tickets_normalized'].quantile(0.95) * 100, 0, 100)
-        collection_score = np.clip(df['collection_normalized'] / df['collection_normalized'].quantile(0.95) * 100, 0, 100)
-        recommend_score = np.clip(df['recommend_normalized'] / df['recommend_normalized'].quantile(0.95) * 100, 0, 100)
+        """计算商业价值分 (40%)"""
+        # 月票、收藏、推荐的综合评分
+        tickets = df['monthly_tickets_normalized']
+        collection = df['collection_normalized']
+        recommend = df['recommend_normalized']
+        
+        # 使用对数缩放 + 百分位归一化，确保分数分布合理
+        # 月票分：使用对数缩放，让高分作品有更高分数
+        tickets_log = np.log1p(tickets)
+        tickets_score = np.clip(tickets_log / tickets_log.quantile(0.95) * 100, 0, 100)
+        
+        # 收藏分
+        collection_log = np.log1p(collection)
+        collection_score = np.clip(collection_log / collection_log.quantile(0.95) * 100, 0, 100)
+        
+        # 推荐分
+        recommend_log = np.log1p(recommend)
+        recommend_score = np.clip(recommend_log / recommend_log.quantile(0.95) * 100, 0, 100)
         
         # 加权平均
         commercial = tickets_score * 0.5 + collection_score * 0.3 + recommend_score * 0.2
+        
+        # 额外加成：排名前100的作品获得加分
+        if 'rank_on_list' in df.columns:
+            rank_bonus = np.clip(100 - df['rank_on_list'], 0, 100) * 0.2  # 排名前100加分
+            commercial = np.clip(commercial + rank_bonus, 0, 100)
+        
         return commercial
     
     def compute_stickiness_score(self, df):
@@ -264,7 +283,8 @@ class IPWeightedScorer:
             count = grade_dist.get(grade, 0)
             pct = count / len(df) * 100
             info = IPGradingSystem.get_grade_info(grade)
-            print(f"    {info.get('color', '')} {grade}级: {count}本 ({pct:.1f}%)")
+            color_name = info.get('color', '').replace('\U0001f534', '[红]').replace('\U0001f7e1', '[黄]').replace('\U0001f7e2', '[绿]').replace('\U0001f535', '[蓝]').replace('\u26ab', '[灰]')
+            print(f"    {color_name} {grade}级: {count}本 ({pct:.1f}%)")
         
         return df
 

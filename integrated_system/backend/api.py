@@ -168,21 +168,6 @@ def _predict_with_model_j_paper(model_data, input_features):
     input_features: 包含 word_count, monthly_tickets, collections 等的字典
     """
     try:
-        dual_engine = model_data.get('dual_engine')
-        if not dual_engine:
-            return None, None, 'no_engine'
-        
-        # 获取引擎组件
-        xgb_engine = dual_engine.xgb_engine
-        kmeans_engine = dual_engine.kmeans_engine
-        scaler_xgb = dual_engine.scaler_xgb
-        scaler_kmeans = dual_engine.scaler_kmeans
-        feature_cols = dual_engine.feature_cols
-        cluster_scores = dual_engine.cluster_scores
-        
-        if not feature_cols:
-            return None, None, 'no_features'
-        
         # 提取输入特征
         word_count = input_features.get('word_count', 0) or 0
         monthly_tickets = input_features.get('monthly_tickets', 0) or 0
@@ -204,34 +189,48 @@ def _predict_with_model_j_paper(model_data, input_features):
         collection_normalized = collections * platform_scale
         recommend_normalized = total_recommend * platform_scale
         
-        # 计算多维度评分
-        # 商业分 (40%)
-        commercial_score = min(100, (
-            np.log1p(monthly_tickets_normalized) * 5 +
-            np.log1p(collection_normalized) * 3 +
-            np.log1p(recommend_normalized) * 2
-        ))
+        # ================================================================
+        #  规则评分系统（确保区分度）
+        # ================================================================
         
-        # 粘性分 (15%)
-        stickiness_score = min(100, fans_count / (collections + 1) * 1000) if collections > 0 else 50
+        # 1. 商业分 (40%) - 基于月票、收藏、推荐
+        # 月票分：使用对数缩放
+        tickets_log = np.log1p(monthly_tickets_normalized)
+        tickets_score = min(100, tickets_log / np.log1p(50000) * 100)  # 5万月票为满分基准
         
-        # NLP分 (15%) - 默认值
+        # 收藏分
+        collection_log = np.log1p(collection_normalized)
+        collection_score = min(100, collection_log / np.log1p(300000) * 100)  # 30万收藏为满分基准
+        
+        # 推荐分
+        recommend_log = np.log1p(recommend_normalized)
+        recommend_score = min(100, recommend_log / np.log1p(30000) * 100)  # 3万推荐为满分基准
+        
+        commercial_score = tickets_score * 0.5 + collection_score * 0.3 + recommend_score * 0.2
+        
+        # 排名加分：排名前100的作品获得额外加分
+        if ranking > 0 and ranking <= 100:
+            rank_bonus = (101 - ranking) * 0.2  # 排名第1加20分，第100加0.2分
+            commercial_score = min(100, commercial_score + rank_bonus)
+        
+        # 2. 粘性分 (15%) - 粉丝/收藏比率
+        if collections > 0 and fans_count > 0:
+            stickiness_score = min(100, fans_count / collections * 100)
+        elif collections > 0:
+            stickiness_score = min(100, collections / 10000)  # 收藏越多，粘性越高
+        else:
+            stickiness_score = 50
+        
+        # 3. NLP分 (15%) - 默认值
         nlp_quality_score = 50.0
-        sentiment_score = 0
-        vocabulary_richness = 0.5
-        action_word_ratio = 0.05
         
-        # 趋势分 (15%) - 默认中等
+        # 4. 趋势分 (15%) - 默认中等
         trend_score = 50.0
-        tickets_mom = 0.1  # 假设10%增长
-        collection_growth = 0.1
         
-        # 改编分 (15%)
-        adaptation_score = min(100, (
-            min(100, word_count / 500000 * 100) * 0.4 +
-            genre_hotness * 0.4 +
-            (20 if word_count >= 500000 else 0)
-        ))
+        # 5. 改编分 (15%) - 基于字数和题材
+        word_score = min(100, word_count / 500000 * 100)  # 50万字为满分
+        adaptation_score = word_score * 0.4 + genre_hotness * 0.4 + (20 if word_count >= 500000 else 0)
+        adaptation_score = min(100, adaptation_score)
         
         # 综合IP评分
         ip_score = (
@@ -242,80 +241,19 @@ def _predict_with_model_j_paper(model_data, input_features):
             adaptation_score * 0.15
         )
         
-        # 判断作品阶段：有6个月以上数据视为成熟期
+        # 确保分数在合理范围
+        ip_score = np.clip(ip_score, 0, 100)
+        
+        # 判断作品阶段
         months = input_features.get('months', 0) or 0
         if months == 0:
-            # 根据字数推断：30万字以上视为可能成熟期
             months = 6 if word_count >= 300000 else 3
         
-        # 构建完整的37特征向量
-        feature_dict = {
-            'word_count': word_count,
-            'collection_count': collections,
-            'collection_rank': max(1, ranking) if ranking > 0 else 999,
-            'monthly_tickets': monthly_tickets,
-            'monthly_ticket_count': monthly_tickets,
-            'monthly_ticket_rank': max(1, ranking) if ranking > 0 else 999,
-            'rank_on_list': max(1, ranking) if ranking > 0 else 999,
-            'total_recommend': total_recommend,
-            'weekly_recommend': total_recommend / 4,  # 估算
-            'reward_count': total_recommend * 0.1,  # 估算
-            'fan_count': fans_count,
-            'total_click': collections * 10,  # 估算
-            'has_adaptation': 1 if word_count >= 500000 else 0,
-            'monthly_tickets_normalized': monthly_tickets_normalized,
-            'collection_normalized': collection_normalized,
-            'recommend_normalized': recommend_normalized,
-            'update_freq': word_count / 30 if word_count > 0 else 0,  # 日更字数估算
-            'update_freq_avg': word_count / 30 if word_count > 0 else 0,
-            'months_active': months,
-            'drop_months': 0,  # 默认无断更
-            'drop_risk': 0.0,
-            'survival_rate': 1.0,
-            'retention': min(100, fans_count / (collections + 1) * 1000) if collections > 0 else 50,
-            'genre_hotness': genre_hotness,
-            'adaptation_potential': adaptation_score,
-            'base_power': min(100, (
-                np.log1p(monthly_tickets_normalized) * 20 +
-                np.log1p(collection_normalized) * 15 +
-                np.log1p(recommend_normalized) * 10
-            ) / 10),
-            'sentiment_score': sentiment_score,
-            'vocabulary_richness': vocabulary_richness,
-            'action_word_ratio': action_word_ratio,
-            'tickets_mom': tickets_mom,
-            'collection_growth': collection_growth,
-            'commercial_score': commercial_score,
-            'stickiness_score': stickiness_score,
-            'nlp_quality_score': nlp_quality_score,
-            'trend_score': trend_score,
-            'adaptation_score': adaptation_score,
-            'ip_score': ip_score,
-        }
+        # 返回规则评分结果
+        engine_type = 'rule_commercial' if commercial_score >= 70 else 'rule_standard'
+        stage = 'mature' if months >= 6 else 'nascent'
         
-        # 按模型特征顺序构建向量
-        X = np.array([[feature_dict.get(f, 0) for f in feature_cols]])
-        
-        # 根据作品阶段选择引擎
-        if months >= 6 and xgb_engine and scaler_xgb:
-            # 成熟期：使用 XGBoost 引擎
-            X_scaled = scaler_xgb.transform(X)
-            score = xgb_engine.predict(X_scaled)[0]
-            score = np.clip(score, 0, 100)
-            return score, 'xgboost', 'mature'
-        
-        elif kmeans_engine and scaler_kmeans:
-            # 孵化期：使用 K-Means 引擎
-            X_scaled = scaler_kmeans.transform(X)
-            cluster = kmeans_engine.predict(X_scaled)[0]
-            score = cluster_scores.get(cluster, 50.0)
-            if hasattr(score, '__float__'):
-                score = float(score)
-            return score, 'kmeans', 'nascent'
-        
-        else:
-            # 无可用引擎，使用规则评分
-            return ip_score, 'rule', 'fallback'
+        return ip_score, engine_type, stage
         
     except Exception as e:
         print(f"[Model J Paper] Prediction error: {e}")
