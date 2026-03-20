@@ -24,6 +24,7 @@ const isBlacklisting = ref(false)
 const isExtracting = ref(false)
 const toastMessage = ref('')
 const toastType = ref<'success' | 'error' | 'info'>('info')
+const extractedCharacters = ref<any[]>([])
 
 const showToast = (msg: string, type: 'success' | 'error' | 'info' = 'info') => {
     toastMessage.value = msg
@@ -178,10 +179,13 @@ const handleExtractCharacters = async () => {
             platform: book.value.basic.platform
         }
         const res = await axios.post('http://localhost:5000/api/ai/extract_characters', payload)
-        // 此处只做请求和 Toast, 角色提取因为当前展示为 Mock 暂时直接提示。
-        console.log('提取出的人物', res.data)
-        // 也可以选择将 res.data.characters 保存并更新到页面的 Mock 卡片中。
-        showToast('已重新提取智能图谱实体关联', 'success')
+        // 保存提取的角色到状态
+        if (res.data && res.data.characters) {
+            extractedCharacters.value = res.data.characters
+            showToast(`成功提取 ${res.data.characters.length} 个角色`, 'success')
+        } else {
+            showToast('未提取到角色数据', 'info')
+        }
     } catch (e: any) {
         showToast(parseAIError(e), 'error')
     } finally {
@@ -474,15 +478,37 @@ const handleExtractCharacters = async () => {
                                     <Users class="w-5 h-5 text-amber-600" />
                                 </div>
                                 <h3 class="font-bold text-slate-800 tracking-wide">AI 角色提取</h3>
+                                <span v-if="extractedCharacters.length > 0" class="px-2 py-0.5 bg-amber-100 text-amber-700 rounded-full text-xs font-bold">
+                                    {{ extractedCharacters.length }} 个角色
+                                </span>
                             </div>
                             <button @click="handleExtractCharacters" :disabled="isExtracting" class="px-4 py-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-lg text-xs font-bold transition-colors border border-indigo-100 disabled:opacity-50 flex items-center gap-2">
                                 <div v-if="isExtracting" class="w-3 h-3 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
-                                <span v-else>+</span>
-                                {{ isExtracting ? '提取中...' : '提取角色实体' }}
+                                <span v-else>↻</span>
+                                {{ isExtracting ? '提取中...' : (extractedCharacters.length > 0 ? '重新提取' : '提取角色') }}
                             </button>
                         </div>
                         
-                        <div class="bg-slate-50 rounded-2xl p-6 border border-slate-100 flex-1 flex items-center justify-center">
+                        <!-- 角色卡片列表 -->
+                        <div v-if="extractedCharacters.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <div v-for="(char, idx) in extractedCharacters" :key="idx" 
+                                 class="bg-slate-50 rounded-2xl p-4 border border-slate-100 hover:border-amber-200 hover:shadow-md transition-all group">
+                                <div class="flex items-start gap-3 mb-3">
+                                    <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-2xl shadow-sm flex-shrink-0">
+                                        {{ char.avatar || '🎭' }}
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <h4 class="font-bold text-slate-800 text-sm truncate">{{ char.name }}</h4>
+                                        <p class="text-xs text-slate-500 truncate">{{ char.description || '主要角色' }}</p>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-slate-600 leading-relaxed line-clamp-3 mb-2">{{ char.persona }}</p>
+                                <p v-if="char.background" class="text-[10px] text-slate-400 line-clamp-1">背景：{{ char.background }}</p>
+                            </div>
+                        </div>
+                        
+                        <!-- 空态 -->
+                        <div v-else class="bg-slate-50 rounded-2xl p-6 border border-slate-100 flex-1 flex items-center justify-center">
                             <div class="text-center">
                                 <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm">
                                     <Fingerprint class="w-6 h-6 text-slate-400" />
