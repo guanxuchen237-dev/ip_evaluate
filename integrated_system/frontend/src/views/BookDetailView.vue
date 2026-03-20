@@ -1000,6 +1000,7 @@ onMounted(() => {
                             { id: 'risk', label: '风险评估', en: 'Risk' },
                             { id: 'ai-audit', label: 'AI 审计', en: 'AI Audit' },
                             { id: 'valuation', label: '价值估算', en: 'Valuation' },
+                            { id: 'audit', label: '章节阅读', en: 'Reader' },
                         ]"
                         :key="tab.id"
                         @click="activeTab = tab.id"
@@ -2027,6 +2028,51 @@ onMounted(() => {
                             <p class="text-slate-500 mb-6">暂时无法获取估值数据，请稍后重试</p>
                             <button @click="fetchValuation()" class="px-6 py-3 bg-amber-600 text-white rounded-xl font-medium hover:bg-amber-700 transition-colors">重新估算</button>
                         </div>
+                    </div>
+
+                    <!-- ==================== AUDIT TAB (Chapter Reader) ==================== -->
+                    <div v-if="activeTab === 'audit'" class="bg-[#faf9f6]/95 backdrop-blur-3xl rounded-[24px] overflow-hidden border border-slate-200/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] pb-10">
+                        <!-- 游客模式提示 -->
+                        <div v-if="!isLoggedIn" class="py-24 text-center">
+                            <h3 class="font-bold text-slate-800 mb-2 text-xl">沉浸式阅读体验</h3>
+                            <p class="text-[15px] font-medium text-slate-500 mb-8">该功能提供沉浸式的章节阅读与大模型解析体验。请登录以继续阅读。</p>
+                            <button @click="router.push('/login')" class="px-10 py-3.5 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 shadow-xl shadow-emerald-200 transition-all hover:-translate-y-0.5">立即登录</button>
+                        </div>
+                        <template v-else>
+                            <div v-if="isFetchingChapter" class="flex flex-col items-center justify-center h-[500px]">
+                                <div class="animate-spin w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full mb-6 relative">
+                                    <div class="absolute inset-0 rounded-full border-4 border-emerald-200/50"></div>
+                                </div>
+                                <p class="text-slate-500 font-bold tracking-widest text-sm uppercase">AI 正在调取或生成章节网络数据...</p>
+                            </div>
+                            <div v-else class="max-w-3xl mx-auto px-8 md:px-12 pt-16 pb-8">
+                                <h2 class="text-3xl md:text-4xl font-serif font-black text-slate-800 tracking-tight text-center mb-16 leading-snug">{{ chapterTitle }}</h2>
+                                <div class="space-y-6 text-[18px] md:text-[19px] leading-loose text-slate-800 font-[400]" style="font-family: 'Bookerly', 'Georgia', 'FangZhengShuSong', 'STSong', serif; color: #333;">
+                                    <p v-for="(paragraph, idx) in chapterContent" :key="idx" class="indent-8 text-justify">
+                                        {{ paragraph }}
+                                    </p>
+                                    <div v-if="!chapterContent || chapterContent.length === 0" class="text-center text-slate-400 font-sans text-sm">暂无内容</div>
+                                </div>
+                                
+                                <div class="mt-24 pt-8 border-t border-slate-200/60 flex items-center justify-between font-sans">
+                                    <button 
+                                        @click="fetchChapter(Math.max(1, currentChapterNum - 1))"
+                                        :disabled="currentChapterNum <= 1 || isFetchingChapter"
+                                        class="px-7 py-3 bg-white text-slate-700 border border-slate-200 rounded-xl font-bold hover:bg-slate-50 hover:border-slate-300 hover:shadow-sm disabled:opacity-50 disabled:hover:shadow-none disabled:hover:bg-white transition-all"
+                                    >
+                                        上一页
+                                    </button>
+                                    <span class="text-sm font-bold text-slate-400 tracking-widest">目前为您展示：第 <span class="text-slate-700 mx-1">{{ currentChapterNum }}</span> 页</span>
+                                    <button 
+                                        @click="fetchChapter(currentChapterNum + 1)"
+                                        :disabled="isFetchingChapter"
+                                        class="px-7 py-3 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:shadow-none disabled:hover:translate-y-0 transition-all"
+                                    >
+                                        下一页
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
                     </div>
             </div>
         </div>
