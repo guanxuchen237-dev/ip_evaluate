@@ -22,6 +22,8 @@ try:
     from chat_store import chat_store
     from virtual_reader.graph_generator import graph_generator
     from auth import login_required, token_limit_required
+    # 导入模型类定义（用于加载model_j_paper.pkl）
+    from train_model_j_paper import PaperDualEngine, PlatformNormalizer, IPGradingSystem, IPWeightedScorer
 except ImportError:
     from backend.data_manager import data_manager
     from backend.ai_service import ai_service
@@ -30,6 +32,12 @@ except ImportError:
     from backend.chat_store import chat_store
     from backend.virtual_reader.graph_generator import graph_generator
     from backend.auth import login_required, token_limit_required
+    try:
+        from backend.train_model_j_paper import PaperDualEngine, PlatformNormalizer, IPGradingSystem, IPWeightedScorer
+    except ImportError:
+        PaperDualEngine = None
+        PlatformNormalizer = None
+        IPGradingSystem = None
 
 
 api_bp = Blueprint('api', __name__)
@@ -38,21 +46,24 @@ api_bp = Blueprint('api', __name__)
 _ip_model = None
 _ip_model_error = None
 
-# XGBoost + K-Means 双引擎模型
-V2_MODEL_PATH = os.path.join(os.path.dirname(__file__), 'model_v2.pkl')
+# XGBoost + K-Means 双引擎模型（论文版）
+MODEL_J_PAPER_PATH = os.path.join(os.path.dirname(__file__), 'resources', 'models', 'model_j_paper.pkl')
 
 def _load_ip_model():
-    """Load the trained IP prediction model (XGBoost + K-Means v2)"""
+    """Load the trained IP prediction model (XGBoost + K-Means Paper Edition)"""
     global _ip_model, _ip_model_error
     if _ip_model is not None or _ip_model_error:
         return _ip_model
     
-    # 优先加载 XGBoost + K-Means 双引擎模型
-    model_path = V2_MODEL_PATH
+    # 加载论文版 XGBoost + K-Means 双引擎模型
+    model_path = MODEL_J_PAPER_PATH
     try:
         _ip_model = joblib.load(model_path)
-        print(f"[Model] Loaded XGBoost + K-Means model v2 from {model_path}")
-        print(f"[Model] Features: {_ip_model.get('features', [])}")
+        print(f"[Model] Loaded Model J Paper (XGBoost+K-Means) from {model_path}")
+        engine = _ip_model.get('dual_engine')
+        if engine:
+            print(f"[Model] XGBoost engine: {engine.xgb_engine is not None}")
+            print(f"[Model] K-Means engine: {engine.kmeans_engine is not None}")
     except Exception as e:
         _ip_model_error = str(e)
         print(f"[Model] Failed to load IP model: {e}")
@@ -66,113 +77,168 @@ def _score_to_grade(score):
     elif score >= 60: return 'C'
     else: return 'D'
 
-def _predict_with_xgboost_kmeans(model_data, input_features):
+def _predict_with_model_j_paper(model_data, input_features):
     """
-    使用 XGBoost + K-Means 双引擎模型进行预测
+    使用 Model J Paper (XGBoost + K-Means 双引擎) 进行预测
     
-    model_data: 包含 model, scaler, features, kmeans_model 的字典
+    model_data: 包含 dual_engine 的字典
     input_features: 包含 word_count, monthly_tickets, collections 等的字典
     """
     try:
-        xgb_model = model_data.get('model')
-        scaler = model_data.get('scaler')
-        features = model_data.get('features', [])
-        kmeans_model = model_data.get('kmeans_model')
+        dual_engine = model_data.get('dual_engine')
+        if not dual_engine:
+            return None, None, 'no_engine'
         
-        if not xgb_model or not scaler:
-            return None, None
+        # 获取引擎组件
+        xgb_engine = dual_engine.xgb_engine
+        kmeans_engine = dual_engine.kmeans_engine
+        scaler_xgb = dual_engine.scaler_xgb
+        scaler_kmeans = dual_engine.scaler_kmeans
+        feature_cols = dual_engine.feature_cols
+        cluster_scores = dual_engine.cluster_scores
         
-        # 构建特征向量（处理缺失值）
+        if not feature_cols:
+            return None, None, 'no_features'
+        
+        # 提取输入特征
         word_count = input_features.get('word_count', 0) or 0
         monthly_tickets = input_features.get('monthly_tickets', 0) or 0
         collections = input_features.get('collections', 0) or 0
-        recommendations = input_features.get('recommendations', 0) or 0
+        total_recommend = input_features.get('recommendations', 0) or 0
         fans_count = input_features.get('fans_count', 0) or 0
+        category = input_features.get('category', '玄幻')
+        status = input_features.get('status', '连载')
+        platform = input_features.get('platform', 'Qidian')
+        ranking = input_features.get('ranking', 0) or 0
         
-        # 计算派生特征（对于新书，使用默认值）
-        # word_count_diff - 月更新字数（新书用总字数估算）
-        word_count_diff = input_features.get('word_count_diff', word_count / 6 if word_count > 0 else 0)
-        # cum_drop_months - 累计断更月数（新书默认0）
-        cum_drop_months = input_features.get('cum_drop_months', 0)
-        # popularity - 人气/收藏
-        popularity = collections
-        # pop_diff - 人气增长（用收藏估算）
-        pop_diff = input_features.get('pop_diff', collections / 6 if collections > 0 else 0)
-        # retention_rate - 留存率
-        retention_rate = input_features.get('retention_rate', 0.5)
-        # fans_diff - 粉丝增长
-        fans_diff = input_features.get('fans_diff', fans_count / 6 if fans_count > 0 else 0)
-        # recalc_finance - 月票（修正后）
-        recalc_finance = monthly_tickets
-        # finance_growth_rate - 月票增长率
-        finance_growth_rate = input_features.get('finance_growth_rate', 0.1)
+        # 热门题材评分
+        HOT_GENRES = {'玄幻': 95, '奇幻': 90, '仙侠': 88, '都市': 85, '游戏': 82, '科幻': 80, '历史': 78, '悬疑': 75}
+        genre_hotness = HOT_GENRES.get(str(category), 70)
         
-        # 构建特征字典
+        # 平台归一化（纵横数据缩放）
+        platform_scale = 1.0 if platform == 'Qidian' else 8.0
+        monthly_tickets_normalized = monthly_tickets * platform_scale
+        collection_normalized = collections * platform_scale
+        recommend_normalized = total_recommend * platform_scale
+        
+        # 计算多维度评分
+        # 商业分 (40%)
+        commercial_score = min(100, (
+            np.log1p(monthly_tickets_normalized) * 5 +
+            np.log1p(collection_normalized) * 3 +
+            np.log1p(recommend_normalized) * 2
+        ))
+        
+        # 粘性分 (15%)
+        stickiness_score = min(100, fans_count / (collections + 1) * 1000) if collections > 0 else 50
+        
+        # NLP分 (15%) - 默认值
+        nlp_quality_score = 50.0
+        sentiment_score = 0
+        vocabulary_richness = 0.5
+        action_word_ratio = 0.05
+        
+        # 趋势分 (15%) - 默认中等
+        trend_score = 50.0
+        tickets_mom = 0.1  # 假设10%增长
+        collection_growth = 0.1
+        
+        # 改编分 (15%)
+        adaptation_score = min(100, (
+            min(100, word_count / 500000 * 100) * 0.4 +
+            genre_hotness * 0.4 +
+            (20 if word_count >= 500000 else 0)
+        ))
+        
+        # 综合IP评分
+        ip_score = (
+            commercial_score * 0.4 +
+            stickiness_score * 0.15 +
+            nlp_quality_score * 0.15 +
+            trend_score * 0.15 +
+            adaptation_score * 0.15
+        )
+        
+        # 判断作品阶段：有6个月以上数据视为成熟期
+        months = input_features.get('months', 0) or 0
+        if months == 0:
+            # 根据字数推断：30万字以上视为可能成熟期
+            months = 6 if word_count >= 300000 else 3
+        
+        # 构建完整的37特征向量
         feature_dict = {
             'word_count': word_count,
-            'word_count_diff': word_count_diff,
-            'cum_drop_months': cum_drop_months,
-            'popularity': popularity,
-            'pop_diff': pop_diff,
-            'retention_rate': retention_rate,
-            'fans_count': fans_count,
-            'fans_diff': fans_diff,
-            'recalc_finance': recalc_finance,
-            'finance_growth_rate': finance_growth_rate
+            'collection_count': collections,
+            'collection_rank': max(1, ranking) if ranking > 0 else 999,
+            'monthly_tickets': monthly_tickets,
+            'monthly_ticket_count': monthly_tickets,
+            'monthly_ticket_rank': max(1, ranking) if ranking > 0 else 999,
+            'rank_on_list': max(1, ranking) if ranking > 0 else 999,
+            'total_recommend': total_recommend,
+            'weekly_recommend': total_recommend / 4,  # 估算
+            'reward_count': total_recommend * 0.1,  # 估算
+            'fan_count': fans_count,
+            'total_click': collections * 10,  # 估算
+            'has_adaptation': 1 if word_count >= 500000 else 0,
+            'monthly_tickets_normalized': monthly_tickets_normalized,
+            'collection_normalized': collection_normalized,
+            'recommend_normalized': recommend_normalized,
+            'update_freq': word_count / 30 if word_count > 0 else 0,  # 日更字数估算
+            'update_freq_avg': word_count / 30 if word_count > 0 else 0,
+            'months_active': months,
+            'drop_months': 0,  # 默认无断更
+            'drop_risk': 0.0,
+            'survival_rate': 1.0,
+            'retention': min(100, fans_count / (collections + 1) * 1000) if collections > 0 else 50,
+            'genre_hotness': genre_hotness,
+            'adaptation_potential': adaptation_score,
+            'base_power': min(100, (
+                np.log1p(monthly_tickets_normalized) * 20 +
+                np.log1p(collection_normalized) * 15 +
+                np.log1p(recommend_normalized) * 10
+            ) / 10),
+            'sentiment_score': sentiment_score,
+            'vocabulary_richness': vocabulary_richness,
+            'action_word_ratio': action_word_ratio,
+            'tickets_mom': tickets_mom,
+            'collection_growth': collection_growth,
+            'commercial_score': commercial_score,
+            'stickiness_score': stickiness_score,
+            'nlp_quality_score': nlp_quality_score,
+            'trend_score': trend_score,
+            'adaptation_score': adaptation_score,
+            'ip_score': ip_score,
         }
         
         # 按模型特征顺序构建向量
-        X = np.array([[feature_dict.get(f, 0) for f in features]])
+        X = np.array([[feature_dict.get(f, 0) for f in feature_cols]])
         
-        # 标准化
-        X_scaled = scaler.transform(X)
+        # 根据作品阶段选择引擎
+        if months >= 6 and xgb_engine and scaler_xgb:
+            # 成熟期：使用 XGBoost 引擎
+            X_scaled = scaler_xgb.transform(X)
+            score = xgb_engine.predict(X_scaled)[0]
+            score = np.clip(score, 0, 100)
+            return score, 'xgboost', 'mature'
         
-        # XGBoost 预测
-        import xgboost as xgb
-        dmatrix = xgb.DMatrix(X_scaled, feature_names=features)
-        predicted_log = xgb_model.predict(dmatrix)[0]
+        elif kmeans_engine and scaler_kmeans:
+            # 孵化期：使用 K-Means 引擎
+            X_scaled = scaler_kmeans.transform(X)
+            cluster = kmeans_engine.predict(X_scaled)[0]
+            score = cluster_scores.get(cluster, 50.0)
+            if hasattr(score, '__float__'):
+                score = float(score)
+            return score, 'kmeans', 'nascent'
         
-        # 反转对数变换（模型训练时使用了 log1p）
-        predicted_value = np.expm1(predicted_log)
-        
-        # 转换为IP评分（0-100）
-        # predicted_value 是预测的下月月票，转换为评分
-        if predicted_value > 0:
-            # 使用对数尺度映射到评分
-            # 高月票 -> 高分
-            score = 50 + min(45, np.log10(predicted_value + 1) * 15)
-            score = np.clip(score, 45, 95)
         else:
-            score = 50.0
-        
-        # 判断是否使用 K-Means 孵化期引擎
-        # 如果没有历史数据（新书），使用 K-Means 聚类
-        engine = 'xgboost'
-        if kmeans_model and monthly_tickets == 0 and word_count < 100000:
-            engine = 'kmeans'
-            # 使用 K-Means 聚类分配评分
-            # 构建聚类特征
-            meta_features = np.array([[word_count, pop_diff, word_count_diff, cum_drop_months]])
-            from sklearn.preprocessing import StandardScaler as SkScaler
-            meta_scaler = SkScaler()
-            # 使用预设的缩放参数（简化处理）
-            cluster_features = meta_features / 1000  # 简单归一化
-            try:
-                cluster = kmeans_model.predict(cluster_features)[0]
-                # 根据聚类分配评分
-                cluster_scores = {
-                    0: 34.0, 1: 31.0, 2: 25.0, 3: 47.0, 4: 47.0,
-                    5: 38.0, 6: 68.0, 7: 24.0, 8: 24.0, 9: 31.0
-                }
-                score = cluster_scores.get(cluster, 45.0)
-            except:
-                pass
-        
-        return score, engine
+            # 无可用引擎，使用规则评分
+            return ip_score, 'rule', 'fallback'
         
     except Exception as e:
-        print(f"[XGBoost+KMeans] Prediction error: {e}")
-        return None, None
+        print(f"[Model J Paper] Prediction error: {e}")
+        import traceback
+        traceback.print_exc()
+        return None, None, str(e)
 
 def load_system_config() -> dict:
     """Load system configuration or return defaults"""
@@ -4731,16 +4797,20 @@ def predict_simple():
             'collections': collections,
             'recommendations': total_recommend,
             'fans_count': data.get('followers', 0) or 0,
+            'category': category,
+            'status': status,
+            'platform': platform_key,
+            'ranking': ranking,
         }
         
-        # 尝试使用 XGBoost + K-Means 模型预测
+        # 尝试使用 Model J Paper (XGBoost + K-Means) 模型预测
         if model:
-            model_score, engine = _predict_with_xgboost_kmeans(model, input_features)
+            model_score, engine, stage = _predict_with_model_j_paper(model, input_features)
             if model_score is not None:
                 score = model_score
-                used_engine = engine or 'xgboost'
-                confidence = 'medium'
-                print(f"[Predict] XGBoost+KMeans predicted score={score:.1f}, engine={used_engine}", flush=True)
+                used_engine = engine or 'unknown'
+                confidence = 'high' if engine == 'xgboost' else 'medium'
+                print(f"[Predict] Model J Paper predicted score={score:.1f}, engine={used_engine}, stage={stage}", flush=True)
         
         # 如果模型预测失败，使用规则评分
         if confidence == 'low' and model:
