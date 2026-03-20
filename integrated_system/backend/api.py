@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, g
 from flask_cors import CORS
 import pandas as pd
 import joblib
@@ -38,28 +38,141 @@ api_bp = Blueprint('api', __name__)
 _ip_model = None
 _ip_model_error = None
 
+# XGBoost + K-Means 双引擎模型
+V2_MODEL_PATH = os.path.join(os.path.dirname(__file__), 'model_v2.pkl')
+
 def _load_ip_model():
-    """Load the trained IP prediction model (lazy loading)"""
+    """Load the trained IP prediction model (XGBoost + K-Means v2)"""
     global _ip_model, _ip_model_error
     if _ip_model is not None or _ip_model_error:
         return _ip_model
     
-    model_path = os.path.join(os.path.dirname(__file__), 'resources', 'models', 'model_j_oracle_v7.pkl')
+    # 优先加载 XGBoost + K-Means 双引擎模型
+    model_path = V2_MODEL_PATH
     try:
         _ip_model = joblib.load(model_path)
-        print(f"[Model] Loaded IP prediction model v7 from {model_path}")
+        print(f"[Model] Loaded XGBoost + K-Means model v2 from {model_path}")
+        print(f"[Model] Features: {_ip_model.get('features', [])}")
     except Exception as e:
         _ip_model_error = str(e)
         print(f"[Model] Failed to load IP model: {e}")
     return _ip_model
 
 def _score_to_grade(score):
-    """Convert numeric score to letter grade"""
-    if score >= 90: return 'S'
+    """Convert numeric score to letter grade - 分段评分标准"""
+    if score >= 88: return 'S'
     elif score >= 80: return 'A'
     elif score >= 70: return 'B'
     elif score >= 60: return 'C'
     else: return 'D'
+
+def _predict_with_xgboost_kmeans(model_data, input_features):
+    """
+    使用 XGBoost + K-Means 双引擎模型进行预测
+    
+    model_data: 包含 model, scaler, features, kmeans_model 的字典
+    input_features: 包含 word_count, monthly_tickets, collections 等的字典
+    """
+    try:
+        xgb_model = model_data.get('model')
+        scaler = model_data.get('scaler')
+        features = model_data.get('features', [])
+        kmeans_model = model_data.get('kmeans_model')
+        
+        if not xgb_model or not scaler:
+            return None, None
+        
+        # 构建特征向量（处理缺失值）
+        word_count = input_features.get('word_count', 0) or 0
+        monthly_tickets = input_features.get('monthly_tickets', 0) or 0
+        collections = input_features.get('collections', 0) or 0
+        recommendations = input_features.get('recommendations', 0) or 0
+        fans_count = input_features.get('fans_count', 0) or 0
+        
+        # 计算派生特征（对于新书，使用默认值）
+        # word_count_diff - 月更新字数（新书用总字数估算）
+        word_count_diff = input_features.get('word_count_diff', word_count / 6 if word_count > 0 else 0)
+        # cum_drop_months - 累计断更月数（新书默认0）
+        cum_drop_months = input_features.get('cum_drop_months', 0)
+        # popularity - 人气/收藏
+        popularity = collections
+        # pop_diff - 人气增长（用收藏估算）
+        pop_diff = input_features.get('pop_diff', collections / 6 if collections > 0 else 0)
+        # retention_rate - 留存率
+        retention_rate = input_features.get('retention_rate', 0.5)
+        # fans_diff - 粉丝增长
+        fans_diff = input_features.get('fans_diff', fans_count / 6 if fans_count > 0 else 0)
+        # recalc_finance - 月票（修正后）
+        recalc_finance = monthly_tickets
+        # finance_growth_rate - 月票增长率
+        finance_growth_rate = input_features.get('finance_growth_rate', 0.1)
+        
+        # 构建特征字典
+        feature_dict = {
+            'word_count': word_count,
+            'word_count_diff': word_count_diff,
+            'cum_drop_months': cum_drop_months,
+            'popularity': popularity,
+            'pop_diff': pop_diff,
+            'retention_rate': retention_rate,
+            'fans_count': fans_count,
+            'fans_diff': fans_diff,
+            'recalc_finance': recalc_finance,
+            'finance_growth_rate': finance_growth_rate
+        }
+        
+        # 按模型特征顺序构建向量
+        X = np.array([[feature_dict.get(f, 0) for f in features]])
+        
+        # 标准化
+        X_scaled = scaler.transform(X)
+        
+        # XGBoost 预测
+        import xgboost as xgb
+        dmatrix = xgb.DMatrix(X_scaled, feature_names=features)
+        predicted_log = xgb_model.predict(dmatrix)[0]
+        
+        # 反转对数变换（模型训练时使用了 log1p）
+        predicted_value = np.expm1(predicted_log)
+        
+        # 转换为IP评分（0-100）
+        # predicted_value 是预测的下月月票，转换为评分
+        if predicted_value > 0:
+            # 使用对数尺度映射到评分
+            # 高月票 -> 高分
+            score = 50 + min(45, np.log10(predicted_value + 1) * 15)
+            score = np.clip(score, 45, 95)
+        else:
+            score = 50.0
+        
+        # 判断是否使用 K-Means 孵化期引擎
+        # 如果没有历史数据（新书），使用 K-Means 聚类
+        engine = 'xgboost'
+        if kmeans_model and monthly_tickets == 0 and word_count < 100000:
+            engine = 'kmeans'
+            # 使用 K-Means 聚类分配评分
+            # 构建聚类特征
+            meta_features = np.array([[word_count, pop_diff, word_count_diff, cum_drop_months]])
+            from sklearn.preprocessing import StandardScaler as SkScaler
+            meta_scaler = SkScaler()
+            # 使用预设的缩放参数（简化处理）
+            cluster_features = meta_features / 1000  # 简单归一化
+            try:
+                cluster = kmeans_model.predict(cluster_features)[0]
+                # 根据聚类分配评分
+                cluster_scores = {
+                    0: 34.0, 1: 31.0, 2: 25.0, 3: 47.0, 4: 47.0,
+                    5: 38.0, 6: 68.0, 7: 24.0, 8: 24.0, 9: 31.0
+                }
+                score = cluster_scores.get(cluster, 45.0)
+            except:
+                pass
+        
+        return score, engine
+        
+    except Exception as e:
+        print(f"[XGBoost+KMeans] Prediction error: {e}")
+        return None, None
 
 def load_system_config() -> dict:
     """Load system configuration or return defaults"""
@@ -3374,26 +3487,58 @@ def get_audit_logs():
         from auth import get_auth_db
         conn = get_auth_db()
         with conn.cursor() as cursor:
-            cursor.execute(query, tuple(params))
-            logs = cursor.fetchall()
-            
-            # 统计总数
-            count_query = "SELECT COUNT(*) as cnt FROM ip_audit_logs WHERE 1=1"
-            count_params = []
-            if status:
-                count_query += " AND status = %s"
-                count_params.append(status)
-            if risk_level:
-                count_query += " AND risk_level = %s"
-                count_params.append(risk_level)
-            if risk_type:
-                count_query += " AND risk_type = %s"
-                count_params.append(risk_type)
+            # 修改：对同一本书只返回最新的一条记录
             if book_title:
-                count_query += " AND book_title = %s"
-                count_params.append(book_title)
-            cursor.execute(count_query, tuple(count_params))
-            total = cursor.fetchone()['cnt']
+                # 如果指定了书名，返回该书最新的记录
+                cursor.execute("""
+                    SELECT * FROM ip_audit_logs 
+                    WHERE book_title = %s
+                    ORDER BY created_at DESC 
+                    LIMIT 1
+                """, (book_title,))
+                logs = cursor.fetchall()
+                total = len(logs)
+            else:
+                # 如果没有指定书名，对每本书只返回最新的一条
+                cursor.execute("""
+                    SELECT a.* FROM ip_audit_logs a
+                    INNER JOIN (
+                        SELECT book_title, MAX(created_at) as max_time 
+                        FROM ip_audit_logs 
+                        WHERE 1=1
+                        """ + (" AND status = %s" if status else "") + 
+                        (" AND risk_level = %s" if risk_level else "") +
+                        (" AND risk_type = %s" if risk_type else "") + 
+                        """
+                        GROUP BY book_title
+                    ) b ON a.book_title = b.book_title AND a.created_at = b.max_time
+                    WHERE 1=1
+                    """ + (" AND a.status = %s" if status else "") + 
+                    (" AND a.risk_level = %s" if risk_level else "") +
+                    (" AND a.risk_type = %s" if risk_type else "") + 
+                    """
+                    ORDER BY a.created_at DESC 
+                    LIMIT %s OFFSET %s
+                """, tuple([p for p in [status, risk_level, risk_type, status, risk_level, risk_type] if p] + [limit, offset]))
+                logs = cursor.fetchall()
+                
+                # 统计总数（去重后的书籍数）
+                count_query = """
+                    SELECT COUNT(DISTINCT book_title) as cnt FROM ip_audit_logs 
+                    WHERE 1=1
+                """
+                count_params = []
+                if status:
+                    count_query += " AND status = %s"
+                    count_params.append(status)
+                if risk_level:
+                    count_query += " AND risk_level = %s"
+                    count_params.append(risk_level)
+                if risk_type:
+                    count_query += " AND risk_type = %s"
+                    count_params.append(risk_type)
+                cursor.execute(count_query, tuple(count_params))
+                total = cursor.fetchone()['cnt']
             
         conn.close()
         
@@ -3445,12 +3590,28 @@ def trigger_scan_gems():
         data = request.json or {}
         book_title = data.get('book_title')
         from scan_potential_gems import scan_and_trigger_gems
-        inserted = scan_and_trigger_gems(title_filter=book_title)
-        return jsonify({
-            'status': 'success',
-            'inserted': inserted,
-            'message': f'Successfully scanned {book_title if book_title else "all library"}, found {inserted} gems'
-        })
+        result = scan_and_trigger_gems(title_filter=book_title)
+        
+        # 处理新的返回格式
+        if isinstance(result, dict):
+            return jsonify({
+                'status': 'success',
+                'inserted': result.get('inserted', 0),
+                'total_scanned': result.get('total_scanned', 0),
+                'gems_count': result.get('gems_count', 0),
+                'global_gems_count': result.get('global_gems_count', 0),
+                'message': f"扫描完成！扫描了 {result.get('total_scanned', 0)} 本书，发现 {result.get('gems_count', 0)} 本潜力遗珠，{result.get('global_gems_count', 0)} 本出海优选"
+            })
+        else:
+            # 兼容旧格式
+            return jsonify({
+                'status': 'success',
+                'inserted': result,
+                'total_scanned': result,
+                'gems_count': result,
+                'global_gems_count': 0,
+                'message': f'发现 {result} 本潜力遗珠'
+            })
     except Exception as e:
         print(f"Scan error: {e}")
         return jsonify({'error': str(e)}), 500
@@ -3790,38 +3951,166 @@ def audit_deep_scan_stream():
                     
                 report_markdown = "".join(full_report)
                 
-                # Report generated, now async save it to DB
+                # 用户端审计结果同步到管理员审计日志
                 try:
-                    conn = pymysql.connect(**QIDIAN_CONFIG)
+                    from auth import AUTH_DB_CONFIG
+                    conn = pymysql.connect(**AUTH_DB_CONFIG, cursorclass=pymysql.cursors.DictCursor)
                     with conn.cursor() as cursor:
-                        cursor.execute("DELETE FROM ip_audit_logs WHERE book_title = %s", (book_title,))
+                        # 删除旧的审计记录（保留历史但去重当天）
+                        cursor.execute("""
+                            DELETE FROM ip_audit_logs 
+                            WHERE book_title = %s AND trigger_source = 'user_audit'
+                            AND DATE(created_at) = CURDATE()
+                        """, (book_title,))
+                        
+                        # 根据 model_score 判定 risk_type
+                        if model_score >= 85:
+                            risk_type = 'POTENTIAL_GEM'
+                        elif model_score >= 70:
+                            risk_type = 'NORMAL'
+                        else:
+                            risk_type = 'DEEP_AUDIT'
+                        
+                        # 插入新的审计记录（标记为用户端审计）
+                        insert_sql = """
+                            INSERT INTO ip_audit_logs 
+                            (book_title, status, risk_level, risk_type, score, report, trigger_source, details)
+                            VALUES (%s, 'REVIEWED', 'MEDIUM', %s, %s, %s, 'user_audit', %s)
+                        """
+                        details_json = json.dumps({
+                            'author': base_stats.get('author', '未知'),
+                            'platform': base_stats.get('platform', '未知'),
+                            'category': base_stats.get('category', '未知'),
+                            'word_count': base_stats.get('word_count', 0),
+                            'finance': max_finance,
+                            'ai_eval': ai_eval_stats,
+                            'user_id': g.current_user_id if hasattr(g, 'current_user_id') else None
+                        }, ensure_ascii=False)
+                        cursor.execute(insert_sql, (book_title, risk_type, model_score, report_markdown, details_json))
+                        
+                        # 同步到 AI 评分表
                         cursor.execute("DELETE FROM ip_ai_evaluation WHERE title = %s", (book_title,))
-                        
-                        insert_sql = "INSERT INTO ip_audit_logs (book_title, status, risk_level, score, report) VALUES (%s, 'REVIEWED', 'MEDIUM', %s, %s)"
-                        cursor.execute(insert_sql, (book_title, model_score, report_markdown))
-                        
-                        base_overall = ai_eval_stats.get('overall', 60)
+                        base_overall = ai_eval_stats.get('overall', 60) if isinstance(ai_eval_stats, dict) else 60
                         ratio = model_score / max(base_overall, 1)
-                        eval_sql = "INSERT INTO ip_ai_evaluation (title, author, platform, overall_score, story_score, character_score, world_score, commercial_score, adaptation_score, safety_score, grade) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+                        eval_sql = """
+                            INSERT INTO ip_ai_evaluation 
+                            (title, author, platform, overall_score, story_score, character_score, 
+                             world_score, commercial_score, adaptation_score, safety_score, grade)
+                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        """
                         cursor.execute(eval_sql, (
                             book_title, base_stats.get('author', '未知'), base_stats.get('platform', '未知'),
-                            model_score, min(100, ai_eval_stats.get('story', 70) * ratio),
-                            min(100, ai_eval_stats.get('character', 70) * ratio),
-                            min(100, ai_eval_stats.get('world', 70) * ratio),
-                            min(100, ai_eval_stats.get('commercial', 70) * ratio),
-                            min(100, ai_eval_stats.get('adaptation', 70) * ratio),
-                            85.2, 'S' if model_score >= 90 else 'A'
+                            model_score, 
+                            min(100, (ai_eval_stats.get('story', 70) if isinstance(ai_eval_stats, dict) else 70) * ratio),
+                            min(100, (ai_eval_stats.get('character', 70) if isinstance(ai_eval_stats, dict) else 70) * ratio),
+                            min(100, (ai_eval_stats.get('world', 70) if isinstance(ai_eval_stats, dict) else 70) * ratio),
+                            min(100, (ai_eval_stats.get('commercial', 70) if isinstance(ai_eval_stats, dict) else 70) * ratio),
+                            min(100, (ai_eval_stats.get('adaptation', 70) if isinstance(ai_eval_stats, dict) else 70) * ratio),
+                            85.2, 'S' if model_score >= 90 else 'A' if model_score >= 80 else 'B'
                         ))
                         conn.commit()
                     conn.close()
+                    print(f"[User Audit] Saved '{book_title}' to admin audit logs (score: {model_score:.1f}, type: {risk_type})")
                 except Exception as e:
-                    print(f"Post-stream save error: {e}")
+                    print(f"[User Audit] Save error: {e}")
                     
                 yield f"data: {json.dumps({'type': 'done'})}\n\n"
             except Exception as e:
                 yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
         
         from flask import stream_with_context, Response
+        
+        # 在生成器外部获取当前用户ID
+        current_user_id = getattr(g, 'current_user_id', None)
+        
+        def generate():
+            import json
+            yield f"data: {json.dumps({'type': 'meta', 'score': model_score, 'data_sources': {'ai_eval': bool(ai_eval_stats), 'vr_comments': bool(vr_comments), 'global_stats': bool(global_stats), 'xgboost': True, 'realtime_trend': bool(realtime_trend)}})}\n\n"
+            
+            full_report = []
+            try:
+                generator = ai_service.generate_comprehensive_audit_stream(
+                    title=book_title, author=base_stats.get('author', '未知'),
+                    base_stats=base_stats, ai_eval_stats=ai_eval_stats,
+                    vr_comments=vr_comments, global_stats=global_stats,
+                    model_score=model_score, realtime_trend=realtime_trend,
+                    market_analysis=market_analysis, book_status=book_status
+                )
+                for chunk in generator:
+                    full_report.append(chunk)
+                    yield f"data: {json.dumps({'type': 'chunk', 'content': chunk})}\n\n"
+                    
+                report_markdown = "".join(full_report)
+                
+                # 用户端审计结果同步到管理员审计日志
+                try:
+                    from auth import AUTH_DB_CONFIG
+                    conn = pymysql.connect(**AUTH_DB_CONFIG, cursorclass=pymysql.cursors.DictCursor)
+                    with conn.cursor() as cursor:
+                        # 删除旧的审计记录（保留历史但去重当天）
+                        cursor.execute("""
+                            DELETE FROM ip_audit_logs 
+                            WHERE book_title = %s AND trigger_source = 'user_audit'
+                            AND DATE(created_at) = CURDATE()
+                        """, (book_title,))
+                        
+                        # 根据 model_score 判定 risk_type
+                        if model_score >= 85:
+                            risk_type = 'POTENTIAL_GEM'
+                        elif model_score >= 70:
+                            risk_type = 'NORMAL'
+                        else:
+                            risk_type = 'DEEP_AUDIT'
+                        
+                        # 插入新的审计记录（标记为用户端审计）
+                        insert_sql = """
+                            INSERT INTO ip_audit_logs 
+                            (book_title, status, risk_level, risk_type, score, report, trigger_source, details)
+                            VALUES (%s, 'REVIEWED', 'MEDIUM', %s, %s, %s, 'user_audit', %s)
+                        """
+                        details_json = json.dumps({
+                            'author': base_stats.get('author', '未知'),
+                            'platform': base_stats.get('platform', '未知'),
+                            'category': base_stats.get('category', '未知'),
+                            'word_count': base_stats.get('word_count', 0),
+                            'finance': max_finance,
+                            'ai_eval': ai_eval_stats if isinstance(ai_eval_stats, dict) else {},
+                            'user_id': current_user_id
+                        }, ensure_ascii=False)
+                        cursor.execute(insert_sql, (book_title, risk_type, model_score, report_markdown, details_json))
+                        
+                        # 同步到 AI 评分表
+                        cursor.execute("DELETE FROM ip_ai_evaluation WHERE title = %s", (book_title,))
+                        base_overall = ai_eval_stats.get('overall', 60) if isinstance(ai_eval_stats, dict) else 60
+                        ratio = model_score / max(base_overall, 1)
+                        eval_sql = """
+                            INSERT INTO ip_ai_evaluation 
+                            (title, author, platform, overall_score, story_score, character_score, 
+                             world_score, commercial_score, adaptation_score, safety_score, grade)
+                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        """
+                        cursor.execute(eval_sql, (
+                            book_title, base_stats.get('author', '未知'), base_stats.get('platform', '未知'),
+                            model_score, 
+                            min(100, (ai_eval_stats.get('story', 70) if isinstance(ai_eval_stats, dict) else 70) * ratio),
+                            min(100, (ai_eval_stats.get('character', 70) if isinstance(ai_eval_stats, dict) else 70) * ratio),
+                            min(100, (ai_eval_stats.get('world', 70) if isinstance(ai_eval_stats, dict) else 70) * ratio),
+                            min(100, (ai_eval_stats.get('commercial', 70) if isinstance(ai_eval_stats, dict) else 70) * ratio),
+                            min(100, (ai_eval_stats.get('adaptation', 70) if isinstance(ai_eval_stats, dict) else 70) * ratio),
+                            85.2, 'S' if model_score >= 90 else 'A' if model_score >= 80 else 'B'
+                        ))
+                        conn.commit()
+                    conn.close()
+                    print(f"[User Audit] Saved '{book_title}' to admin audit logs (score: {model_score:.1f}, type: {risk_type})")
+                except Exception as e:
+                    print(f"[User Audit] Save error: {e}")
+                    import traceback
+                    traceback.print_exc()
+                    
+                yield f"data: {json.dumps({'type': 'done'})}\n\n"
+            except Exception as e:
+                yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
+        
         return Response(stream_with_context(generate()), mimetype='text/event-stream')
         
     except Exception as e:
@@ -3854,11 +4143,11 @@ def audit_multi_source_overview():
             with conn.cursor() as cur:
                 cur.execute("SELECT COUNT(*) as c FROM vr_comment")
                 overview['vr']['total'] = cur.fetchone()['c']
-                cur.execute("SELECT COUNT(*) as c FROM vr_comment WHERE rating >= 8")
+                cur.execute("SELECT COUNT(*) as c FROM vr_comment WHERE score >= 8")
                 overview['vr']['positive'] = cur.fetchone()['c']
-                cur.execute("SELECT COUNT(*) as c FROM vr_comment WHERE rating >= 5 AND rating < 8")
+                cur.execute("SELECT COUNT(*) as c FROM vr_comment WHERE score >= 5 AND score < 8")
                 overview['vr']['neutral'] = cur.fetchone()['c']
-                cur.execute("SELECT COUNT(*) as c FROM vr_comment WHERE rating < 5")
+                cur.execute("SELECT COUNT(*) as c FROM vr_comment WHERE score < 5")
                 overview['vr']['negative'] = cur.fetchone()['c']
             conn.close()
         except Exception as e:
@@ -4325,6 +4614,14 @@ def predict_simple():
         status = data.get('status', '连载')
         author = data.get('author', '')
         
+        print(f"[Predict] title={title}, platform={platform}, ranking={ranking}, monthly_tickets={monthly_tickets}", flush=True)
+        
+        # 获取当前实际日期（提前定义，用于实时数据判断）
+        from datetime import datetime
+        now = datetime.now()
+        current_year = now.year
+        current_month = now.month
+        
         # ================================================================
         #  1. 数据库检测 - 查找是否已有该书
         # ================================================================
@@ -4377,52 +4674,192 @@ def predict_simple():
                         monthly_tickets = db_match['monthly_tickets']
                     if not total_recommend and db_match.get('total_recommend'):
                         total_recommend = db_match['total_recommend']
+                    
+                    # 获取实时监控数据（如果有）
+                    try:
+                        realtime_table = 'novel_realtime_tracking'
+                        cur.execute(f"""
+                            SELECT title, record_year as year, record_month as month, 
+                                   monthly_tickets, collection_count, monthly_ticket_rank,
+                                   crawl_time, record_day
+                            FROM {realtime_table}
+                            WHERE title = %s
+                            ORDER BY crawl_time DESC
+                            LIMIT 30
+                        """, (db_match['title'],))
+                        realtime_data = cur.fetchall()
+                        
+                        if realtime_data:
+                            print(f"[Realtime] 找到 {len(realtime_data)} 条实时数据", flush=True)
+                            # 将实时数据添加到历史数据中
+                            for rt in realtime_data:
+                                # 检查是否已存在该月份的历史数据
+                                exists = any(h['year'] == rt['year'] and h['month'] == rt['month'] for h in history_data)
+                                if not exists:
+                                    history_data.append({
+                                        'title': rt['title'],
+                                        'year': rt['year'],
+                                        'month': rt['month'],
+                                        'monthly_tickets': rt['monthly_tickets'],
+                                        'total_recommend': 0,
+                                        'word_count': word_count
+                                    })
+                            
+                            # 更新当前月票数（使用最新的实时数据）
+                            latest_realtime = realtime_data[0]
+                            if latest_realtime['year'] == current_year and latest_realtime['month'] == current_month:
+                                if monthly_tickets == 0 or monthly_tickets < latest_realtime['monthly_tickets']:
+                                    monthly_tickets = latest_realtime['monthly_tickets']
+                                    print(f"[Realtime] 更新当前月票: {monthly_tickets}", flush=True)
+                    except Exception as e:
+                        print(f"[Realtime] 获取实时数据失败: {e}", flush=True)
             conn.close()
         except Exception as e:
             print(f"[DB Match Error] {e}")
         
         # ================================================================
-        #  2. 使用训练模型计算基础评分
+        #  2. 使用 XGBoost + K-Means 双引擎模型计算评分
         # ================================================================
         score = 50.0
         confidence = 'low'
+        used_engine = 'rule'  # 记录使用的引擎
         
+        # 准备模型输入特征
+        input_features = {
+            'word_count': word_count,
+            'monthly_tickets': monthly_tickets,
+            'collections': collections,
+            'recommendations': total_recommend,
+            'fans_count': data.get('followers', 0) or 0,
+        }
+        
+        # 尝试使用 XGBoost + K-Means 模型预测
         if model:
+            model_score, engine = _predict_with_xgboost_kmeans(model, input_features)
+            if model_score is not None:
+                score = model_score
+                used_engine = engine or 'xgboost'
+                confidence = 'medium'
+                print(f"[Predict] XGBoost+KMeans predicted score={score:.1f}, engine={used_engine}", flush=True)
+        
+        # 如果模型预测失败，使用规则评分
+        if confidence == 'low' and model:
             if ranking > 0:
-                total_books = 500 if platform_key == 'Qidian' else 50
-                rank_pct = (ranking - 1) / (total_books - 1)
-                base_score = 99.0 - 49.0 * rank_pct
-                wc_bonus = min(2.0, np.log1p(word_count / 500000) * 1.0) if word_count > 0 else 0
-                ticket_threshold = 5000 if platform_key == 'Qidian' else 500
-                ticket_bonus = min(3.0, monthly_tickets / ticket_threshold * 1.5) if monthly_tickets > ticket_threshold else 0
-                score = base_score + wc_bonus + ticket_bonus
-                score = np.clip(score, 45.0, 99.5)
-                confidence = 'high'
-            elif monthly_tickets > 0:
-                rank_ticket_map = model.get('rank_ticket_mapping', {}).get(platform_key, {})
-                closest_rank = None
-                min_diff = float('inf')
-                for r, t in rank_ticket_map.items():
-                    diff = abs(t - monthly_tickets)
-                    if diff < min_diff:
-                        min_diff = diff
-                        closest_rank = r
-                if closest_rank:
-                    total_books = 500 if platform_key == 'Qidian' else 50
-                    rank_pct = (closest_rank - 1) / (total_books - 1)
-                    score = 99.0 - 49.0 * rank_pct
-                    score = np.clip(score, 45.0, 99.5)
-                    confidence = 'medium'
+                total_books = 500 if platform_key == 'Qidian' else 200  # 纵横扩展到200本
+                if ranking > total_books:
+                    # 排名超出榜单范围，根据月票估算
+                    if monthly_tickets > 0:
+                        ticket_threshold = 5000 if platform_key == 'Qidian' else 500
+                        score = 60.0 + min(20.0, monthly_tickets / ticket_threshold * 10)
+                        confidence = 'medium'
+                    else:
+                        score = 55.0  # 超出榜单但无月票数据，给基础分
+                        confidence = 'low'
                 else:
-                    features = np.array([[word_count, total_recommend]])
-                    score = model['ip_model'].predict(features)[0]
-                    score = np.clip(score, 45.0, 99.5)
-                    confidence = 'medium'
+                    # 分段评分：前10名S级，前30名A级，前100名B级，前200名C级
+                    if ranking <= 10:
+                        # 前10名：92-99分（S级）
+                        base_score = 99.0 - (ranking - 1) * 0.8
+                    elif ranking <= 30:
+                        # 前11-30名：82-92分（A级）
+                        base_score = 92.0 - (ranking - 10) * 0.5
+                    elif ranking <= 100:
+                        # 前31-100名：70-82分（B级）
+                        base_score = 82.0 - (ranking - 30) * 0.17
+                    elif ranking <= 200:
+                        # 前101-200名：60-70分（C级）
+                        base_score = 70.0 - (ranking - 100) * 0.1
+                    else:
+                        # 200名以后：55-60分（D级）
+                        base_score = 60.0 - min(5.0, (ranking - 200) * 0.02)
+                    wc_bonus = min(2.0, np.log1p(word_count / 500000) * 1.0) if word_count > 0 else 0
+                    ticket_threshold = 5000 if platform_key == 'Qidian' else 500
+                    ticket_bonus = min(2.0, monthly_tickets / ticket_threshold * 1.0) if monthly_tickets > ticket_threshold else 0
+                    score = base_score + wc_bonus + ticket_bonus
+                    score = np.clip(score, 55.0, 99.5)  # 最低分提高到55
+                    confidence = 'high'
+            elif monthly_tickets > 0:
+                # 有月票但无排名，根据月票数推断排名范围
+                # 基于真实数据库数据：
+                # 起点：头部10万+，TOP20约4.4万，最低1.7万，平均5.5万
+                # 纵横：头部6万+，TOP20约2.6万，最低394，平均4473
+                if platform_key == 'Qidian':
+                    # 起点月票标准（基于真实数据）
+                    if monthly_tickets >= 100000:
+                        inferred_rank = 5   # 头部
+                    elif monthly_tickets >= 70000:
+                        inferred_rank = 10
+                    elif monthly_tickets >= 50000:
+                        inferred_rank = 20
+                    elif monthly_tickets >= 30000:
+                        inferred_rank = 50
+                    elif monthly_tickets >= 20000:
+                        inferred_rank = 100
+                    elif monthly_tickets >= 17000:
+                        inferred_rank = 200
+                    else:
+                        inferred_rank = 300
+                else:  # Zongheng
+                    # 纵横月票标准（基于真实数据：头部6万+，TOP20约2.6万）
+                    if monthly_tickets >= 30000:
+                        inferred_rank = 5   # 头部
+                    elif monthly_tickets >= 15000:
+                        inferred_rank = 10
+                    elif monthly_tickets >= 8000:
+                        inferred_rank = 20
+                    elif monthly_tickets >= 5000:
+                        inferred_rank = 50
+                    elif monthly_tickets >= 2000:
+                        inferred_rank = 100
+                    elif monthly_tickets >= 500:
+                        inferred_rank = 200
+                    else:
+                        inferred_rank = 300
+                
+                # 使用推断的排名计算分数
+                if inferred_rank <= 10:
+                    base_score = 99.0 - (inferred_rank - 1) * 0.8
+                elif inferred_rank <= 30:
+                    base_score = 92.0 - (inferred_rank - 10) * 0.5
+                elif inferred_rank <= 100:
+                    base_score = 82.0 - (inferred_rank - 30) * 0.17
+                elif inferred_rank <= 200:
+                    base_score = 70.0 - (inferred_rank - 100) * 0.1
+                else:
+                    base_score = 60.0 - min(5.0, (inferred_rank - 200) * 0.02)
+                
+                # 字数加分
+                wc_bonus = min(2.0, np.log1p(word_count / 500000) * 1.0) if word_count > 0 else 0
+                score = base_score + wc_bonus
+                score = np.clip(score, 55.0, 99.5)
+                confidence = 'medium'
+                print(f"[Predict] {platform_key}: Inferred rank {inferred_rank} from monthly_tickets={monthly_tickets}, score={score:.1f}", flush=True)
             else:
-                features = np.array([[word_count, total_recommend if total_recommend > 0 else collections / 10]])
-                score = model['ip_model'].predict(features)[0]
-                score = np.clip(score, 45.0, 99.5)
+                # 无排名无月票，根据字数和收藏推断（区分平台）
+                if platform_key == 'Qidian':
+                    # 起点：收藏门槛高
+                    if word_count >= 1000000 and collections >= 100000:
+                        base_score = 75.0  # B级起步
+                    elif word_count >= 500000 and collections >= 50000:
+                        base_score = 70.0  # B级
+                    elif word_count >= 200000 or collections >= 30000:
+                        base_score = 65.0  # C级
+                    else:
+                        base_score = 60.0  # C级起步
+                else:
+                    # 纵横：收藏门槛低
+                    if word_count >= 500000 and collections >= 10000:
+                        base_score = 75.0  # B级起步
+                    elif word_count >= 200000 and collections >= 5000:
+                        base_score = 70.0  # B级
+                    elif word_count >= 100000 or collections >= 2000:
+                        base_score = 65.0  # C级
+                    else:
+                        base_score = 60.0  # C级起步
+                
+                score = np.clip(base_score, 55.0, 99.5)
                 confidence = 'low'
+                print(f"[Predict] {platform_key}: No ranking/tickets, inferred score={score:.1f} from word_count={word_count}, collections={collections}", flush=True)
         
         # ================================================================
         #  3. 六维度评判体系
@@ -4437,20 +4874,22 @@ def predict_simple():
         }
         dimension_details = {}
         
-        # 维度1: 内容质量 (基于字数、简介、章节内容)
-        content_score = 10
+        # 维度1: 内容质量 (基于字数、简介、章节内容) - 优化：提高基础分和加分梯度
+        content_score = 15  # 基础分从10提高到15
         if word_count >= 2000000:
-            content_score = 25
+            content_score = 28
         elif word_count >= 1000000:
-            content_score = 20
+            content_score = 25
         elif word_count >= 500000:
-            content_score = 15
+            content_score = 22  # 50万字提高到22分
+        elif word_count >= 100000:
+            content_score = 18  # 10万字有18分
         synopsis = data.get('synopsis', '')
         chapter = data.get('chapterContent', '')
         if len(synopsis) >= 200:
-            content_score += 3
+            content_score += 2  # 简介加分降低
         if len(chapter) >= 5000:
-            content_score += 2
+            content_score += 1  # 章节加分降低
         dimensions['内容质量'] = min(30, content_score)
         content_detail_parts = []
         if word_count >= 10000:
@@ -4461,16 +4900,20 @@ def predict_simple():
             content_detail_parts.append("章节充实")
         dimension_details['内容质量'] = '，'.join(content_detail_parts) if content_detail_parts else '基础评估'
         
-        # 维度2: 商业价值 (基于月票、收藏、推荐)
-        commercial_score = 10
+        # 维度2: 商业价值 (基于月票、收藏、推荐) - 优化：降低门槛，提高基础分
+        commercial_score = 18  # 基础分从10提高到18
         if monthly_tickets >= 10000:
-            commercial_score = 25
+            commercial_score = 28
         elif monthly_tickets >= 5000:
-            commercial_score = 20
+            commercial_score = 26
         elif monthly_tickets >= 1000:
-            commercial_score = 15
+            commercial_score = 24  # 千票就有24分
+        elif monthly_tickets >= 100:  # 新增百票档位
+            commercial_score = 21
         if collections >= 100000:
-            commercial_score += 5
+            commercial_score += 2
+        elif collections >= 10000:  # 新增万收档位
+            commercial_score += 1
         dimensions['商业价值'] = min(30, commercial_score)
         commercial_parts = []
         if monthly_tickets > 0:
@@ -4483,16 +4926,20 @@ def predict_simple():
             commercial_parts.append("潜力作品")
         dimension_details['商业价值'] = '，'.join(commercial_parts) if commercial_parts else '基础评估'
         
-        # 维度3: 读者粘性 (基于评论、粉丝、互动)
+        # 维度3: 读者粘性 (基于评论、粉丝、互动) - 优化：提高基础分，降低门槛
         comments = data.get('comments', 0) or 0
         followers = data.get('followers', 0) or 0
-        stickiness_score = 10
+        stickiness_score = 15  # 基础分从10提高到15
         if comments >= 5000:
-            stickiness_score = 20
+            stickiness_score = 23
         elif comments >= 1000:
-            stickiness_score = 15
+            stickiness_score = 21  # 千评21分
+        elif comments >= 100:  # 新增百评档位
+            stickiness_score = 18
         if followers >= 50000:
-            stickiness_score += 5
+            stickiness_score += 2
+        elif followers >= 5000:  # 新增五千粉档位
+            stickiness_score += 1
         dimensions['读者粘性'] = min(25, stickiness_score)
         stickiness_parts = []
         if comments > 0:
@@ -4505,24 +4952,28 @@ def predict_simple():
             stickiness_parts.append("有互动基础")
         dimension_details['读者粘性'] = '，'.join(stickiness_parts) if stickiness_parts else '基础评估'
         
-        # 维度4: 更新稳定性 (基于状态、增长率)
-        stability_score = 15 if status == '连载' else (10 if status == '完本' else 5)
+        # 维度4: 更新稳定性 (基于状态、增长率) - 优化：完本作品加分，连载基础分提高
+        stability_score = 18 if status == '连载' else (20 if status == '完本' else 12)  # 提高基础分
         growth = data.get('weekOverWeekGrowth', 0) or 0
         if growth > 20:
-            stability_score += 5
+            stability_score += 2
         elif growth > 10:
-            stability_score += 3
+            stability_score += 1
         dimensions['更新稳定性'] = min(20, stability_score)
         if growth > 0:
             dimension_details['更新稳定性'] = f"{status}，周增长{growth}%"
         else:
             dimension_details['更新稳定性'] = f"{status}"
         
-        # 维度5: 市场潜力 (基于题材热度、平台竞争)
-        hot_categories = ['玄幻', '都市', '仙侠', '科幻', '悬疑']
-        potential_score = 15 if category in hot_categories else 10
-        if ranking > 0 and ranking <= 100:
+        # 维度5: 市场潜力 (基于题材热度、平台竞争) - 优化：提高基础分
+        hot_categories = ['玄幻', '都市', '仙侠', '科幻', '悬疑', '历史', '游戏', '奇幻']
+        potential_score = 16 if category in hot_categories else 13  # 提高基础分
+        if ranking > 0 and ranking <= 50:  # 前50名加5分
             potential_score += 5
+        elif ranking > 0 and ranking <= 100:  # 前100名加3分
+            potential_score += 3
+        elif ranking > 0 and ranking <= 500:  # 新增前500名加1分
+            potential_score += 1
         dimensions['市场潜力'] = min(20, potential_score)
         market_parts = [category]
         if category in hot_categories:
@@ -4531,11 +4982,15 @@ def predict_simple():
             market_parts.append(f"榜单前{ranking}")
         dimension_details['市场潜力'] = '，'.join(market_parts)
         
-        # 维度6: IP延展性 (基于题材适配度、字数规模)
-        adaptable_categories = ['玄幻', '仙侠', '都市', '科幻', '悬疑']
-        extend_score = 10 if category in adaptable_categories else 5
+        # 维度6: IP延展性 (基于题材适配度、字数规模) - 优化：大幅提高基础分和加分
+        adaptable_categories = ['玄幻', '仙侠', '都市', '科幻', '悬疑', '历史', '奇幻', '军事']
+        extend_score = 12 if category in adaptable_categories else 10  # 大幅提高基础分
         if word_count >= 1000000:
-            extend_score += 5
+            extend_score += 3
+        elif word_count >= 500000:  # 新增50万字档位
+            extend_score += 2
+        elif word_count >= 200000:  # 新增20万字档位
+            extend_score += 1
         dimensions['IP延展性'] = min(15, extend_score)
         extend_parts = []
         if category in adaptable_categories:
@@ -4556,11 +5011,63 @@ def predict_simple():
         history_trend = "无历史数据"
         future_predictions = []  # 未来预测数值
         
-        if history_data and len(history_data) > 1:
+        # 获取当前实际日期
+        from datetime import datetime
+        now = datetime.now()
+        current_year = now.year
+        current_month = now.month
+        
+        # 过滤不完整数据：排除月中爬取的数据（当月数据可能不完整）
+        # 如果数据月份等于当前月份，说明是本月数据，可能不完整
+        # 同时排除明显异常的数据（如12月月中爬取的不完整数据）
+        filtered_history = []
+        skipped_months = []
+        for h in history_data:
+            h_year = h.get('year', 0)
+            h_month = h.get('month', 0)
+            h_tickets = h.get('monthly_tickets', 0) or 0
+            
+            # 跳过当前月数据（未统计完成）
+            if h_year == current_year and h_month == current_month:
+                skipped_months.append(f"{h_year}/{h_month}(当前月)")
+                continue
+            
+            # 跳过所有12月数据（月中爬取，不完整）
+            if h_month == 12:
+                skipped_months.append(f"{h_year}/{h_month}(12月不完整)")
+                continue
+            
+            # 跳过月票为0或异常低的记录
+            if h_tickets < 100:
+                skipped_months.append(f"{h_year}/{h_month}(月票过低)")
+                continue
+                
+            filtered_history.append(h)
+        
+        print(f"[Filter] 原始{len(history_data)}条, 过滤后{len(filtered_history)}条, 跳过: {skipped_months}", flush=True)
+        
+        # 如果用户输入了月票，作为当前月数据加入历史
+        if monthly_tickets > 0 and len(filtered_history) > 0:
+            # 添加当前月数据（用户输入）
+            current_month_data = {
+                'year': current_year,
+                'month': current_month,
+                'monthly_tickets': monthly_tickets,
+                'total_recommend': total_recommend,
+                'word_count': word_count
+            }
+            filtered_history.append(current_month_data)
+            print(f"[Filter] 添加用户输入月票: {current_year}/{current_month} - {monthly_tickets}票", flush=True)
+        
+        # 使用过滤后的历史数据进行分析
+        if filtered_history and len(filtered_history) > 1:
+            # 按时间排序
+            filtered_history.sort(key=lambda x: (x.get('year', 0), x.get('month', 0)))
+            
             # 计算趋势
-            first = history_data[0]
-            last = history_data[-1]
-            mid = history_data[len(history_data)//2] if len(history_data) > 2 else first
+            first = filtered_history[0]
+            last = filtered_history[-1]
+            mid = filtered_history[len(filtered_history)//2] if len(filtered_history) > 2 else first
             
             ticket_start = first.get('monthly_tickets', 0) or 0
             ticket_end = last.get('monthly_tickets', 0) or 0
@@ -4585,54 +5092,72 @@ def predict_simple():
                 trend_type = "明显下滑"
             
             # 检测波动
-            tickets = [h.get('monthly_tickets', 0) or 0 for h in history_data]
+            tickets = [h.get('monthly_tickets', 0) or 0 for h in filtered_history]
             avg = sum(tickets) / len(tickets)
             variance = sum((t - avg)**2 for t in tickets) / len(tickets)
             volatility = "波动较大" if variance > avg * 0.5 else "波动较小"
             
-            history_trend = f"【{len(history_data)}个月历史数据】起始月票{ticket_start}→当前{ticket_end}，整体{trend_type}（{growth_rate:+.1f}%），{volatility}。中间值{ticket_mid}，平均值{avg:.0f}。"
+            history_trend = f"【{len(filtered_history)}个月历史数据】起始月票{ticket_start}→当前{ticket_end}，整体{trend_type}（{growth_rate:+.1f}%），{volatility}。中间值{ticket_mid}，平均值{avg:.0f}。"
             
             # ================================================================
-            #  基于历史数据的数值预测
+            #  优化预测算法 - 多月加权平均 + 趋势稳定性
             # ================================================================
-            from datetime import datetime, timedelta
             
-            # 计算月均增长率
-            if len(tickets) >= 2 and tickets[-2] > 0:
-                month_growth_rate = (tickets[-1] - tickets[-2]) / tickets[-2]
-            elif avg > 0:
-                month_growth_rate = (avg - tickets[0]) / (tickets[0] * len(tickets)) if tickets[0] > 0 else 0.05
+            # 1. 计算多月加权平均增长率（最近3-6个月）
+            growth_rates = []
+            for i in range(1, min(6, len(tickets))):
+                if tickets[-(i+1)] > 0:
+                    rate = (tickets[-i] - tickets[-(i+1)]) / tickets[-(i+1)]
+                    growth_rates.append(rate)
+            
+            # 加权平均：近期权重更高
+            if growth_rates:
+                weights = [0.4, 0.3, 0.2, 0.1, 0.0, 0.0][:len(growth_rates)]
+                avg_growth_rate = sum(g * w for g, w in zip(growth_rates, weights)) / sum(weights[:len(growth_rates)])
             else:
-                month_growth_rate = 0
+                avg_growth_rate = 0
             
-            # 计算预测值（考虑趋势和波动）
-            last_year = last.get('year', datetime.now().year)
-            last_month = last.get('month', datetime.now().month)
+            # 2. 计算趋势稳定性
+            if len(tickets) >= 3:
+                import statistics
+                stability = 1 - min(1, statistics.stdev(tickets[-6:]) / statistics.mean(tickets[-6:])) if statistics.mean(tickets[-6:]) > 0 else 0
+            else:
+                stability = 0.5
             
-            for i in range(1, 4):  # 预测未来3个月
-                pred_month = last_month + i
-                pred_year = last_year
+            # 3. 判断趋势方向并调整因子
+            recent_avg = sum(tickets[-3:]) / 3 if len(tickets) >= 3 else tickets[-1]
+            earlier_avg = sum(tickets[-6:-3]) / 3 if len(tickets) >= 6 else tickets[0]
+            
+            if recent_avg > earlier_avg * 1.2:
+                trend_factor = 1.1
+            elif recent_avg < earlier_avg * 0.8:
+                trend_factor = 0.9
+            else:
+                trend_factor = 1.0
+            
+            # 4. 基准值使用最近3个月平均（更稳定）
+            base_value = sum(tickets[-3:]) / 3 if len(tickets) >= 3 else tickets[-1]
+            
+            # 5. 基于当前实际日期预测未来3个月
+            for i in range(1, 4):
+                pred_month = current_month + i
+                pred_year = current_year
                 if pred_month > 12:
                     pred_month -= 12
                     pred_year += 1
                 
-                # 预测月票（考虑增长率衰减）
-                decay_factor = 0.85 ** i  # 增长率逐月衰减
-                if trend_type in ["快速增长", "稳步上升"]:
-                    pred_tickets = int(ticket_end * (1 + month_growth_rate * decay_factor))
-                elif trend_type == "趋于平稳":
-                    pred_tickets = int(ticket_end * (1 + month_growth_rate * 0.3 * decay_factor))
-                else:  # 下滑趋势
-                    pred_tickets = int(ticket_end * (1 + month_growth_rate * 0.5 * decay_factor))
+                # 优化预测：更平缓的衰减 + 稳定性调整
+                decay = 0.90 ** i
+                stability_factor = 0.5 + 0.5 * stability
                 
-                # 确保预测值合理
-                pred_tickets = max(0, pred_tickets)
+                pred_tickets = int(base_value * (1 + avg_growth_rate * decay * trend_factor * stability_factor))
+                pred_tickets = max(pred_tickets, int(base_value * 0.5))  # 不低于基准的50%
                 
                 future_predictions.append({
                     'year': pred_year,
                     'month': pred_month,
                     'predicted_tickets': pred_tickets,
-                    'confidence': 'high' if volatility == "波动较小" else 'medium',
+                    'confidence': 'high' if stability > 0.7 else 'medium' if stability > 0.4 else 'low',
                     'trend': trend_type
                 })
             
@@ -4679,30 +5204,15 @@ def predict_simple():
 
 综合评分：{score:.1f}分 ({_score_to_grade(score)}级)
 
-请生成【详细完整】的评估报告，要求如下：
+请生成简洁评估报告（JSON格式）：
 
-【综合评价报告】（600-800字）：
-1. 总体表现概述（80字）：概括作品整体表现和市场定位
-2. 历史数据深度解读（150字）：分析月票变化趋势、增长原因、波动特征
-3. 六维度逐一深度分析（每个维度50-80字）：
-   - 内容质量：分析字数规模、内容深度、故事架构
-   - 商业价值：分析月票收藏表现、变现能力、商业前景
-   - 读者粘性：分析粉丝互动、评论活跃度、留存能力
-   - 更新稳定性：分析更新节奏、完结风险、读者期待
-   - 市场潜力：分析题材热度、竞争格局、增长空间
-   - IP延展性：分析改编潜力、衍生价值、跨媒介可能
-4. 核心结论（50字）：总结作品定位和发展建议
+【综合评价】（150字内）：作品定位、核心优势、主要不足
 
-【具体改进建议】（5-7条）：
-每条建议需包含：针对维度 + 具体问题 + 可操作措施 + 预期效果
+【改进建议】（3条）：针对核心问题的具体建议
 
-【未来发展预测】（300-400字）：
-1. 短期预测（1-3个月）：月票走势、榜单变化、读者增长（结合预测数值分析）
-2. 中期预测（3-6个月）：市场表现、竞争态势、IP进展
-3. 风险提示：潜在风险点和应对策略
-4. 机会展望：值得把握的发展机会
+【发展预测】（100字内）：短期走势和关键机会
 
-注意：使用中文标点，不要使用Markdown符号（如##、**等），直接输出纯文本内容。
+注意：使用中文标点，不要使用Markdown符号。
 
 请用JSON格式返回：
 {json_example}"""
@@ -4710,7 +5220,7 @@ def predict_simple():
         try:
             # 使用 _call_model 方法，model_key='chat'
             messages = [{"role": "user", "content": prompt}]
-            response = ai_service._call_model('chat', messages, temperature=0.7, max_tokens=2000, json_mode=False)
+            response = ai_service._call_model('chat', messages, temperature=0.7, max_tokens=800, json_mode=False)
             
             if response:
                 import re
@@ -4795,9 +5305,9 @@ def predict_simple():
                 'year': h['year'],
                 'month': h['month'],
                 'monthly_tickets': h['monthly_tickets'],
-                'total_recommend': h['total_recommend'],
-                'word_count': h['word_count']
-            } for h in history_data] if history_data else []
+                'total_recommend': h.get('total_recommend', 0),
+                'word_count': h.get('word_count', 0)
+            } for h in filtered_history] if filtered_history else []
         }
         
         # 保存预测记录到数据库（用于管理员端训练回流池）
