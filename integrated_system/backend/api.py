@@ -4857,17 +4857,30 @@ def predict_simple():
                     
                     # 获取实时监控数据（如果有）
                     try:
-                        realtime_table = 'novel_realtime_tracking'
-                        cur.execute(f"""
-                            SELECT title, record_year as year, record_month as month, 
-                                   monthly_tickets, collection_count, monthly_ticket_rank,
-                                   crawl_time, record_day
-                            FROM {realtime_table}
-                            WHERE title = %s
-                            ORDER BY crawl_time DESC
-                            LIMIT 30
-                        """, (db_match['title'],))
-                        realtime_data = cur.fetchall()
+                        if platform_key == 'Qidian':
+                            realtime_table = 'novel_realtime_tracking'
+                            cur.execute(f"""
+                                SELECT title, record_year as year, record_month as month, 
+                                       monthly_tickets, collection_count, monthly_ticket_rank,
+                                       crawl_time, record_day
+                                FROM {realtime_table}
+                                WHERE title = %s
+                                ORDER BY crawl_time DESC
+                                LIMIT 30
+                            """, (db_match['title'],))
+                            realtime_data = cur.fetchall()
+                        else:
+                            # 纵横：使用zongheng_realtime_tracking表
+                            cur.execute(f"""
+                                SELECT title, record_year as year, record_month as month, 
+                                       monthly_tickets, total_recommend, monthly_ticket_rank,
+                                       crawl_time, record_day
+                                FROM zongheng_realtime_tracking
+                                WHERE title = %s
+                                ORDER BY crawl_time DESC
+                                LIMIT 30
+                            """, (db_match['title'],))
+                            realtime_data = cur.fetchall()
                         
                         if realtime_data:
                             print(f"[Realtime] 找到 {len(realtime_data)} 条实时数据", flush=True)
