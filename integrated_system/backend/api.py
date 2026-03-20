@@ -24,6 +24,8 @@ try:
     from auth import login_required, token_limit_required
     # 导入模型类定义（用于加载model_j_paper.pkl）
     from train_model_j_paper import PaperDualEngine, PlatformNormalizer, IPGradingSystem, IPWeightedScorer
+    # 导入月票预测双引擎类
+    from train_ticket_dual_engine import TicketDualEngine
 except ImportError:
     from backend.data_manager import data_manager
     from backend.ai_service import ai_service
@@ -34,6 +36,7 @@ except ImportError:
     from backend.auth import login_required, token_limit_required
     try:
         from backend.train_model_j_paper import PaperDualEngine, PlatformNormalizer, IPGradingSystem, IPWeightedScorer
+        from backend.train_ticket_dual_engine import TicketDualEngine
     except ImportError:
         PaperDualEngine = None
         PlatformNormalizer = None
@@ -48,28 +51,29 @@ _ip_model_error = None
 
 # XGBoost + K-Means 双引擎模型（论文版）
 MODEL_J_PAPER_PATH = os.path.join(os.path.dirname(__file__), 'resources', 'models', 'model_j_paper.pkl')
-# 月票预测模型（来自model_j_oracle_v6）
-MODEL_J_ORACLE_V6_PATH = os.path.join(os.path.dirname(__file__), 'resources', 'models', 'model_j_oracle_v6.pkl')
+# 月票预测双引擎模型（XGBoost + K-Means）
+TICKET_DUAL_ENGINE_PATH = os.path.join(os.path.dirname(__file__), 'resources', 'models', 'ticket_dual_engine.pkl')
 
 # 月票预测模型（单独加载）
-_ticket_model = None
-_ticket_model_features = None
+_ticket_dual_engine = None
+_ticket_dual_features = None
 
-def _load_ticket_model():
-    """Load ticket prediction model from model_j_oracle_v6"""
-    global _ticket_model, _ticket_model_features
-    if _ticket_model is not None:
-        return _ticket_model, _ticket_model_features
+def _load_ticket_dual_engine():
+    """Load XGBoost + K-Means ticket prediction model"""
+    global _ticket_dual_engine, _ticket_dual_features
+    if _ticket_dual_engine is not None:
+        return _ticket_dual_engine, _ticket_dual_features
     
     try:
-        m = joblib.load(MODEL_J_ORACLE_V6_PATH)
-        _ticket_model = m.get('ticket_model')
-        _ticket_model_features = m.get('features', [])
-        print(f"[TicketModel] Loaded ticket prediction model, MAE=14.45")
-        print(f"[TicketModel] Features: {_ticket_model_features}")
+        m = joblib.load(TICKET_DUAL_ENGINE_PATH)
+        _ticket_dual_engine = m.get('dual_engine')
+        _ticket_dual_features = m.get('features', [])
+        metrics = m.get('metrics', {})
+        print(f"[TicketDualEngine] Loaded XGBoost+K-Means ticket model")
+        print(f"[TicketDualEngine] RMSE: {metrics.get('rmse', 0):.2f}, MAE: {metrics.get('mae', 0):.2f}")
     except Exception as e:
-        print(f"[TicketModel] Failed to load: {e}")
-    return _ticket_model, _ticket_model_features
+        print(f"[TicketDualEngine] Failed to load: {e}")
+    return _ticket_dual_engine, _ticket_dual_features
 
 def _load_ip_model():
     """Load the trained IP prediction model (XGBoost + K-Means Paper Edition)"""
@@ -91,10 +95,11 @@ def _load_ip_model():
         print(f"[Model] Failed to load IP model: {e}")
     return _ip_model
 
-def _predict_tickets(ticket_model, features_list, input_features):
+def _predict_tickets_dual(engine, features_list, input_features):
     """
-    使用 ticket_model 预测月票
+    使用 XGBoost + K-Means 双引擎预测月票
     
+    engine: TicketDualEngine 实例
     features_list: 模型需要的特征列表
     input_features: 输入数据字典
     """
@@ -106,40 +111,46 @@ def _predict_tickets(ticket_model, features_list, input_features):
         total_recommend = input_features.get('recommendations', 0) or 0
         collections = input_features.get('collections', 0) or 0
         fans_count = input_features.get('fans_count', 0) or 0
-        monthly_tickets = input_features.get('monthly_tickets', 0) or 0
+        months = input_features.get('months', 6) or 6
         
         # 计算派生特征
         log_word_count = np.log1p(word_count)
-        log_recommend = np.log1p(total_recommend)
         log_collection = np.log1p(collections)
-        heat_index = (monthly_tickets + collections + total_recommend) / 3
-        interaction_per_10k_words = (collections + total_recommend) / (word_count + 1) * 10000
+        log_recommend = np.log1p(total_recommend)
+        tickets_per_word = collections / (word_count + 1) * 10000
+        collection_per_word = collections / (word_count + 1) * 10000
+        heat_index = (collections + total_recommend) / 2
+        genre_hotness = 85  # 默认题材热度
         
-        # 构建特征字典
-        feature_dict = {
-            'word_count': word_count,
-            'total_recommend': total_recommend,
-            'collection_count': collections,
-            'fan_count': fans_count,
-            'log_word_count': log_word_count,
-            'log_recommend': log_recommend,
-            'log_collection': log_collection,
-            'heat_index': heat_index,
-            'interaction_per_10k_words': interaction_per_10k_words,
-        }
+        # 构建特征向量
+        X = np.array([[
+            word_count,
+            collections,
+            total_recommend,
+            fans_count,
+            log_word_count,
+            log_collection,
+            log_recommend,
+            tickets_per_word,
+            collection_per_word,
+            heat_index,
+            genre_hotness,
+            months
+        ]])
         
-        # 按模型特征顺序构建向量
-        X = np.array([[feature_dict.get(f, 0) for f in features_list]])
+        # 使用双引擎预测
+        pred = engine.predict(X, [months])[0]
+        predicted_tickets = max(0, int(pred))
         
-        # 预测
-        predicted_tickets = ticket_model.predict(X)[0]
-        predicted_tickets = max(0, int(predicted_tickets))  # 确保非负整数
-        
-        return predicted_tickets
+        # 返回预测结果和使用的引擎类型
+        engine_type = 'xgboost' if months >= 6 else 'kmeans'
+        return predicted_tickets, engine_type
         
     except Exception as e:
-        print(f"[TicketModel] Prediction error: {e}")
-        return None
+        print(f"[TicketDualEngine] Prediction error: {e}")
+        import traceback
+        traceback.print_exc()
+        return None, None
 
 def _score_to_grade(score):
     """Convert numeric score to letter grade - 分段评分标准"""
@@ -5280,12 +5291,12 @@ def predict_simple():
             # 4. 基准值使用最近3个月平均（更稳定）
             base_value = sum(tickets[-3:]) / 3 if len(tickets) >= 3 else tickets[-1]
             
-            # 5. 尝试使用 ticket_model 进行预测
-            ticket_model, ticket_features = _load_ticket_model()
+            # 5. 尝试使用 XGBoost + K-Means 双引擎进行月票预测
+            ticket_engine, ticket_features = _load_ticket_dual_engine()
             
-            if ticket_model and ticket_features:
-                # 使用模型预测
-                print(f"[TicketModel] 使用模型预测未来3个月月票", flush=True)
+            if ticket_engine and ticket_features:
+                # 使用双引擎模型预测
+                print(f"[TicketDualEngine] 使用XGBoost+K-Means预测未来3个月月票", flush=True)
                 
                 # 构建模型输入特征
                 model_input = {
@@ -5293,13 +5304,15 @@ def predict_simple():
                     'recommendations': total_recommend,
                     'collections': collections,
                     'fans_count': data.get('followers', 0) or 0,
-                    'monthly_tickets': int(base_value),  # 使用历史平均作为当前月票
+                    'months': 6,  # 成熟期使用XGBoost
                 }
                 
                 # 基准预测
-                base_pred = _predict_tickets(ticket_model, ticket_features, model_input)
+                base_pred, engine_type = _predict_tickets_dual(ticket_engine, ticket_features, model_input)
                 
                 if base_pred and base_pred > 0:
+                    print(f"[TicketDualEngine] 基准预测: {base_pred}, 引擎: {engine_type}", flush=True)
+                    
                     # 预测未来3个月（考虑趋势衰减）
                     for i in range(1, 4):
                         pred_month = current_month + i
@@ -5322,18 +5335,18 @@ def predict_simple():
                             'predicted_tickets': pred_tickets,
                             'confidence': 'high' if stability > 0.7 else 'medium' if stability > 0.4 else 'low',
                             'trend': trend_type,
-                            'model': 'ticket_model'
+                            'model': 'xgboost_kmeans'
                         })
                     
-                    print(f"[TicketModel] 预测完成: {[(p['month'], p['predicted_tickets']) for p in future_predictions]}", flush=True)
+                    print(f"[TicketDualEngine] 预测完成: {[(p['month'], p['predicted_tickets']) for p in future_predictions]}", flush=True)
                 else:
                     # 模型预测失败，回退到规则
-                    print(f"[TicketModel] 模型预测失败，回退到规则计算", flush=True)
-                    ticket_model = None  # 触发下面的规则回退
+                    print(f"[TicketDualEngine] 模型预测失败，回退到规则计算", flush=True)
+                    ticket_engine = None  # 触发下面的规则回退
             
             # 回退：规则预测
-            if not ticket_model or not future_predictions:
-                print(f"[TicketModel] 使用规则预测", flush=True)
+            if not ticket_engine or not future_predictions:
+                print(f"[TicketDualEngine] 使用规则预测", flush=True)
                 for i in range(1, 4):
                     pred_month = current_month + i
                     pred_year = current_year
