@@ -102,20 +102,22 @@ def _load_ticket_dual_engine():
     return _ticket_dual_engine, _ticket_dual_features
 
 def _load_ip_model():
-    """Load the trained IP prediction model (XGBoost + K-Means Paper Edition)"""
+    """Load the trained IP prediction model (XGBoost + K-Means SACD Edition)"""
     global _ip_model, _ip_model_error
     if _ip_model is not None or _ip_model_error:
         return _ip_model
     
-    # 加载论文版 XGBoost + K-Means 双引擎模型
-    model_path = MODEL_J_PAPER_PATH
+    # 加载 SACD 等级 XGBoost + K-Means 双引擎模型
+    model_path = MODEL_SACD_PATH
     try:
         _ip_model = joblib.load(model_path)
-        print(f"[Model] Loaded Model J Paper (XGBoost+K-Means) from {model_path}")
+        print(f"[Model] Loaded SACD Model (XGBoost+K-Means, S/A/B/C/D grades) from {model_path}")
         engine = _ip_model.get('dual_engine')
         if engine:
             print(f"[Model] XGBoost engine: {engine.xgb_engine is not None}")
             print(f"[Model] K-Means engine: {engine.kmeans_engine is not None}")
+            metrics = _ip_model.get('metrics', {})
+            print(f"[Model] RMSE: {metrics.get('rmse', 0):.2f}, Grade Accuracy: {metrics.get('grade_accuracy', 0)*100:.1f}%")
     except Exception as e:
         _ip_model_error = str(e)
         print(f"[Model] Failed to load IP model: {e}")
