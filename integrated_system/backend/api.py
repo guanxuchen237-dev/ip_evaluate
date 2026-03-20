@@ -3716,11 +3716,13 @@ def get_audit_logs():
 
 @api_bp.route('/admin/audit_logs/<int:log_id>/generate_report', methods=['POST'])
 def generate_audit_report(log_id):
-    """按需生成AI深度报告 - 用户点击查看时才调用AI，节省token"""
+    """按需生成AI深度报告 - 融合训练模型评分 + AI大模型分析"""
     try:
         from auth import get_auth_db
         from ai_service import ai_service
         from scan_potential_gems import fetch_vr_comments, fetch_global_stats, fetch_ai_eval, fetch_realtime_trend
+        from data_manager import ZONGHENG_CONFIG, QIDIAN_CONFIG, data_manager
+        import numpy as np
         
         conn = get_auth_db()
         with conn.cursor() as cursor:
@@ -3740,38 +3742,119 @@ def generate_audit_report(log_id):
         book_author = log.get('book_author', '未知')
         platform = log.get('platform', 'Qidian')
         
-        print(f"[Audit Report] Generating AI report for '{book_title}'...")
+        print(f"[Audit Report] Generating AI report for '{book_title}' with model + AI fusion...")
         
-        # 获取多源数据
+        # ===== 1. 获取完整书籍基础数据 =====
+        base_stats = {'title': book_title, 'author': book_author, 'category': '未知', 'platform': '未知', 'finance': 0, 'interaction': 0, 'word_count': 0}
+        
+        # 从纵横查
+        try:
+            conn_z = pymysql.connect(**ZONGHENG_CONFIG, cursorclass=pymysql.cursors.DictCursor)
+            with conn_z.cursor() as cur:
+                cur.execute("""
+                    SELECT title, author, category, monthly_ticket as finance, total_rec as interaction, word_count
+                    FROM zongheng_book_ranks WHERE title = %s ORDER BY year DESC, month DESC LIMIT 1
+                """, (book_title,))
+                row = cur.fetchone()
+                if row:
+                    base_stats = {'title': row['title'], 'author': row['author'], 'category': row['category'] or '未知',
+                                  'platform': 'Zongheng', 'finance': row['finance'] or 0, 'interaction': row['interaction'] or 0, 'word_count': row['word_count'] or 0}
+            conn_z.close()
+        except: pass
+        
+        # 从起点查
+        if base_stats['platform'] == '未知':
+            try:
+                conn_q = pymysql.connect(**QIDIAN_CONFIG, cursorclass=pymysql.cursors.DictCursor)
+                with conn_q.cursor() as cur:
+                    cur.execute("""
+                        SELECT title, author, category, monthly_tickets_on_list as finance, recommendation_count as interaction, word_count
+                        FROM novel_monthly_stats WHERE title = %s ORDER BY year DESC, month DESC LIMIT 1
+                    """, (book_title,))
+                    row = cur.fetchone()
+                    if row:
+                        base_stats = {'title': row['title'], 'author': row['author'], 'category': row['category'] or '未知',
+                                      'platform': 'Qidian', 'finance': row['finance'] or 0, 'interaction': row['interaction'] or 0, 'word_count': row['word_count'] or 0}
+                conn_q.close()
+            except: pass
+        
+        # ===== 2. 获取多源数据 =====
         vr_comments = fetch_vr_comments(book_title) or "暂无虚拟读者反馈"
         global_stats = fetch_global_stats(book_title)
         ai_eval_stats = fetch_ai_eval(book_title)
         realtime_trend = fetch_realtime_trend(book_title)
         
-        # 调用AI生成报告
+        # ===== 3. XGBoost 模型预测评分 =====
+        realtime_latest = realtime_trend.get('latest_tickets', 0) if isinstance(realtime_trend, dict) else 0
+        max_finance = max(base_stats.get('finance', 0), realtime_latest)
+        
+        predict_res = data_manager.predict_ip({
+            'title': book_title,
+            'category': base_stats.get('category', '未知'),
+            'word_count': base_stats.get('word_count', 0),
+            'finance': max_finance,
+            'interaction': base_stats.get('interaction', 0),
+            'popularity': base_stats.get('interaction', 0) * 0.2
+        })
+        model_score = predict_res.get('score', 80.0)
+        book_status = predict_res.get('details', {}).get('status', '未知')
+        print(f"[Audit Report] Model Score: {model_score:.1f}, Status: {book_status}")
+        
+        # ===== 4. 构建市场价值大盘指标 =====
+        _fin = float(max_finance)
+        _inter = float(base_stats.get('interaction', 0))
+        _pop = _inter * 0.2
+        _score = float(model_score)
+        
+        heat_score = min(100, 40 + 12 * np.log10(max(_fin, 1)) + 5 * np.log10(max(_pop, 1)))
+        fan_loyalty = min(100, 50 + 15 * np.log10(max(_inter / (_fin * 100), 0.01) + 1)) if _fin > 0 and _inter > 0 else 50.0
+        commercial_value = min(100, 35 + 14 * np.log10(max(_fin, 1)))
+        
+        dims = ai_eval_stats if isinstance(ai_eval_stats, dict) else {}
+        if dims.get('story') and dims.get('character') and dims.get('world'):
+             content_score = (float(dims.get('story', 0)) + float(dims.get('character', 0)) + float(dims.get('world', 0))) / 3
+        else:
+             content_score = _score * 0.85
+             
+        ip_potential = (float(dims.get('commercial', 0)) + float(dims.get('overall', 0))) / 2 if dims.get('commercial') and dims.get('overall') else _score * 0.9
+        timeliness = 85.0 if '连载' in book_status else (55.0 if '完结' in book_status or '完本' in book_status else 70.0)
+        
+        market_analysis = {
+             'market_heat': round(heat_score, 1),
+             'content_quality': round(content_score, 1),
+             'ip_potential': round(ip_potential, 1),
+             'fan_loyalty': round(fan_loyalty, 1),
+             'commercial_value': round(commercial_value, 1),
+             'timeliness': round(timeliness, 1)
+        }
+        print(f"[Audit Report] Market Analysis: {market_analysis}")
+        
+        # ===== 5. 调用AI生成报告（融合模型评分） =====
         report_markdown = ai_service.generate_comprehensive_audit(
             title=book_title,
-            author=book_author,
-            base_stats={'platform': platform},
+            author=base_stats.get('author', '未知'),
+            base_stats=base_stats,
             ai_eval_stats=ai_eval_stats,
             vr_comments=vr_comments,
             global_stats=global_stats,
-            model_score=log.get('score', 80),
-            realtime_trend=realtime_trend
+            model_score=model_score,
+            realtime_trend=realtime_trend,
+            market_analysis=market_analysis,
+            book_status=book_status
         )
         
         # 更新数据库
         with conn.cursor() as cursor:
             cursor.execute("""
                 UPDATE ip_audit_logs 
-                SET markdown_report = %s, status = 'RESOLVED' 
+                SET markdown_report = %s, status = 'RESOLVED', score = %s 
                 WHERE id = %s
-            """, (report_markdown, log_id))
+            """, (report_markdown, round(float(model_score), 2), log_id))
             conn.commit()
         
         conn.close()
-        print(f"[Audit Report] ✓ Generated report for '{book_title}'")
-        return jsonify({'status': 'success', 'report': report_markdown, 'cached': False})
+        print(f"[Audit Report] ✓ Generated report for '{book_title}' with score {model_score:.1f}")
+        return jsonify({'status': 'success', 'report': report_markdown, 'cached': False, 'model_score': round(float(model_score), 2)})
         
     except Exception as e:
         print(f"Generate report error: {e}")
