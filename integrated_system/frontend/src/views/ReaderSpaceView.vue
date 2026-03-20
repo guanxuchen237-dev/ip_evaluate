@@ -490,12 +490,15 @@ const triggerEffect = (type: string, message: string) => {
 }
 
 const startRound = async () => {
+  console.log('[VR Simulation] startRound called, isSimulating:', isSimulating.value, 'isRoundRunning:', isRoundRunning.value)
   if (!isSimulating.value || isRoundRunning.value) return
 
   const personaIds = getActivePersonaIds()
+  console.log('[VR Simulation] personaIds:', personaIds)
   if (!personaIds.length) {
     taskError.value = '没有可用真实读者，请先创建角色。'
     isSimulating.value = false
+    console.warn('[VR Simulation] No personas available')
     return
   }
 
@@ -591,12 +594,14 @@ const startRound = async () => {
 }
 
 const toggleSimulation = () => {
+  console.log('[VR Simulation] toggleSimulation called, current isSimulating:', isSimulating.value)
   if (isSimulating.value) {
     isSimulating.value = false
     clearTaskPoll()
     isRoundRunning.value = false
     return
   }
+  console.log('[VR Simulation] Starting simulation, realPersonas count:', realPersonas.value.length)
   isSimulating.value = true
   startRound()
 }
