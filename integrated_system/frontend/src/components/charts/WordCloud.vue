@@ -15,23 +15,8 @@ const initChart = async () => {
   if (!chartRef.value) return;
   chartInstance = echarts.init(chartRef.value);
 
-  let data = [
-    { name: '烟斗老哥', value: 100 },
-    { name: '知白', value: 95 },
-    { name: '言归正传', value: 90 },
-    { name: '远瞳', value: 85 },
-    { name: '黑山老鬼', value: 80 },
-    { name: '奕辰辰', value: 75 },
-    { name: '滚开', value: 70 },
-    { name: '步履无声', value: 65 },
-    { name: '火中物', value: 60 },
-    { name: '一叶青天', value: 55 },
-    { name: '海棠灯', value: 50 },
-    { name: '李闲鱼', value: 45 },
-    { name: '如水意', value: 40 },
-    { name: '子与2', value: 35 },
-    { name: '姬叉', value: 30 },
-  ];
+  let data: any[] = [];
+  let hasError = false;
 
   try {
     const res = await axios.get(`${API_BASE}/charts/wordcloud`);
@@ -40,9 +25,27 @@ const initChart = async () => {
         name: item.name || item.word,
         value: item.value || item.count || 50
       }));
+    } else {
+      hasError = true;
     }
   } catch (e) {
     console.warn("WordCloud Fetch Fail", e);
+    hasError = true;
+  }
+
+  if (hasError || data.length === 0) {
+    // 显示空状态
+    chartInstance.setOption({
+      title: {
+        text: '暂无数据',
+        subtext: '后端服务未启动或数据为空',
+        left: 'center',
+        top: 'center',
+        textStyle: { color: '#94a3b8', fontSize: 16 },
+        subtextStyle: { color: '#cbd5e1', fontSize: 12 }
+      }
+    });
+    return;
   }
 
   const option = {
