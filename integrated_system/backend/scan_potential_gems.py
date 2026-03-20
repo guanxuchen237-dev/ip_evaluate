@@ -326,126 +326,80 @@ def scan_and_trigger_gems(title_filter=None):
             # 改进的筛选逻辑：识别真正的潜力作品
             # 放宽条件让更多好书被标记
             
-            # ========== 新增指标 ==========
-            # 1. 字数/收藏比（被低估信号）：高字数但收藏偏低
+            # ========== 基础指标 ==========
             collection_count = int(bk.get('collection_count', 0) or 0)
             word_count = int(bk.get('word_count', 0) or 0)
             collection_per_10k = collection_count / (word_count / 10000 + 1) if word_count > 0 else 0
-            # 收藏效率低于同类均值但字数高 → 被埋没
             is_undervalued = word_count > 100000 and collection_count > 0 and collection_per_10k < 1000
             
-            # 2. 粉丝互动率（粘性强）
             fans_count = int(bk.get('fans_count', 0) or 0)
             reward_count = int(bk.get('reward_count', 0) or 0)
-            has_fanbase = fans_count > 500 or reward_count > 100  # 有粉丝基础
-            high_engagement = fans_count > 0 and (reward_count / (fans_count + 1)) > 0.1  # 打赏率高
+            has_fanbase = fans_count > 500 or reward_count > 100
+            high_engagement = fans_count > 0 and (reward_count / (fans_count + 1)) > 0.1
             
-            # 3. 排名对比（同类中排名靠后但数据好）
             ticket_rank_raw = bk.get('ticket_rank', 9999)
             ticket_rank = int(ticket_rank_raw) if isinstance(ticket_rank_raw, (int, float)) else 9999
-            collection_rank_raw = bk.get('collection_rank', 9999)
-            collection_rank = int(collection_rank_raw) if isinstance(collection_rank_raw, (int, float)) else 9999
-            # 排名>500但月票>500 → 被推荐算法遗漏
             rank_underrated = ticket_rank > 500 and max_finance > 500
             
-            # 4. 评论情感（简化：有评论即表示有讨论度）
             vr_comments = fetch_vr_comments(title)
-            has_discussion = len(vr_comments) > 50  # 有评论内容
+            has_discussion = len(vr_comments) > 50
             
-            # ========== 原有指标 ==========
-            # 1. 基础数据要求（降低门槛）
-            has_sufficient_data = word_count > 50000  # 至少5万字（降低）
-            has_engagement = max_finance > 500 or bk.get('interaction', 0) > 500  # 有互动数据（降低）
+            has_sufficient_data = word_count > 50000
+            has_engagement = max_finance > 500 or bk.get('interaction', 0) > 500
             
-            # 2. 评分要求（多维度）- 降低阈值
+            # ========== AI评分指标 ==========
             ai_overall = ai_eval_stats.get('overall_score', 0) if ai_eval_stats else 0
             ai_commercial = ai_eval_stats.get('commercial_score', 0) if ai_eval_stats else 0
             ai_story = ai_eval_stats.get('story_score', 0) if ai_eval_stats else 0
             
-            ai_score_high = ai_overall >= 70  # AI综合评分>=70（降低）
-            ai_has_potential = ai_commercial >= 65 or ai_story >= 70  # 商业或故事潜力（降低）
+            ai_score_high = ai_overall >= 70
+            ai_has_potential = ai_commercial >= 65 or ai_story >= 70
             
-            # 3. 实时增长要求（降低）
-            realtime_growing = bool(realtime_trend) and realtime_trend.get('growth_rate', 0) > 10  # 增长>10%（降低）
-            realtime_has_data = bool(realtime_trend) and realtime_trend.get('data_points', 0) >= 2  # 至少2个数据点（降低）
+            # ========== 实时增长指标 ==========
+            realtime_growing = bool(realtime_trend) and realtime_trend.get('growth_rate', 0) > 10
+            realtime_has_data = bool(realtime_trend) and realtime_trend.get('data_points', 0) >= 2
             
-            # 4. 模型预测分（作为参考，不是唯一标准）- 降低
-            model_good = final_score >= 75  # 使用综合评分
+            # ========== 模型预测指标 ==========
+            model_good = final_score >= 75
             model_excellent = final_score >= 85
+            oracle_high = oracle_grade in ['S', 'A']
             
-            # Oracle模型等级判定（新增）
-            oracle_high = oracle_grade in ['S', 'A']  # Oracle评为S或A级
+            # ========== 月票增幅指标 ==========
+            current_tickets = max_finance
+            prev_tickets = bk.get('prev_month_tickets', current_tickets * 0.5)
+            ticket_growth_rate = ((current_tickets - prev_tickets) / max(prev_tickets, 1)) * 100 if prev_tickets > 0 else 0
             
-            # 调试：打印前5本书的详细数据
+            ticket_explosive = ticket_growth_rate > 50 and current_tickets > 1000
+            rank_improved = ticket_rank < 500 and ticket_rank < bk.get('prev_ticket_rank', 9999)
+            dark_horse = rank_improved and ticket_growth_rate > 30 and current_tickets > 2000
+            high_speed_growth = current_tickets > 5000 and ticket_growth_rate > 100
+            quality_potential = current_tickets > 10000 and ai_overall >= 65
+            
+            # ========== 判定条件 ==========
+            condition_a = ai_score_high and has_engagement and model_good
+            condition_b = ai_has_potential and realtime_growing and realtime_has_data
+            condition_c = model_excellent and has_sufficient_data and has_engagement
+            condition_d = ai_overall >= 72 and has_engagement and word_count < 100000
+            condition_e = is_undervalued and ai_overall >= 68
+            condition_f = has_fanbase and high_engagement and ai_overall >= 65
+            condition_g = rank_underrated and has_discussion
+            condition_h = has_discussion and ai_overall >= 68 and has_engagement
+            condition_i = oracle_high and has_sufficient_data and has_engagement
+            
+            # ========== 综合判定 ==========
+            is_global = bool(global_stats) and global_stats.get('overseas_revenue_prediction') in ['S', 'A'] and ai_overall >= 70
+            is_gem = (condition_a or condition_b or condition_c or condition_d or condition_e or 
+                     condition_f or condition_g or condition_h or condition_i or 
+                     ticket_explosive or dark_horse or high_speed_growth or quality_potential)
+            
+            # 调试打印
             if total_scanned <= 5:
                 print(f"[Gem Debug] '{title[:20]}': AI={ai_overall}, 字数={word_count}, 收藏={collection_count}, 月票={max_finance}")
                 print(f"[Gem Debug]   模型={model_score:.1f}, Oracle={oracle_score:.1f}({oracle_grade}), 综合={final_score:.1f}")
                 print(f"[Gem Debug]   月票增幅={ticket_growth_rate:.1f}%, 排名={ticket_rank}")
                 print(f"[Gem Debug]   条件: 爆发={ticket_explosive}, 黑马={dark_horse}, 高速={high_speed_growth}")
             
-            # ========== 判定条件 ==========
-            # 判定为POTENTIAL_GEM的条件（满足其中一组，更宽松）：
-            # A. 高质量+有数据：AI评分高 + 有实际互动 + 模型预测好
-            condition_a = ai_score_high and has_engagement and model_good
-            
-            # B. 高潜力+增长快：AI有潜力 + 实时在增长 + 有足够数据
-            condition_b = ai_has_potential and realtime_growing and realtime_has_data
-            
-            # C. 异常优秀：模型分极高 + 有基础数据
-            condition_c = model_excellent and has_sufficient_data and has_engagement
-            
-            # D. 新书潜力：数据少但AI评分高 + 有基础互动
-            condition_d = ai_overall >= 72 and has_engagement and word_count < 100000
-            
-            # E. 被埋没的好书：高字数但收藏效率低（被低估）
-            condition_e = is_undervalued and ai_overall >= 68
-            
-            # F. 粉丝忠诚：有粉丝基础 + 高互动率
-            condition_f = has_fanbase and high_engagement and ai_overall >= 65
-            
-            # G. 排名遗漏：排名靠后但数据好
-            condition_g = rank_underrated and has_discussion
-            
-            # H. 口碑传播：有讨论度 + AI评分尚可
-            condition_h = has_discussion and ai_overall >= 68 and has_engagement
-            
-            # I. Oracle模型高评级：Oracle评为S/A级 + 有基础数据
-            condition_i = oracle_high and has_sufficient_data and has_engagement
-            
-            # ========== 月票增幅和趋势指标 ==========
-            # 获取月票历史数据进行趋势分析
-            monthly_ticket_history = bk.get('monthly_ticket_history', [])
-            if not monthly_ticket_history and 'monthly_tickets' in bk:
-                monthly_ticket_history = [bk.get('monthly_tickets', 0)]
-            
-            current_tickets = max_finance  # 当前月票数
-            prev_tickets = bk.get('prev_month_tickets', current_tickets * 0.5)  # 上月月票（估算）
-            
-            # 计算月票增幅
-            ticket_growth_rate = ((current_tickets - prev_tickets) / max(prev_tickets, 1)) * 100 if prev_tickets > 0 else 0
-            
-            # J. 月票爆发：月票增幅>50% 且 当前月票>1000
-            ticket_explosive = ticket_growth_rate > 50 and current_tickets > 1000
-            
-            # K. 黑马崛起：排名上升快（排名数字变小）+ 月票持续增长
-            rank_improved = ticket_rank < 500 and ticket_rank < bk.get('prev_ticket_rank', 9999)
-            dark_horse = rank_improved and ticket_growth_rate > 30 and current_tickets > 2000
-            
-            # L. 高速增长：月票>5000 且 增幅>100%（截图中Top 1-3的特征）
-            high_speed_growth = current_tickets > 5000 and ticket_growth_rate > 100
-            
-            # M. 优质潜力：月票>10000 + AI评分>65（高数据量+质量过关）
-            quality_potential = current_tickets > 10000 and ai_overall >= 65
-            
-            # 1. GLOBAL_GEM: 有出海潜力评估为S/A级 + 基础质量过关
-            is_global = bool(global_stats) and global_stats.get('overseas_revenue_prediction') in ['S', 'A'] and ai_overall >= 70
-            
-            # 2. POTENTIAL_GEM: 满足上述任一条件组合（更宽松，包含月票增幅指标）
-            is_gem = (condition_a or condition_b or condition_c or condition_d or condition_e or 
-                     condition_f or condition_g or condition_h or condition_i or 
-                     ticket_explosive or dark_horse or high_speed_growth or quality_potential)
-            
-            # 先定义risk_type
+            # 定义risk_type
             risk_type = 'NORMAL'
             if is_global: 
                 risk_type = 'GLOBAL_GEM'
