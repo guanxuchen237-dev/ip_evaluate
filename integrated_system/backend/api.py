@@ -5217,8 +5217,7 @@ def predict_simple():
         current_month = now.month
         
         # 过滤不完整数据：排除月中爬取的数据（当月数据可能不完整）
-        # 如果数据月份等于当前月份，说明是本月数据，可能不完整
-        # 同时排除明显异常的数据（如12月月中爬取的不完整数据）
+        # 注意：纵横数据库缺少历史月度数据，需要更宽松的过滤
         filtered_history = []
         skipped_months = []
         for h in history_data:
@@ -5231,8 +5230,9 @@ def predict_simple():
                 skipped_months.append(f"{h_year}/{h_month}(当前月)")
                 continue
             
-            # 跳过所有12月数据（月中爬取，不完整）
-            if h_month == 12:
+            # 起点数据：跳过12月数据（月中爬取，不完整）
+            # 纵横数据：保留12月数据（因为没有其他历史数据）
+            if platform_key == 'Qidian' and h_month == 12:
                 skipped_months.append(f"{h_year}/{h_month}(12月不完整)")
                 continue
             
