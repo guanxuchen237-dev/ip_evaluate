@@ -430,32 +430,16 @@ def scan_and_trigger_gems(title_filter=None):
             # 只记录真正有潜力的作品到审计日志（减少噪音和AI调用）
             if risk_type == 'NORMAL':
                 # 普通作品跳过，不记录也不调用AI
-                print(f"[Gem Scanner] Skipping '{title}' - not a gem (score: {model_score:.1f})")
                 continue
             
-            # 只对真正的潜力作品调用大模型生成深度报告
-            # 这会消耗AI额度，所以严格控制只给高价值作品调用
-            print(f"[Gem Scanner] Calling AI for '{title}' ({risk_type})...")
-            report_markdown = ai_service.generate_comprehensive_audit(
-                title=title, 
-                author=bk['author'], 
-                base_stats=bk, 
-                ai_eval_stats=ai_eval_stats, 
-                vr_comments=vr_comments, 
-                global_stats=global_stats, 
-                model_score=model_score,
-                realtime_trend=realtime_trend
-            )
-            
-            # 生成 snippet 显示
+            # 生成 snippet 显示（不调用AI，节省token）
             if risk_type == 'GLOBAL_GEM':
-                snippet = f"【出海优选】已通过出海潜力评估。预测分: {model_score:.1f}。目标市场: {global_stats.get('target_regions', '待定')}. AI生成深度分析报告中..."
+                snippet = f"【出海优选】模型评分: {final_score:.1f} | Oracle评级: {oracle_grade} | 月票: {max_finance} | 目标市场: {global_stats.get('target_regions', '待定') if global_stats else '待分析'}"
             elif risk_type == 'POTENTIAL_GEM':
-                growth_info = f"增长{realtime_trend.get('growth_rate', 0):.0f}%" if realtime_trend else ""
-                snippet = f"【潜力遗珠】高分优质作品。预测分: {model_score:.1f} {growth_info}。AI生成深度分析报告中..."
-            else:
-                snippet = f"深度审计已完成。实时预测分 {model_score:.1f}。详情参见展开报告。"
+                growth_info = f" | 增长{realtime_trend.get('growth_rate', 0):.0f}%" if realtime_trend else ""
+                snippet = f"【潜力遗珠】模型评分: {final_score:.1f} | Oracle评级: {oracle_grade} | 月票: {max_finance}{growth_info} | 点击查看AI深度分析"
             
+            # 先插入基础记录，不调用AI（大幅加速）
             with conn.cursor() as cur:
                 cur.execute("""
                     INSERT INTO ip_audit_logs 
@@ -464,11 +448,11 @@ def scan_and_trigger_gems(title_filter=None):
                 """, (
                     title, bk['author'], bk['platform'], 
                     'Positive' if risk_type in ['POTENTIAL_GEM', 'GLOBAL_GEM'] else 'Low', 
-                    risk_type, snippet, model_score, 'manual_scan', 'RESOLVED', report_markdown
+                    risk_type, snippet, final_score, 'manual_scan', 'Pending', ''  # 报告留空，按需生成
                 ))
             conn.commit()
             inserted += 1
-            print(f"[Gem Scanner] ✓ Inserted '{title}' as {risk_type} (score: {model_score:.1f})")
+            print(f"[Gem Scanner] ✓ Inserted '{title}' as {risk_type} (score: {final_score:.1f})")
             
         conn.close()
         print(f"[Gem Scanner] Scan complete: {total_scanned} books scanned, {inserted} inserted ({gems_count} gems, {global_gems_count} global)")

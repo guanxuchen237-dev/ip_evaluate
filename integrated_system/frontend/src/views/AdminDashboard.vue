@@ -1025,8 +1025,51 @@ async function fetchAiScores() {
 
 // 报告展开状态
 const expandedLogId = ref<number | null>(null)
-function toggleLogExpand(logId: number) {
-  expandedLogId.value = expandedLogId.value === logId ? null : logId
+const reportLoading = ref(false)
+
+async function toggleLogExpand(logId: number) {
+  if (expandedLogId.value === logId) {
+    expandedLogId.value = null
+    return
+  }
+  
+  // 检查是否需要生成报告
+  const log = auditLogs.value.find(l => l.id === logId)
+  if (!log) return
+  
+  // 如果报告为空或太短，调用API生成
+  if (!log.markdown_report || log.markdown_report.length < 100) {
+    reportLoading.value = true
+    try {
+      const token = localStorage.getItem('auth_token')
+      const res = await fetch(`http://localhost:5000/api/admin/audit_logs/${logId}/generate_report`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      const data = await res.json()
+      if (res.ok && data.status === 'success') {
+        // 更新本地数据
+        const idx = auditLogs.value.findIndex(l => l.id === logId)
+        if (idx >= 0) {
+          auditLogs.value[idx].markdown_report = data.report
+          auditLogs.value[idx].status = 'RESOLVED'
+        }
+        expandedLogId.value = logId
+        console.log('[Audit] Report generated, cached:', data.cached)
+      } else {
+        console.error('[Audit] Generate report failed:', data.error)
+      }
+    } catch (e) {
+      console.error('[Audit] Generate report error:', e)
+    } finally {
+      reportLoading.value = false
+    }
+  } else {
+    expandedLogId.value = logId
+  }
 }
 
 // 导出审计报告为 Markdown 文件
@@ -2453,9 +2496,15 @@ const formatPeriod = (period: string) => {
                           <div class="flex gap-2">
                               <button v-if="log.status === 'Pending' || log.status === 'PENDING'" @click="resolveAuditLog(log.id, 'resolve')" class="flex-1 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded drop-shadow-sm text-xs font-bold transition-colors">标记解决</button>
                               <button v-if="log.status === 'Pending' || log.status === 'PENDING'" @click="resolveAuditLog(log.id, 'ignore')" class="flex-1 py-1.5 px-3 bg-white border border-slate-200 hover:bg-slate-100 text-slate-500 rounded drop-shadow-sm text-xs font-bold transition-colors">忽略</button>
-                              <button v-if="log.markdown_report" @click="toggleLogExpand(log.id)" 
+                              <!-- 有报告时显示展开/收起 -->
+                              <button v-if="log.markdown_report && log.markdown_report.length > 100" @click="toggleLogExpand(log.id)" 
                                       class="flex-1 py-1.5 bg-violet-50 hover:bg-violet-100 text-violet-600 rounded drop-shadow-sm text-xs font-bold transition-colors flex items-center justify-center gap-1">
                                  <FileText class="w-3 h-3" /> {{ expandedLogId === log.id ? '收起报告' : '展开报告' }}
+                              </button>
+                              <!-- 没有报告时显示生成按钮 -->
+                              <button v-else @click="toggleLogExpand(log.id)" :disabled="reportLoading"
+                                      class="flex-1 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-600 rounded drop-shadow-sm text-xs font-bold transition-colors flex items-center justify-center gap-1 disabled:opacity-50">
+                                 <Sparkles class="w-3 h-3" :class="{'animate-spin': reportLoading}" /> {{ reportLoading ? '生成中...' : 'AI分析' }}
                               </button>
                           </div>
                        </div>

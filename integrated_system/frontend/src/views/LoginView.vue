@@ -34,8 +34,42 @@ const form = ref({
   confirmPassword: ''
 })
 
+// 登录页统计数据
+const loginStats = ref({
+  total_tracking: 2847,
+  dark_horse_count: 156,
+  prediction_accuracy: 78,
+  total_books: 5000
+})
+const statsLoading = ref(false)
+
+// 获取登录页统计数据
+async function fetchLoginStats() {
+  statsLoading.value = true
+  try {
+    const res = await fetch('http://localhost:5000/api/stats/login')
+    if (res.ok) {
+      const result = await res.json()
+      if (result.data) {
+        loginStats.value = {
+          total_tracking: result.data.total_tracking || 2847,
+          dark_horse_count: result.data.dark_horse_count || 156,
+          prediction_accuracy: result.data.prediction_accuracy || 78,
+          total_books: result.data.total_books || 5000
+        }
+      }
+    }
+  } catch (e) {
+    console.error('获取登录页统计数据失败:', e)
+    // 使用默认值
+  } finally {
+    statsLoading.value = false
+  }
+}
+
 onMounted(() => {
   setTimeout(() => { ready.value = true }, 150)
+  fetchLoginStats() // 获取真实统计数据
 })
 
 function toggleMode() {
@@ -253,20 +287,31 @@ function closeForgotModal() {
               </p>
 
               <!-- 极简数据展示 -->
-              <div class="flex items-center gap-10 pt-8">
+              <div class="flex items-center gap-8 pt-8">
                  <div>
-                    <div class="text-4xl font-bold text-white mb-1">2,847</div>
+                    <div class="text-4xl font-bold text-white mb-1 transition-opacity" :class="statsLoading ? 'opacity-50' : 'opacity-100'">
+                      {{ loginStats.total_books.toLocaleString() }}
+                    </div>
+                    <div class="text-slate-500 text-sm font-medium">总入库书籍</div>
+                 </div>
+                 <div class="w-px h-10 bg-white/10"></div>
+                 <div>
+                    <div class="text-4xl font-bold text-white mb-1 transition-opacity" :class="statsLoading ? 'opacity-50' : 'opacity-100'">
+                      {{ loginStats.total_tracking.toLocaleString() }}
+                    </div>
                     <div class="text-slate-500 text-sm font-medium">实时追踪作品</div>
                  </div>
                  <div class="w-px h-10 bg-white/10"></div>
                  <div>
-                    <div class="text-4xl font-bold text-white mb-1">156</div>
+                    <div class="text-4xl font-bold text-white mb-1 transition-opacity" :class="statsLoading ? 'opacity-50' : 'opacity-100'">
+                      {{ loginStats.dark_horse_count }}
+                    </div>
                     <div class="text-slate-500 text-sm font-medium">潜力黑马</div>
                  </div>
                  <div class="w-px h-10 bg-white/10"></div>
                  <div>
-                    <div class="text-4xl font-bold text-white mb-1 flex items-center gap-1">
-                      78% <Zap class="w-5 h-5 text-amber-400" />
+                    <div class="text-4xl font-bold text-white mb-1 flex items-center gap-1 transition-opacity" :class="statsLoading ? 'opacity-50' : 'opacity-100'">
+                      {{ loginStats.prediction_accuracy }}% <Zap class="w-5 h-5 text-amber-400" />
                     </div>
                     <div class="text-slate-500 text-sm font-medium">预测准确率</div>
                  </div>

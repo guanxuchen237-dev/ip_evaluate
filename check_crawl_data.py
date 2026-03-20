@@ -1,37 +1,38 @@
 import pymysql
-from datetime import datetime
 
-conn = pymysql.connect(
-    host='localhost', port=3306, user='root', password='root',
-    database='qidian_data', charset='utf8mb4',
-    cursorclass=pymysql.cursors.DictCursor
-)
-cur = conn.cursor()
+QIDIAN_CONFIG = {
+    'host': 'localhost',
+    'user': 'root',
+    'password': 'root',
+    'database': 'qidian_data',
+    'charset': 'utf8mb4'
+}
 
-# 查看最近5分钟爬取的记录数和去重书籍数
-cur.execute("""
-    SELECT COUNT(*) as total, COUNT(DISTINCT title) as unique_books
-    FROM novel_realtime_tracking 
-    WHERE crawl_time >= DATE_SUB(NOW(), INTERVAL 5 MINUTE)
+conn = pymysql.connect(**QIDIAN_CONFIG)
+cursor = conn.cursor()
+
+# 检查记录时间分布
+cursor.execute("""
+    SELECT DATE(crawl_time) as crawl_date, COUNT(*) as cnt
+    FROM novel_realtime_tracking
+    GROUP BY DATE(crawl_time)
+    ORDER BY crawl_date DESC
+    LIMIT 10
 """)
-result = cur.fetchone()
-print(f"最近5分钟: {result['total']}条记录, {result['unique_books']}本不同书籍")
+print('=== 按日期统计 ===')
+for row in cursor.fetchall():
+    print(f'  {row[0]}: {row[1]}条')
 
-# 查看所有时间段的书籍总数
-cur.execute("SELECT COUNT(DISTINCT title) as total FROM novel_realtime_tracking")
-total_books = cur.fetchone()
-print(f"数据库中总书籍数: {total_books['total']}")
-
-# 查看最新爬取的书籍
-cur.execute("""
-    SELECT title, monthly_tickets, crawl_time 
-    FROM novel_realtime_tracking 
+# 检查今天的记录
+cursor.execute("""
+    SELECT title, monthly_tickets, crawl_time
+    FROM novel_realtime_tracking
+    WHERE DATE(crawl_time) = CURDATE()
     ORDER BY crawl_time DESC
     LIMIT 10
 """)
-rows = cur.fetchall()
-print(f"\n最新10条记录:")
-for r in rows:
-    print(f"  {r['crawl_time']} | {r['title'][:25]:25s} | 月票: {r['monthly_tickets']}")
+print('\n=== 今天最新记录 ===')
+for row in cursor.fetchall():
+    print(f'  {row[0][:15]:15} | 月票: {row[1]:6} | {row[2]}')
 
 conn.close()

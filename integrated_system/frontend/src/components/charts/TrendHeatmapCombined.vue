@@ -21,12 +21,12 @@
       </div>
     </div>
 
-    <!-- 热力图区�?-->
+    <!-- 热力图区域 -->
     <div class="heatmap-section">
       <div class="section-title">月票热力分布</div>
       <div v-if="loading" class="loading-state">
         <div class="spinner"></div>
-        <span>加载�?..</span>
+        <span>加载中...</span>
       </div>
       <div v-else-if="!hasData" class="empty-state">
         <span class="empty-icon">📊</span>
@@ -35,12 +35,12 @@
       <div v-else ref="heatmapRef" class="heatmap-chart"></div>
     </div>
 
-    <!-- 趋势图区�?-->
+    <!-- 趋势图区域 -->
     <div class="trend-section">
       <div class="section-title">月度走势对比</div>
       <div v-if="loading" class="loading-state">
         <div class="spinner"></div>
-        <span>加载�?..</span>
+        <span>加载中...</span>
       </div>
       <div v-else-if="!hasData" class="empty-state">
         <span class="empty-icon">📈</span>
@@ -100,13 +100,14 @@ const renderCharts = () => {
     return
   }
   
-  // 收集所有月�?  const allMonths = new Set<string>()
+  // 收集所有月份
+  const allMonths = new Set<string>()
   books.forEach((book: any) => {
     book.dates.forEach((date: string) => allMonths.add(date))
   })
   const sortedMonths = Array.from(allMonths).sort()
   
-  // ========== 热力�?==========
+  // ========== 热力图 ==========
   const heatmapDataArr: [number, number, number][] = []
   books.forEach((book: any, yIndex: number) => {
     const dateMap = new Map<string, number>()
@@ -133,7 +134,7 @@ const renderCharts = () => {
         const book = books[params.data[1]]
         return `<div style="font-weight:600">${book.title}</div>
                 <div style="color:#64748b;font-size:12px">${month}</div>
-                <div style="color:#0ea5e9;font-weight:600">${params.data[2].toLocaleString()} �?/div>`
+                <div style="color:#0ea5e9;font-weight:600">${params.data[2].toLocaleString()} 张</div>`
       }
     },
     grid: {
@@ -189,7 +190,7 @@ const renderCharts = () => {
     }]
   }, true)
   
-  // ========== 趋势�?==========
+  // ========== 趋势图 ==========
   const series = books.map((book: any, index: number) => ({
     name: book.title,
     type: 'line',
@@ -259,8 +260,10 @@ const fetchData = async () => {
         qidian: heatmapData.value.qidian?.length || 0,
         zongheng: heatmapData.value.zongheng?.length || 0
       })
-      // 等待DOM更新后再初始化图�?      await nextTick()
-      // 确保图表已初始化再渲�?      if (!heatmapChart && heatmapRef.value) {
+      // 等待DOM更新后再初始化图表
+      await nextTick()
+      // 确保图表已初始化再渲染
+      if (!heatmapChart && heatmapRef.value) {
         heatmapChart = echarts.init(heatmapRef.value)
       }
       if (!trendChart && trendRef.value) {

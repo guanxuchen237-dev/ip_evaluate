@@ -3708,6 +3708,71 @@ def get_audit_logs():
         print(f"Failed to fetch audit logs: {e}")
         return jsonify({'error': str(e)}), 500
 
+@api_bp.route('/admin/audit_logs/<int:log_id>/generate_report', methods=['POST'])
+def generate_audit_report(log_id):
+    """按需生成AI深度报告 - 用户点击查看时才调用AI，节省token"""
+    try:
+        from auth import get_auth_db
+        from ai_service import ai_service
+        from scan_potential_gems import fetch_vr_comments, fetch_global_stats, fetch_ai_eval, fetch_realtime_trend
+        
+        conn = get_auth_db()
+        with conn.cursor() as cursor:
+            cursor.execute("SELECT * FROM ip_audit_logs WHERE id = %s", (log_id,))
+            log = cursor.fetchone()
+        
+        if not log:
+            conn.close()
+            return jsonify({'error': '记录不存在'}), 404
+        
+        # 如果已有报告，直接返回
+        if log.get('markdown_report') and len(log.get('markdown_report', '')) > 100:
+            conn.close()
+            return jsonify({'status': 'success', 'report': log['markdown_report'], 'cached': True})
+        
+        book_title = log['book_title']
+        book_author = log.get('book_author', '未知')
+        platform = log.get('platform', 'Qidian')
+        
+        print(f"[Audit Report] Generating AI report for '{book_title}'...")
+        
+        # 获取多源数据
+        vr_comments = fetch_vr_comments(book_title) or "暂无虚拟读者反馈"
+        global_stats = fetch_global_stats(book_title)
+        ai_eval_stats = fetch_ai_eval(book_title)
+        realtime_trend = fetch_realtime_trend(book_title)
+        
+        # 调用AI生成报告
+        report_markdown = ai_service.generate_comprehensive_audit(
+            title=book_title,
+            author=book_author,
+            base_stats={'platform': platform},
+            ai_eval_stats=ai_eval_stats,
+            vr_comments=vr_comments,
+            global_stats=global_stats,
+            model_score=log.get('score', 80),
+            realtime_trend=realtime_trend
+        )
+        
+        # 更新数据库
+        with conn.cursor() as cursor:
+            cursor.execute("""
+                UPDATE ip_audit_logs 
+                SET markdown_report = %s, status = 'RESOLVED' 
+                WHERE id = %s
+            """, (report_markdown, log_id))
+            conn.commit()
+        
+        conn.close()
+        print(f"[Audit Report] ✓ Generated report for '{book_title}'")
+        return jsonify({'status': 'success', 'report': report_markdown, 'cached': False})
+        
+    except Exception as e:
+        print(f"Generate report error: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+
 @api_bp.route('/admin/audit_logs/<int:log_id>/resolve', methods=['POST'])
 def resolve_audit_log(log_id):
     """处理风控告警"""

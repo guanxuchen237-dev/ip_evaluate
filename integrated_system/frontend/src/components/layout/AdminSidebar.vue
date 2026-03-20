@@ -9,11 +9,8 @@ import {
   Globe,
   Database,
   Shield,
-  Cpu,
   Settings,
-  BookOpen,
-  LogOut,
-  ArrowLeft
+  BookOpen
 } from 'lucide-vue-next'
 
 interface MenuItem {
@@ -24,8 +21,6 @@ interface MenuItem {
 }
 
 const route = useRoute()
-const router = useRouter()
-const { user, logout } = useAuth()
 
 const menuItems: MenuItem[] = [
   { title: "总览", titleEn: "Overview", url: "/admin?tab=overview", icon: LayoutDashboard },
@@ -34,22 +29,12 @@ const menuItems: MenuItem[] = [
   { title: "平台监控", titleEn: "Platform", url: "/admin?tab=platform", icon: Globe },
   { title: "数据采集", titleEn: "Pipeline", url: "/admin?tab=monitor", icon: Database },
   { title: "智能审计", titleEn: "Audit", url: "/admin?tab=audit", icon: Shield },
-  { title: "模型训练", titleEn: "Model", url: "/admin?tab=model", icon: Cpu },
   { title: "设置", titleEn: "Settings", url: "/admin?tab=settings", icon: Settings },
 ]
 
 function isActive(url: string) {
   const tab = url.split('tab=')[1]
   return route.query.tab === tab || (!route.query.tab && tab === 'overview')
-}
-
-function goHome() {
-  router.push('/')
-}
-
-function handleLogout() {
-  logout()
-  router.push('/login')
 }
 </script>
 
@@ -98,31 +83,5 @@ function handleLogout() {
         </div>
       </router-link>
     </nav>
-
-    <!-- Footer -->
-    <div class="pt-6 border-t border-slate-200/50 space-y-3">
-      <!-- 返回前台 -->
-      <button 
-        @click="goHome"
-        class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors"
-      >
-        <ArrowLeft class="w-5 h-5" />
-        <span class="text-sm font-medium">返回前台</span>
-      </button>
-      
-      <!-- 用户信息 -->
-      <div class="flex items-center gap-3 px-4 py-3 bg-slate-50 rounded-xl">
-        <div class="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center">
-          <span class="text-xs font-bold text-indigo-600 uppercase">{{ user?.username?.charAt(0) || 'A' }}</span>
-        </div>
-        <div class="flex-1 min-w-0">
-          <p class="text-sm font-medium text-slate-800 truncate">{{ user?.username || '管理员' }}</p>
-          <p class="text-xs text-slate-400">管理员</p>
-        </div>
-        <button @click="handleLogout" class="p-1.5 rounded-lg hover:bg-slate-200 text-slate-400 hover:text-slate-600 transition-colors">
-          <LogOut class="w-4 h-4" />
-        </button>
-      </div>
-    </div>
   </aside>
 </template>

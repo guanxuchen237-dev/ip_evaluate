@@ -21,7 +21,7 @@ const initChart = async () => {
                 axisPointer: { type: 'shadow' }
             },
             legend: {
-                data: ['起点中文�?, '纵横中文�?],
+                data: ['起点中文网', '纵横中文网'],
                 bottom: 0,
                 itemWidth: 12,
                 itemHeight: 12,
@@ -51,7 +51,7 @@ const initChart = async () => {
             },
             series: [
                 {
-                    name: '起点中文�?,
+                    name: '起点中文网',
                     type: 'bar',
                     data: qidian,
                     itemStyle: {
@@ -61,7 +61,7 @@ const initChart = async () => {
                     barWidth: '35%'
                 },
                 {
-                    name: '纵横中文�?,
+                    name: '纵横中文网',
                     type: 'bar',
                     data: zongheng,
                     itemStyle: {

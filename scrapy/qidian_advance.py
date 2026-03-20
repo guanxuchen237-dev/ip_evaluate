@@ -550,8 +550,103 @@ class QidianSpider:
         except:
             return (0, 0)
 
+    def fetch_rank_page_pc_selenium(self, year, month, page):
+        """使用Selenium爬取PC端月票榜（可获取100本，带字体解密）
+        
+        PC端分页URL格式: https://www.qidian.com/rank/yuepiao/year2026-month03-page2/
+        字体反爬：月票数字使用FjgiwJie字体加密，需要解密
+        """
+        if not SELENIUM_AVAILABLE:
+            logging.warning("Selenium不可用，无法爬取PC端月票榜")
+            return []
+        
+        try:
+            options = Options()
+            options.add_experimental_option("excludeSwitches", ["enable-automation"])
+            options.add_argument("--disable-blink-features=AutomationControlled")
+            options.add_argument("--ignore-certificate-errors")
+            options.add_argument("--headless")
+            
+            browser = webdriver.Chrome(options=options)
+            
+            # 构建PC端分页URL
+            if page == 1 and datetime.now().year == year and datetime.now().month == month:
+                url = "https://www.qidian.com/rank/yuepiao/"
+            else:
+                url = f"https://www.qidian.com/rank/yuepiao/year{year}-month{month:02d}-page{page}/"
+            
+            logging.info(f"🕷️ 使用Selenium爬取PC端: {url}")
+            browser.get(url)
+            browser.maximize_window()
+            time.sleep(3)
+            
+            text = browser.page_source
+            browser.quit()
+            
+            # 提取字体URL并解密月票数字
+            font_map = None
+            if FONT_TOOLS_AVAILABLE:
+                font_url_match = re.search(r"url\(['\"]?(https://[^'\"]+FjgiwJie\.woff[^'\"]*?)['\"]?\)", text)
+                if font_url_match:
+                    font_url = font_url_match.group(1).replace("'", "")
+                    font_map = self.get_font_map(self.session, font_url)
+                    if font_map:
+                        logging.info(f"✅ 字体解密成功，映射表大小: {len(font_map)}")
+            
+            # 解析页面内容
+            current_books = []
+            
+            # 提取书籍ID和标题
+            pattern = r'data-bid="(\d+)"[^>]*>.*?<h2><a[^>]*>([^<]+)</a></h2>'
+            matches = re.findall(pattern, text, re.DOTALL)
+            
+            # 提取月票数（使用字体解密）
+            # 格式: <span class="FjgiwJie">加密数字</span></span>月票
+            ticket_pattern = r'<span class="FjgiwJie">([^<]+)</span></span>月票'
+            ticket_matches = re.findall(ticket_pattern, text)
+            
+            # 去重并合并数据
+            seen = set()
+            rank = 1
+            for i, (book_id, title) in enumerate(matches):
+                if book_id not in seen:
+                    seen.add(book_id)
+                    
+                    # 解密月票数
+                    tickets = 0
+                    if i < len(ticket_matches) and font_map:
+                        encrypted = ticket_matches[i]
+                        decrypted = self.decode_text(encrypted, font_map)
+                        # 提取数字
+                        try:
+                            tickets = int(decrypted)
+                        except:
+                            pass
+                    
+                    current_books.append({
+                        'book_id': str(book_id),
+                        'title': title.strip(),
+                        'url': f"https://book.qidian.com/info/{book_id}",
+                        'rank_on_list': rank,
+                        'monthly_tickets_on_list': tickets
+                    })
+                    rank += 1
+            
+            if current_books:
+                logging.info(f"✅ 【PC端Selenium模式】获取 {len(current_books)} 本书籍，月票数据已解密")
+            
+            return current_books
+            
+        except Exception as e:
+            logging.error(f"Selenium爬取PC端失败: {e}")
+            return []
+
     def fetch_rank_page_smart(self, year, month, page):
-        """获取单页榜单（通过移动端 JSON 接口绕过 PC 端风控）"""
+        """获取单页榜单（通过移动端 JSON 接口绕过 PC 端风控）
+        
+        注意：移动端分页参数不起作用，只能获取第1页的20条数据。
+        如需获取更多数据，需要使用Playwright模拟滚动加载。
+        """
         session = self.get_proxy_session()
         # 使用移动端 User-Agent
         mobile_ua = "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1"
@@ -569,27 +664,52 @@ class QidianSpider:
                     url = f"https://m.qidian.com/rank/yuepiao/catid-1/{year}{month:02d}/p{page}/"
             
             resp_text = None
-            try:
-                session.trust_env = False
-                resp = session.get(url, timeout=15)
-                if resp.status_code == 200:
-                    resp_text = resp.text
-            except Exception as e:
-                logging.warning(f"Mobile Requests 失败: {e}")
-
-            if not resp_text and PLAYWRIGHT_AVAILABLE:
-                logging.info(f"🕷️ Mobile Requests 受阻，启用浏览器内核: {url}")
+            
+            # 对于page > 1，直接使用Playwright模拟滚动加载
+            if page > 1 and PLAYWRIGHT_AVAILABLE:
+                logging.info(f"🕷️ 使用Playwright模拟滚动加载获取第{page}页数据")
                 try:
                     with sync_playwright() as p:
                         browser = p.chromium.launch(headless=True)
                         context = browser.new_context(user_agent=mobile_ua)
                         pg = context.new_page()
-                        pg.goto(url, timeout=30000, wait_until="domcontentloaded")
-                        pg.wait_for_timeout(3000)
+                        pg.goto("https://m.qidian.com/rank/yuepiao/", timeout=30000, wait_until="domcontentloaded")
+                        pg.wait_for_timeout(2000)
+                        
+                        # 模拟滚动加载，每次滚动加载20条数据
+                        scroll_times = page - 1  # 需要滚动的次数
+                        for i in range(scroll_times):
+                            pg.evaluate("window.scrollTo(0, document.body.scrollHeight)")
+                            pg.wait_for_timeout(2000)  # 等待加载
+                        
                         resp_text = pg.content()
                         browser.close()
                 except Exception as e:
-                    logging.error(f"Mobile Playwright 失败: {e}")
+                    logging.error(f"Playwright滚动加载失败: {e}")
+                    return []
+            else:
+                # 第1页直接请求
+                try:
+                    session.trust_env = False
+                    resp = session.get(url, timeout=15)
+                    if resp.status_code == 200:
+                        resp_text = resp.text
+                except Exception as e:
+                    logging.warning(f"Mobile Requests 失败: {e}")
+
+                if not resp_text and PLAYWRIGHT_AVAILABLE:
+                    logging.info(f"🕷️ Mobile Requests 受阻，启用浏览器内核: {url}")
+                    try:
+                        with sync_playwright() as p:
+                            browser = p.chromium.launch(headless=True)
+                            context = browser.new_context(user_agent=mobile_ua)
+                            pg = context.new_page()
+                            pg.goto(url, timeout=30000, wait_until="domcontentloaded")
+                            pg.wait_for_timeout(3000)
+                            resp_text = pg.content()
+                            browser.close()
+                    except Exception as e:
+                        logging.error(f"Mobile Playwright 失败: {e}")
 
             if not resp_text: return []
             

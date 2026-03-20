@@ -85,31 +85,77 @@ def run_realtime_spider():
     now = datetime.now()
     year, month = now.year, now.month
     
-    # 关闭极其容易失效甚至导致阻塞宕机的代理，开启直连抓取实时榜单
     spider = QidianSpider(use_proxy=False)
     
-    # 只需要爬取前 5 页 (前 100 本) 作为实时跟踪样例，避免过度请求
-    max_pages = 5
+    # 策略：PC端获取100本书ID+标题 + 移动端获取前20本月票数据
+    logging.info("=== 策略：PC端(100本) + 移动端(月票数据) ===")
+    
+    # 第一步：从移动端榜单获取前20本的月票数据
+    logging.info("步骤1: 从移动端榜单获取前20本月票数据...")
+    mobile_books = spider.fetch_rank_page_smart(year, month, 1)
+    mobile_data = {}
+    if mobile_books:
+        for b in mobile_books:
+            mobile_data[b['book_id']] = {
+                'monthly_tickets_on_list': b.get('monthly_tickets_on_list', 0),
+                'rank_on_list': b.get('rank_on_list', 0)
+            }
+        logging.info(f"移动端获取 {len(mobile_books)} 本月票数据")
+    
+    # 第二步：使用Selenium爬取PC端获取100本书ID和标题（5页x20本）
+    logging.info("步骤2: 使用Selenium爬取PC端获取100本书...")
+    pc_books = []
+    for page in range(1, 6):  # 爬取5页
+        page_books = spider.fetch_rank_page_pc_selenium(year, month, page)
+        if page_books:
+            pc_books.extend(page_books)
+            logging.info(f"PC端第{page}页获取 {len(page_books)} 本")
+        else:
+            break
+    
+    if not pc_books:
+        logging.warning("PC端爬取失败，使用移动端数据...")
+        pc_books = mobile_books
+    
+    if not pc_books:
+        logging.error("未能获取到任何书籍数据")
+        return
+    
+    # 去重
+    seen = set()
+    unique_books = []
+    for b in pc_books:
+        if b['book_id'] not in seen:
+            seen.add(b['book_id'])
+            unique_books.append(b)
+    
+    logging.info(f"共获取 {len(unique_books)} 本唯一书籍")
+    
+    # 第三步：合并数据并获取详情
+    logging.info(f"步骤3: 获取详情数据...")
     success_count = 0
     
-    for page in range(1, max_pages + 1):
-        logging.info(f"正在扫描当月月票榜 第 {page} 页 ...")
-        books = spider.fetch_rank_page_smart(year, month, page)
+    for i, book_info in enumerate(unique_books):
+        # 补充月票数据（如果有）
+        if book_info['book_id'] in mobile_data:
+            book_info.update(mobile_data[book_info['book_id']])
         
-        if not books:
-            logging.warning("未能获取到书籍列表，可能是被封禁或到达页尾。")
-            break
-            
-        for book_info in books:
-            # 抓取详情获取细分数据
+        # 获取详情
+        data = spider.parse_book_detail_mobile(book_info, year, month)
+        if not data:
             data = spider.parse_book_detail(book_info, year, month)
-            if data:
-                if save_realtime_data(data):
-                    success_count += 1
-                    print(f"  [√] 实时记录更新: {data['title']} - 月票: {data['monthly_ticket_count']} 排名: {data['monthly_ticket_rank']}")
-            time.sleep(random.uniform(2, 5)) # 扩大防封随机间隔，避免过于频繁触碰封禁阈值
-            
-        time.sleep(random.uniform(3, 6)) # 页与页之间也加入长间隔
+        
+        if data:
+            if save_realtime_data(data):
+                success_count += 1
+                tickets = data.get('monthly_tickets_on_list', 0) or data.get('monthly_ticket_count', 0)
+                rank = data.get('rank_on_list', 0) or data.get('monthly_ticket_rank', 0)
+                print(f"  [{success_count}] {data['title'][:15]:15} | 月票: {tickets:6} | 排名: {rank}")
+        
+        time.sleep(random.uniform(0.3, 0.8))
+        
+        if (i + 1) % 20 == 0:
+            logging.info(f"进度: {i+1}/{len(unique_books)}")
 
     print(f"\n🎉 实时更新完成！共抓取并存入 {success_count} 条最新数据。")
 

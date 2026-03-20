@@ -19,7 +19,7 @@ const initChart = async () => {
             tooltip: {
                 trigger: 'axis',
                 axisPointer: { type: 'shadow' },
-                formatter: '{b}: {c} �?
+                formatter: '{b}: {c} 次'
             },
             grid: {
                 left: '3%',
