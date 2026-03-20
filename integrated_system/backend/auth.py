@@ -98,7 +98,7 @@ def init_auth_database():
                     book_author VARCHAR(100) DEFAULT NULL,
                     platform VARCHAR(50) DEFAULT NULL,
                     risk_level ENUM('High', 'Medium', 'Low', 'Positive') NOT NULL,
-                    risk_type ENUM('COMPLIANCE', 'PLOT_TOXIC', 'UPDATE_ENTROPY', 'POTENTIAL_GEM') NOT NULL,
+                    risk_type ENUM('COMPLIANCE', 'PLOT_TOXIC', 'UPDATE_ENTROPY', 'POTENTIAL_GEM', 'GLOBAL_GEM', 'NORMAL', 'DEEP_AUDIT') NOT NULL,
                     content_snippet TEXT,
                     score FLOAT DEFAULT NULL,
                     trigger_source VARCHAR(50) DEFAULT 'virtual_reader',
@@ -106,6 +106,15 @@ def init_auth_database():
                     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
             """)
+            
+            # 修改现有表的risk_type ENUM值（如果表已存在）
+            try:
+                cursor.execute("""
+                    ALTER TABLE ip_audit_logs 
+                    MODIFY COLUMN risk_type ENUM('COMPLIANCE', 'PLOT_TOXIC', 'UPDATE_ENTROPY', 'POTENTIAL_GEM', 'GLOBAL_GEM', 'NORMAL', 'DEEP_AUDIT') NOT NULL
+                """)
+            except Exception as e:
+                pass  # 表不存在或已是最新结构，忽略错误
 
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS ip_chapters (

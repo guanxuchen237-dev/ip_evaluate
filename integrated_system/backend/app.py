@@ -1,8 +1,9 @@
 from flask import Flask, send_from_directory
 from flask_cors import CORS
 from api import api_bp
-from auth import auth_bp, init_auth_database, SECRET_KEY
+from auth import auth_bp, init_auth_database, SECRET_KEY, AUTH_DB_CONFIG
 import os
+import pymysql
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = SECRET_KEY
@@ -112,6 +113,41 @@ def track_metrics():
 
 # 初始化认证数据库
 init_auth_database()
+
+# 数据库迁移：修复 ip_audit_logs 表的 risk_type ENUM
+def migrate_audit_logs_table():
+    try:
+        conn = pymysql.connect(**AUTH_DB_CONFIG, cursorclass=pymysql.cursors.DictCursor)
+        with conn.cursor() as cursor:
+            # 步骤1：先改为 VARCHAR 移除 ENUM 约束
+            try:
+                cursor.execute("ALTER TABLE ip_audit_logs MODIFY COLUMN risk_type VARCHAR(50) NOT NULL")
+                conn.commit()
+                print("[MIGRATION] Step 1: Changed risk_type to VARCHAR")
+            except Exception as e:
+                print(f"[MIGRATION] Step 1 note: {e}")
+            
+            # 步骤2：更新无效值为 'NORMAL'
+            cursor.execute("""
+                UPDATE ip_audit_logs 
+                SET risk_type = 'NORMAL' 
+                WHERE risk_type NOT IN ('COMPLIANCE', 'PLOT_TOXIC', 'UPDATE_ENTROPY', 'POTENTIAL_GEM', 'GLOBAL_GEM', 'NORMAL', 'DEEP_AUDIT')
+            """)
+            conn.commit()
+            print(f"[MIGRATION] Step 2: Updated {cursor.rowcount} rows to 'NORMAL'")
+            
+            # 步骤3：改回 ENUM 类型
+            cursor.execute("""
+                ALTER TABLE ip_audit_logs 
+                MODIFY COLUMN risk_type ENUM('COMPLIANCE', 'PLOT_TOXIC', 'UPDATE_ENTROPY', 'POTENTIAL_GEM', 'GLOBAL_GEM', 'NORMAL', 'DEEP_AUDIT') NOT NULL
+            """)
+            conn.commit()
+            print("[MIGRATION] Step 3: Changed risk_type back to ENUM with new values")
+        conn.close()
+    except Exception as e:
+        print(f"[MIGRATION] Error: {e}")
+
+migrate_audit_logs_table()
 
 # 静态文件：头像上传目录
 UPLOAD_DIR = os.path.join(os.path.dirname(__file__), 'uploads')
