@@ -323,9 +323,6 @@ const handleExtractCharacters = async () => {
                             <Wifi v-else class="w-4 h-4 text-emerald-500" />
                             {{ isCrawling ? '节点调度中...' : '触发节点深度数据抓取' }}
                         </button>
-                        <button class="flex items-center gap-2 px-4 py-2 bg-white text-slate-600 hover:bg-slate-50 rounded-xl text-sm font-bold transition-all border border-slate-200">
-                            <FileJson class="w-4 h-4" /> 导出节点全量数据
-                        </button>
                     </div>
                     
                     <div>
@@ -431,84 +428,38 @@ const handleExtractCharacters = async () => {
                                 <div class="p-2 bg-emerald-50 rounded-lg border border-emerald-100">
                                     <Wifi class="w-5 h-5 text-emerald-600" />
                                 </div>
-                                <h3 class="font-bold text-slate-800 tracking-wide">节点状态监控</h3>
+                                <h3 class="font-bold text-slate-800 tracking-wide">系统状态</h3>
                             </div>
                             <span class="flex items-center gap-1.5 text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-100 uppercase">
-                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Online
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Online
                             </span>
                         </div>
                         
-                        <div class="space-y-4 flex-1">
+                        <div class="space-y-3 flex-1">
                             <div class="bg-slate-50 rounded-xl p-4 border border-slate-100">
-                                <div class="flex justify-between items-center mb-1">
-                                    <span class="text-xs text-slate-500 font-bold uppercase">最后心跳时间 (Heartbeat)</span>
-                                    <span class="text-xs font-mono font-bold text-slate-700">Just now</span>
+                                <div class="flex items-center gap-3">
+                                    <ShieldCheck class="w-5 h-5 text-emerald-500" />
+                                    <div>
+                                        <div class="text-xs font-bold text-slate-700">API 服务正常</div>
+                                        <div class="text-[10px] text-slate-500">后端节点响应正常</div>
+                                    </div>
                                 </div>
                             </div>
-                            
                             <div class="bg-slate-50 rounded-xl p-4 border border-slate-100">
-                                <div class="flex items-center justify-between mb-2">
-                                    <span class="text-xs text-slate-500 font-bold uppercase">Spider 解析延迟</span>
-                                    <span class="text-xs font-mono font-bold text-indigo-600 text-right">{{ Math.floor(Math.random() * 40 + 20) }} ms</span>
-                                </div>
-                                <div class="w-full bg-slate-200 rounded-full h-1.5">
-                                    <div class="bg-indigo-500 h-1.5 rounded-full" style="width: 15%"></div>
-                                </div>
-                            </div>
-                            
-                            <div class="grid grid-cols-2 gap-3 mt-2">
-                                <div class="border border-slate-100 rounded-lg p-3 flex items-center justify-center gap-2">
-                                    <ShieldCheck class="w-4 h-4 text-emerald-500" />
-                                    <span class="text-xs font-bold text-slate-700">SSL Valid</span>
-                                </div>
-                                <div class="border border-slate-100 rounded-lg p-3 flex items-center justify-center gap-2">
-                                    <Zap class="w-4 h-4 text-amber-500" />
-                                    <span class="text-xs font-bold text-slate-700">Cache Hit</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Textual Features (New) -->
-                    <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm flex flex-col">
-                        <div class="flex items-center justify-between mb-6">
-                            <div class="flex items-center gap-3">
-                                <div class="p-2 bg-rose-50 rounded-lg border border-rose-100">
-                                    <Layers class="w-5 h-5 text-rose-600" />
-                                </div>
-                                <h3 class="font-bold text-slate-800 tracking-wide">NLP 文本画像探针</h3>
-                            </div>
-                        </div>
-
-                        <div class="space-y-4 flex-1">
-                            <div class="flex items-center gap-4">
-                                <div class="w-12 h-12 rounded-full bg-rose-50 border border-rose-100 flex items-center justify-center flex-shrink-0">
-                                    <MessageSquare class="w-5 h-5 text-rose-500" />
-                                </div>
-                                <div>
-                                    <h4 class="text-sm font-bold text-slate-800">词汇丰富度 (V-Richness)</h4>
-                                    <p class="text-[10px] text-slate-500 mt-0.5">模型分析文本用词多样性</p>
-                                </div>
-                                <div class="ml-auto text-lg font-black font-mono text-rose-600">A-</div>
-                            </div>
-
-                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                                <h4 class="text-[10px] font-bold text-slate-500 uppercase mb-3">情绪色彩动态流 (Sentiment)</h4>
-                                <div class="space-y-2">
-                                    <div class="flex items-center gap-3">
-                                        <span class="text-[10px] font-medium text-slate-700 w-8">积极</span>
-                                        <div class="flex-1 bg-slate-200 rounded-full h-1"><div class="bg-emerald-500 h-1 rounded-full" style="width: 65%"></div></div>
-                                        <span class="text-[10px] font-mono font-bold text-slate-500 w-8 text-right">65%</span>
+                                <div class="flex items-center gap-3">
+                                    <Database class="w-5 h-5 text-indigo-500" />
+                                    <div>
+                                        <div class="text-xs font-bold text-slate-700">数据连接正常</div>
+                                        <div class="text-[10px] text-slate-500">数据库连接池健康</div>
                                     </div>
-                                    <div class="flex items-center gap-3">
-                                        <span class="text-[10px] font-medium text-slate-700 w-8">悬疑</span>
-                                        <div class="flex-1 bg-slate-200 rounded-full h-1"><div class="bg-indigo-400 h-1 rounded-full" style="width: 20%"></div></div>
-                                        <span class="text-[10px] font-mono font-bold text-slate-500 w-8 text-right">20%</span>
-                                    </div>
-                                    <div class="flex items-center gap-3">
-                                        <span class="text-[10px] font-medium text-slate-700 w-8">消极</span>
-                                        <div class="flex-1 bg-slate-200 rounded-full h-1"><div class="bg-rose-400 h-1 rounded-full" style="width: 15%"></div></div>
-                                        <span class="text-[10px] font-mono font-bold text-slate-500 w-8 text-right">15%</span>
+                                </div>
+                            </div>
+                            <div class="bg-slate-50 rounded-xl p-4 border border-slate-100">
+                                <div class="flex items-center gap-3">
+                                    <Server class="w-5 h-5 text-amber-500" />
+                                    <div>
+                                        <div class="text-xs font-bold text-slate-700">爬虫服务就绪</div>
+                                        <div class="text-[10px] text-slate-500">可执行数据采集任务</div>
                                     </div>
                                 </div>
                             </div>
@@ -522,41 +473,23 @@ const handleExtractCharacters = async () => {
                                 <div class="p-2 bg-amber-50 rounded-lg border border-amber-100">
                                     <Users class="w-5 h-5 text-amber-600" />
                                 </div>
-                                <h3 class="font-bold text-slate-800 tracking-wide">实体抽取与角色图谱 (NER)</h3>
+                                <h3 class="font-bold text-slate-800 tracking-wide">AI 角色提取</h3>
                             </div>
-                            <span class="px-2 py-0.5 rounded text-[9px] font-bold uppercase font-mono border border-slate-200 text-slate-500 bg-slate-50">Auto-Extracted</span>
+                            <button @click="handleExtractCharacters" :disabled="isExtracting" class="px-4 py-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-lg text-xs font-bold transition-colors border border-indigo-100 disabled:opacity-50 flex items-center gap-2">
+                                <div v-if="isExtracting" class="w-3 h-3 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+                                <span v-else>+</span>
+                                {{ isExtracting ? '提取中...' : '提取角色实体' }}
+                            </button>
                         </div>
                         
-                        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                            <!-- Placeholder Character Cards -->
-                            <div class="border border-slate-100 bg-slate-50 rounded-2xl p-4 flex flex-col items-center text-center group hover:bg-white hover:border-indigo-100 hover:shadow-md transition-all cursor-pointer">
-                                <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mb-3 group-hover:bg-indigo-500 transition-colors">
-                                    <Fingerprint class="w-6 h-6 text-indigo-500 group-hover:text-white transition-colors" />
+                        <div class="bg-slate-50 rounded-2xl p-6 border border-slate-100 flex-1 flex items-center justify-center">
+                            <div class="text-center">
+                                <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm">
+                                    <Fingerprint class="w-6 h-6 text-slate-400" />
                                 </div>
-                                <h4 class="font-bold text-slate-800 text-sm mb-1">主角实体</h4>
-                                <p class="text-[10px] text-slate-500">检测到较高频词汇，疑似男主/女主实体</p>
+                                <p class="text-sm text-slate-600 font-medium mb-1">点击右上角按钮提取角色</p>
+                                <p class="text-xs text-slate-400">AI 将分析文本内容并提取主要角色实体信息</p>
                             </div>
-                            <div class="border border-slate-100 bg-slate-50 rounded-2xl p-4 flex flex-col items-center text-center group hover:bg-white hover:border-emerald-100 hover:shadow-md transition-all cursor-pointer">
-                                <div class="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mb-3 group-hover:bg-emerald-500 transition-colors">
-                                    <Users class="w-6 h-6 text-emerald-500 group-hover:text-white transition-colors" />
-                                </div>
-                                <h4 class="font-bold text-slate-800 text-sm mb-1">配角网络</h4>
-                                <p class="text-[10px] text-slate-500">已提取 14 个命名实体配角特征</p>
-                            </div>
-                            <div class="border border-slate-100 bg-slate-50 rounded-2xl p-4 flex flex-col items-center text-center group hover:bg-white hover:border-sky-100 hover:shadow-md transition-all cursor-pointer">
-                                <div class="w-12 h-12 bg-sky-100 rounded-full flex items-center justify-center mb-3 group-hover:bg-sky-500 transition-colors">
-                                    <Map class="w-6 h-6 text-sky-500 group-hover:text-white transition-colors" />
-                                </div>
-                                <h4 class="font-bold text-slate-800 text-sm mb-1">地名势力</h4>
-                                <p class="text-[10px] text-slate-500">3 大门派 / 城市坐标点提取完成</p>
-                            </div>
-                            <button @click="handleExtractCharacters" :disabled="isExtracting" class="border border-slate-100 bg-slate-50 rounded-2xl p-4 flex flex-col items-center justify-center text-center group hover:bg-indigo-50 border-dashed cursor-pointer disabled:opacity-60 transition-all min-h-[148px]">
-                                <div class="w-10 h-10 bg-white border border-slate-200 rounded-full flex items-center justify-center mb-2 shadow-sm text-slate-400 group-hover:text-indigo-600 transition-colors">
-                                    <div v-if="isExtracting" class="w-4 h-4 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-                                    <span v-else>+</span>
-                                </div>
-                                <p class="text-[10px] font-bold text-slate-500 group-hover:text-indigo-600">{{ isExtracting ? '模型提取中...' : '生成智能角色提示词' }}</p>
-                            </button>
                         </div>
                     </div>
                 </div>
