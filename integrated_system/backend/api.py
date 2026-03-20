@@ -4790,26 +4790,28 @@ def predict_simple():
         try:
             conn = pymysql.connect(**config, cursorclass=pymysql.cursors.DictCursor)
             with conn.cursor() as cur:
-                # 模糊匹配书名
-                cur.execute(f"""
-                    SELECT title, author, category, status, word_count,
-                           {tkt_col} as monthly_tickets,
-                           recommendation_count as total_recommend,
-                           year, month
-                    FROM {table}
-                    WHERE title LIKE %s
-                    ORDER BY year DESC, month DESC
-                    LIMIT 1
-                """, (f"%{title}%",))
-                db_match = cur.fetchone()
-                
-                # 纵横特殊处理：zongheng_book_ranks表没有year/month，需要从realtime表获取
-                if not db_match and platform_key == 'Zongheng':
+                # 模糊匹配书名 - 根据平台使用不同的SQL
+                if platform_key == 'Qidian':
                     cur.execute(f"""
                         SELECT title, author, category, status, word_count,
-                               monthly_tickets, total_recommend,
-                               record_year as year, record_month as month
-                        FROM zongheng_realtime_tracking
+                               {tkt_col} as monthly_tickets,
+                               recommendation_count as total_recommend,
+                               year, month
+                        FROM {table}
+                        WHERE title LIKE %s
+                        ORDER BY year DESC, month DESC
+                        LIMIT 1
+                    """, (f"%{title}%",))
+                    db_match = cur.fetchone()
+                else:
+                    # 纵横：从zongheng_book_ranks获取，使用crawl_time提取年月
+                    cur.execute(f"""
+                        SELECT title, author, category, status, word_count,
+                               monthly_ticket as monthly_tickets,
+                               total_rec as total_recommend,
+                               YEAR(crawl_time) as year,
+                               MONTH(crawl_time) as month
+                        FROM zongheng_book_ranks
                         WHERE title LIKE %s
                         ORDER BY crawl_time DESC
                         LIMIT 1
