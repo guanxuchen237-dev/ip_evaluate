@@ -4829,13 +4829,17 @@ def predict_simple():
                         """, (db_match['title'],))
                         history_data = cur.fetchall()
                     else:
-                        # 纵横：从realtime_tracking获取历史数据
+                        # 纵横：从zongheng_book_ranks获取历史数据，使用crawl_time提取年月
                         cur.execute(f"""
-                            SELECT title, record_year as year, record_month as month,
-                                   monthly_tickets, total_recommend, 0 as word_count
-                            FROM zongheng_realtime_tracking
+                            SELECT title, 
+                                   YEAR(crawl_time) as year, 
+                                   MONTH(crawl_time) as month,
+                                   monthly_ticket as monthly_tickets,
+                                   total_rec as total_recommend,
+                                   word_count
+                            FROM zongheng_book_ranks
                             WHERE title = %s
-                            ORDER BY record_year, record_month
+                            ORDER BY crawl_time
                         """, (db_match['title'],))
                         history_data = cur.fetchall()
                     
