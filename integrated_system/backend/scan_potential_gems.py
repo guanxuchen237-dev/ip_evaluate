@@ -323,81 +323,48 @@ def scan_and_trigger_gems(title_filter=None):
             # 综合评分：取两者较高值
             final_score = max(model_score, oracle_score) if oracle_score > 0 else model_score
             
-            # 改进的筛选逻辑：识别真正的潜力作品
-            # 放宽条件让更多好书被标记
+            # ========== 严格判定逻辑：真正的潜力遗珠 ==========
+            # 必须同时满足：
+            # 1. 月票持续增长（不是一次性高分）
+            # 2. 数据稳定性（有足够历史数据点）
+            # 3. 高评分（综合评分>=85）
+            # 4. 基础数据门槛（月票>1000，字数>10万）
             
-            # ========== 基础指标 ==========
-            collection_count = int(bk.get('collection_count', 0) or 0)
+            # 基础门槛
             word_count = int(bk.get('word_count', 0) or 0)
-            collection_per_10k = collection_count / (word_count / 10000 + 1) if word_count > 0 else 0
-            is_undervalued = word_count > 100000 and collection_count > 0 and collection_per_10k < 1000
-            
-            fans_count = int(bk.get('fans_count', 0) or 0)
-            reward_count = int(bk.get('reward_count', 0) or 0)
-            has_fanbase = fans_count > 500 or reward_count > 100
-            high_engagement = fans_count > 0 and (reward_count / (fans_count + 1)) > 0.1
-            
-            ticket_rank_raw = bk.get('ticket_rank', 9999)
-            ticket_rank = int(ticket_rank_raw) if isinstance(ticket_rank_raw, (int, float)) else 9999
-            rank_underrated = ticket_rank > 500 and max_finance > 500
-            
-            vr_comments = fetch_vr_comments(title)
-            has_discussion = len(vr_comments) > 50
-            
-            has_sufficient_data = word_count > 50000
-            has_engagement = max_finance > 500 or bk.get('interaction', 0) > 500
-            
-            # ========== AI评分指标 ==========
-            ai_overall = ai_eval_stats.get('overall_score', 0) if ai_eval_stats else 0
-            ai_commercial = ai_eval_stats.get('commercial_score', 0) if ai_eval_stats else 0
-            ai_story = ai_eval_stats.get('story_score', 0) if ai_eval_stats else 0
-            
-            ai_score_high = ai_overall >= 70
-            ai_has_potential = ai_commercial >= 65 or ai_story >= 70
-            
-            # ========== 实时增长指标 ==========
-            realtime_growing = bool(realtime_trend) and realtime_trend.get('growth_rate', 0) > 10
-            realtime_has_data = bool(realtime_trend) and realtime_trend.get('data_points', 0) >= 2
-            
-            # ========== 模型预测指标 ==========
-            model_good = final_score >= 75
-            model_excellent = final_score >= 85
-            oracle_high = oracle_grade in ['S', 'A']
-            
-            # ========== 月票增幅指标 ==========
             current_tickets = max_finance
-            prev_tickets = bk.get('prev_month_tickets', current_tickets * 0.5)
-            ticket_growth_rate = ((current_tickets - prev_tickets) / max(prev_tickets, 1)) * 100 if prev_tickets > 0 else 0
             
-            ticket_explosive = ticket_growth_rate > 50 and current_tickets > 1000
-            rank_improved = ticket_rank < 500 and ticket_rank < bk.get('prev_ticket_rank', 9999)
-            dark_horse = rank_improved and ticket_growth_rate > 30 and current_tickets > 2000
-            high_speed_growth = current_tickets > 5000 and ticket_growth_rate > 100
-            quality_potential = current_tickets > 10000 and ai_overall >= 65
+            # 必须满足基础门槛
+            base_qualified = word_count >= 100000 and current_tickets >= 1000
             
-            # ========== 判定条件 ==========
-            condition_a = ai_score_high and has_engagement and model_good
-            condition_b = ai_has_potential and realtime_growing and realtime_has_data
-            condition_c = model_excellent and has_sufficient_data and has_engagement
-            condition_d = ai_overall >= 72 and has_engagement and word_count < 100000
-            condition_e = is_undervalued and ai_overall >= 68
-            condition_f = has_fanbase and high_engagement and ai_overall >= 65
-            condition_g = rank_underrated and has_discussion
-            condition_h = has_discussion and ai_overall >= 68 and has_engagement
-            condition_i = oracle_high and has_sufficient_data and has_engagement
+            # 评分门槛：必须优秀
+            score_qualified = final_score >= 85 and oracle_grade in ['S', 'A']
             
-            # ========== 综合判定 ==========
-            is_global = bool(global_stats) and global_stats.get('overseas_revenue_prediction') in ['S', 'A'] and ai_overall >= 70
-            is_gem = (condition_a or condition_b or condition_c or condition_d or condition_e or 
-                     condition_f or condition_g or condition_h or condition_i or 
-                     ticket_explosive or dark_horse or high_speed_growth or quality_potential)
+            # 实时趋势分析（必须有足够数据点）
+            has_realtime_data = bool(realtime_trend) and realtime_trend.get('data_points', 0) >= 3
+            is_growing = has_realtime_data and realtime_trend.get('growth_rate', 0) > 5  # 至少5%增长
+            is_stable = has_realtime_data and realtime_trend.get('growth_rate', 0) < 200  # 增长不能是异常的
+            
+            # 增长稳定性（连续增长）
+            consistent_growth = is_growing and is_stable and has_realtime_data
+            
+            # AI评估门槛（如果存在AI评估）
+            ai_overall = ai_eval_stats.get('overall_score', 0) if ai_eval_stats else 0
+            ai_qualified = ai_overall == 0 or ai_overall >= 75  # 要么没有AI评估，要么AI评分高
+            
+            # 严格判定：必须同时满足所有条件
+            is_gem = base_qualified and score_qualified and consistent_growth and ai_qualified
+            
+            # 出海优选判定（更严格的全球市场标准）
+            is_global = (base_qualified and score_qualified and 
+                        bool(global_stats) and global_stats.get('overseas_revenue_prediction') in ['S', 'A'])
             
             # 调试打印
-            if total_scanned <= 5:
-                print(f"[Gem Debug] '{title[:20]}': AI={ai_overall}, 字数={word_count}, 收藏={collection_count}, 月票={max_finance}")
-                print(f"[Gem Debug]   模型={model_score:.1f}, Oracle={oracle_score:.1f}({oracle_grade}), 综合={final_score:.1f}")
-                print(f"[Gem Debug]   月票增幅={ticket_growth_rate:.1f}%, 排名={ticket_rank}")
-                print(f"[Gem Debug]   条件: 爆发={ticket_explosive}, 黑马={dark_horse}, 高速={high_speed_growth}")
+            if total_scanned <= 10 or is_gem:
+                print(f"[Gem Debug] '{title[:20]}': 综合={final_score:.1f}, Oracle={oracle_grade}, 月票={current_tickets}")
+                print(f"[Gem Debug]   基础门槛={base_qualified}, 评分门槛={score_qualified}, 稳定增长={consistent_growth}")
+                print(f"[Gem Debug]   实时数据={has_realtime_data}, 增长率={realtime_trend.get('growth_rate', 0):.1f}% if realtime_trend else 'N/A'")
+                print(f"[Gem Debug]   判定={is_gem}, 出海={is_global}")
             
             # 定义risk_type
             risk_type = 'NORMAL'
@@ -411,21 +378,14 @@ def scan_and_trigger_gems(title_filter=None):
             # 记录判定依据（用于调试）
             if is_gem or is_global:
                 reasons = []
-                if is_global: reasons.append("出海潜力S/A")
-                if condition_a: reasons.append(f"AI高分({ai_overall:.0f})+有互动")
-                if condition_b: reasons.append(f"实时增长({realtime_trend.get('growth_rate', 0):.0f}%)")
-                if condition_c: reasons.append(f"模型极优({final_score:.1f})")
-                if condition_d: reasons.append("新书潜力")
-                if condition_e: reasons.append(f"被埋没(收藏率{collection_per_10k:.0f})")
-                if condition_f: reasons.append(f"粉丝忠诚(粉丝{fans_count})")
-                if condition_g: reasons.append(f"排名遗漏(#{ticket_rank})")
-                if condition_h: reasons.append("口碑传播")
-                if condition_i: reasons.append(f"Oracle高评级({oracle_grade})")
-                if ticket_explosive: reasons.append(f"月票爆发(+{ticket_growth_rate:.0f}%)")
-                if dark_horse: reasons.append("黑马崛起")
-                if high_speed_growth: reasons.append(f"高速增长(+{ticket_growth_rate:.0f}%)")
-                if quality_potential: reasons.append(f"优质潜力(月票{current_tickets/10000:.1f}万)")
-                print(f"[Gem Scanner] '{title}' → {risk_type} | 原因: {' + '.join(reasons)}")
+                if is_global: 
+                    reasons.append("出海优选")
+                if is_gem:
+                    reasons.append(f"评分{final_score:.1f}")
+                    if has_realtime_data:
+                        reasons.append(f"月票增长{realtime_trend.get('growth_rate', 0):.0f}%")
+                    reasons.append(f"Oracle-{oracle_grade}")
+                print(f"[Gem Scanner] '{title}' → {risk_type} | 原因: {' | '.join(reasons)}")
             
             # 只记录真正有潜力的作品到审计日志（减少噪音和AI调用）
             if risk_type == 'NORMAL':

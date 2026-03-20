@@ -653,7 +653,58 @@ class AIService:
         except Exception as e:
             print(f"[ERROR] generate_comprehensive_audit failed: {e}")
             
-        return f"✅ **生成报告遭遇网络拥堵**\n\n- 基础预测分：**{model_score}**\n- 推荐出海区域：**{global_stats.get('target_regions', '暂无')}**\n该作品具备较好的数据稳定性，可尝试轻量级出海试水。"
+        # 生成基于数据的详细fallback报告（不依赖AI调用成功）
+        trend_info = ""
+        if realtime_trend and isinstance(realtime_trend, dict):
+            direction = realtime_trend.get('direction', '稳定')
+            growth = realtime_trend.get('growth_rate', 0)
+            trend_info = f"月票趋势: {direction}（{growth:+.1f}%）"
+        
+        ai_info = ""
+        if ai_eval_stats and isinstance(ai_eval_stats, dict):
+            overall = ai_eval_stats.get('overall_score', 0) or ai_eval_stats.get('overall', 0)
+            commercial = ai_eval_stats.get('commercial_score', 0) or ai_eval_stats.get('commercial', 0)
+            if overall:
+                ai_info = f"AI评分: 综合{overall}/100, 商业{commercial}/100"
+        
+        global_info = ""
+        if global_stats and isinstance(global_stats, dict):
+            regions = global_stats.get('target_regions', '')
+            if regions:
+                global_info = f"推荐出海市场: {regions}"
+        
+        # 等级判定
+        if model_score >= 95:
+            grade = "S级 - 现象级爆款"
+        elif model_score >= 85:
+            grade = "A级 - 头部作品"
+        elif model_score >= 75:
+            grade = "B级 - 腰部精品"
+        elif model_score >= 60:
+            grade = "C级 - 潜力新作"
+        else:
+            grade = "D级 - 需观察"
+        
+        fallback_report = f"""# 《{title}》IP商业审计报告
+
+## 核心判定
+**{grade}** | 模型评分: **{model_score}/100**
+
+## 关键指标
+- **基础数据**: 月票{base_stats.get('finance', '未知')}, 互动{base_stats.get('interaction', '未知')}, 字数{base_stats.get('word_count', '未知')}
+- **{trend_info}**
+- **{ai_info}**
+- **{global_info}**
+
+## 商业建议
+1. 该作品当前数据表现为**{grade[:2]}**，具备{('较强的' if model_score >=85 else '一定的')}商业变现潜力
+2. 建议持续关注月票增长趋势，评估IP改编价值
+3. {('可重点考虑出海投放' if model_score >=85 and global_info else '建议深耕国内市场')}
+
+---
+*注: 此报告基于训练模型评分生成，AI深度分析因网络问题未成功生成*
+"""
+        return fallback_report
 
     def generate_comprehensive_audit_stream(self, title, author, base_stats, ai_eval_stats, vr_comments, global_stats, model_score, realtime_trend=None, market_analysis=None, book_status='未知'):
         """
