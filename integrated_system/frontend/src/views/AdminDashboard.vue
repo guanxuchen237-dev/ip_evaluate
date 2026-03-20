@@ -875,14 +875,39 @@ async function fetchAuditLogs() {
 }
 
 async function resolveAuditLog(id: number, action: string) {
-    if (!confirm(`确定要${action === 'resolve' ? '标记为已处理' : '忽略'}该预警吗？`)) return;
+    const log = auditLogs.value.find(l => l.id === id)
+    const bookTitle = log?.book_title || '该作品'
+    
+    if (action === 'resolve') {
+      showConfirmDialog({
+        title: '标记为已处理',
+        message: `《${bookTitle}》的审计预警将被标记为"已解决"。\n\n这意味着：\n• 该作品已通过人工复核\n• 相关商业建议已被采纳或处理\n• 预警状态更新，但仍保留在记录中`,
+        type: 'info',
+        confirmText: '确认标记',
+        cancelText: '取消',
+        onConfirm: () => doResolveAuditLog(id, action)
+      })
+    } else {
+      showConfirmDialog({
+        title: '取消潜力遗珠标记',
+        message: `确定要取消《${bookTitle}》的"潜力遗珠"标记吗？\n\n说明：\n• 随着时间推移，真正的好书会自然浮出水面\n• 之前标记的遗珠可能已不符合当前标准\n• 取消标记后该记录将被移出潜力遗珠列表\n• 这有助于保持潜力遗珠列表的时效性和准确性`,
+        type: 'warning',
+        confirmText: '取消标记',
+        cancelText: '保留',
+        onConfirm: () => doResolveAuditLog(id, action)
+      })
+    }
+}
+
+async function doResolveAuditLog(id: number, action: string) {
+    closeConfirmDialog()
     try {
         const token = localStorage.getItem('auth_token')
         const res = await fetch(`${API_BASE}/admin/audit_logs/${id}/resolve`, {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}` 
+                'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify({ action: action === 'resolve' ? 'Resolved' : 'Ignored' })
         })
@@ -1102,7 +1127,42 @@ const showAiEvalModal = ref(false)
 const showRealtimeModal = ref(false)
 const showAuditModal = ref(false)
 
-// Gem Scan Toast
+// 确认对话框状态
+const confirmDialog = ref({
+  show: false,
+  title: '',
+  message: '',
+  type: 'info' as 'info' | 'warning' | 'danger',
+  confirmText: '确定',
+  cancelText: '取消',
+  onConfirm: () => {},
+  onCancel: () => {}
+})
+
+function showConfirmDialog(options: {
+  title: string,
+  message: string,
+  type?: 'info' | 'warning' | 'danger',
+  confirmText?: string,
+  cancelText?: string,
+  onConfirm: () => void,
+  onCancel?: () => void
+}) {
+  confirmDialog.value = {
+    show: true,
+    title: options.title,
+    message: options.message,
+    type: options.type || 'info',
+    confirmText: options.confirmText || '确定',
+    cancelText: options.cancelText || '取消',
+    onConfirm: options.onConfirm,
+    onCancel: options.onCancel || (() => {})
+  }
+}
+
+function closeConfirmDialog() {
+  confirmDialog.value.show = false
+}
 const gemScanToast = ref({ show: false, message: '', type: 'success' as 'success' | 'error', count: 0 })
 
 function showGemScanToast(message: string, type: 'success' | 'error', count: number = 0) {
@@ -2494,8 +2554,8 @@ const formatPeriod = (period: string) => {
                           
                           <!-- Actions -->
                           <div class="flex gap-2">
-                              <button v-if="log.status === 'Pending' || log.status === 'PENDING'" @click="resolveAuditLog(log.id, 'resolve')" class="flex-1 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded drop-shadow-sm text-xs font-bold transition-colors">标记解决</button>
-                              <button v-if="log.status === 'Pending' || log.status === 'PENDING'" @click="resolveAuditLog(log.id, 'ignore')" class="flex-1 py-1.5 px-3 bg-white border border-slate-200 hover:bg-slate-100 text-slate-500 rounded drop-shadow-sm text-xs font-bold transition-colors">忽略</button>
+                              <button v-if="log.status === 'Pending' || log.status === 'PENDING'" @click="resolveAuditLog(log.id, 'resolve')" class="flex-1 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded drop-shadow-sm text-xs font-bold transition-colors" title="标记该作品已通过复核">已处理</button>
+                              <button v-if="log.status === 'Pending' || log.status === 'PENDING'" @click="resolveAuditLog(log.id, 'ignore')" class="flex-1 py-1.5 px-3 bg-white border border-slate-200 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 text-slate-500 rounded drop-shadow-sm text-xs font-bold transition-colors" title="取消该作品的潜力遗珠标记">取消标记</button>
                               <!-- 有报告时显示展开/收起 -->
                               <button v-if="log.markdown_report && log.markdown_report.length > 100" @click="toggleLogExpand(log.id)" 
                                       class="flex-1 py-1.5 bg-violet-50 hover:bg-violet-100 text-violet-600 rounded drop-shadow-sm text-xs font-bold transition-colors flex items-center justify-center gap-1">
@@ -3614,6 +3674,39 @@ const formatPeriod = (period: string) => {
          </button>
          <button @click="showAuditModal = false" class="px-5 py-2 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100 transition-colors">
             关闭
+         </button>
+      </div>
+   </div>
+</div>
+
+<!-- 自定义确认对话框 -->
+<div v-if="confirmDialog.show" class="fixed inset-0 z-[60] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm px-4">
+   <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-fade-in-up">
+      <!-- 头部 -->
+      <div class="px-6 py-4 border-b flex items-center gap-3" 
+           :class="confirmDialog.type === 'danger' ? 'bg-rose-50 border-rose-100' : confirmDialog.type === 'warning' ? 'bg-amber-50 border-amber-100' : 'bg-indigo-50 border-indigo-100'">
+         <div class="w-10 h-10 rounded-full flex items-center justify-center"
+              :class="confirmDialog.type === 'danger' ? 'bg-rose-100 text-rose-600' : confirmDialog.type === 'warning' ? 'bg-amber-100 text-amber-600' : 'bg-indigo-100 text-indigo-600'">
+            <svg v-if="confirmDialog.type === 'danger'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            <svg v-else-if="confirmDialog.type === 'warning'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+         </div>
+         <h3 class="font-bold text-lg text-slate-800">{{ confirmDialog.title }}</h3>
+      </div>
+      <!-- 内容 -->
+      <div class="p-6">
+         <p class="text-slate-600 text-sm leading-relaxed whitespace-pre-line">{{ confirmDialog.message }}</p>
+      </div>
+      <!-- 按钮 -->
+      <div class="px-6 py-4 bg-slate-50/50 flex justify-end gap-3">
+         <button @click="confirmDialog.onCancel(); closeConfirmDialog()" 
+                 class="px-4 py-2 rounded-lg text-sm font-medium text-slate-500 hover:bg-slate-100 transition-colors">
+            {{ confirmDialog.cancelText }}
+         </button>
+         <button @click="confirmDialog.onConfirm()" 
+                 class="px-4 py-2 rounded-lg text-sm font-bold text-white transition-colors shadow-sm"
+                 :class="confirmDialog.type === 'danger' ? 'bg-rose-500 hover:bg-rose-600' : confirmDialog.type === 'warning' ? 'bg-amber-500 hover:bg-amber-600' : 'bg-indigo-500 hover:bg-indigo-600'">
+            {{ confirmDialog.confirmText }}
          </button>
       </div>
    </div>
