@@ -894,9 +894,14 @@ async function resolveAuditLog(id: number, action: string) {
     }
 }
 
+const gemScanLoading = ref(false)
+
 async function triggerGemScan() {
+    console.log('[Gem Scan] 按钮被点击，开始扫描...')
+    gemScanLoading.value = true
     try {
         const token = localStorage.getItem('auth_token');
+        console.log('[Gem Scan] 发送请求到 /admin/scan_gems')
         const res = await fetch(`${API_BASE}/admin/scan_gems`, {
             method: 'POST',
             headers: {
@@ -905,6 +910,7 @@ async function triggerGemScan() {
             },
             body: JSON.stringify({})
         });
+        console.log('[Gem Scan] 收到响应:', res.status)
         const data = await res.json();
         if (res.ok) {
             const total_scanned = data.total_scanned || 0;
@@ -930,8 +936,10 @@ async function triggerGemScan() {
             showGemScanToast(data.error || '扫描失败，请重试', 'error', 0);
         }
     } catch (e) {
-        console.error('Trigger gem scan failed', e);
+        console.error('[Gem Scan] 错误:', e);
         showGemScanToast('网络错误，请稍后重试', 'error', 0);
+    } finally {
+        gemScanLoading.value = false
     }
 }
 
@@ -2240,8 +2248,8 @@ const formatPeriod = (period: string) => {
                 <div class="text-xs text-slate-500 font-mono uppercase tracking-wide">AI Decision Audit Center · 六维多源数据融合</div>
              </div>
              <div class="ml-auto flex gap-3">
-                 <button @click="triggerGemScan" class="flex items-center gap-2 px-4 py-2 bg-amber-50 border border-amber-200 text-amber-600 rounded-lg text-sm hover:bg-amber-100 transition-colors shadow-sm font-bold">
-                    <Sparkles class="w-4 h-4" /> 挖掘潜力遗珠
+                 <button @click="triggerGemScan" :disabled="gemScanLoading" class="flex items-center gap-2 px-4 py-2 bg-amber-50 border border-amber-200 text-amber-600 rounded-lg text-sm hover:bg-amber-100 transition-colors shadow-sm font-bold disabled:opacity-50">
+                    <Sparkles class="w-4 h-4" :class="{'animate-spin': gemScanLoading}" /> {{ gemScanLoading ? '扫描中...' : '挖掘潜力遗珠' }}
                  </button>
                  <button @click="fetchAuditLogs(); fetchMultiSourceOverview(); fetchAiScores()" class="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm hover:bg-slate-50 transition-colors shadow-sm">
                     <RotateCcw class="w-4 h-4 text-slate-500" :class="{'animate-spin': auditLoading}" /> 刷新
