@@ -1049,6 +1049,7 @@ const settingsToast = ref({ show: false, message: '', type: 'success' as 'succes
 const showVrDetailModal = ref(false)
 const showAiEvalModal = ref(false)
 const showRealtimeModal = ref(false)
+const showAuditModal = ref(false)
 
 // Gem Scan Toast
 const gemScanToast = ref({ show: false, message: '', type: 'success' as 'success' | 'error', count: 0 })
@@ -2299,7 +2300,7 @@ const formatPeriod = (period: string) => {
                 </div>
              </div>
              <!-- 审计报告 -->
-             <div class="col-span-6 lg:col-span-3 cursor-pointer" @click="router.push({ path: '/admin', query: { tab: 'audit' } })">
+             <div class="col-span-6 lg:col-span-3 cursor-pointer" @click="showAuditModal = true">
                 <div class="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-100 rounded-2xl p-5 shadow-sm relative overflow-hidden hover:shadow-md transition-shadow">
                    <div class="absolute -right-4 -top-4 w-16 h-16 rounded-full bg-amber-400/10"></div>
                    <div class="relative z-10">
@@ -3491,6 +3492,70 @@ const formatPeriod = (period: string) => {
       </div>
       <div class="px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex justify-end">
          <button @click="showRealtimeModal = false" class="px-5 py-2 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100 transition-colors">
+            关闭
+         </button>
+      </div>
+   </div>
+</div>
+
+<!-- 审计报告详情弹窗 -->
+<div v-if="showAuditModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm px-4">
+   <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[80vh] overflow-hidden animate-fade-in-up">
+      <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-amber-50/50">
+         <div class="flex items-center gap-2">
+            <FileText class="w-5 h-5 text-amber-600" />
+            <h3 class="font-bold text-lg text-slate-800">审计报告详情</h3>
+         </div>
+         <button @click="showAuditModal = false" class="text-slate-400 hover:text-slate-600 p-1">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+         </button>
+      </div>
+      <div class="p-6 overflow-y-auto max-h-[60vh] custom-scrollbar">
+         <!-- 统计概览 -->
+         <div class="grid grid-cols-4 gap-4 mb-6">
+            <div class="bg-slate-50 rounded-xl p-4 text-center">
+               <div class="text-2xl font-bold text-slate-800">{{ multiSourceOverview.audit.total }}</div>
+               <div class="text-xs text-slate-500 mt-1">总报告数</div>
+            </div>
+            <div class="bg-amber-50 rounded-xl p-4 text-center">
+               <div class="text-2xl font-bold text-amber-600">{{ multiSourceOverview.audit.gems }}</div>
+               <div class="text-xs text-slate-500 mt-1">💎 潜力遗珠</div>
+            </div>
+            <div class="bg-blue-50 rounded-xl p-4 text-center">
+               <div class="text-2xl font-bold text-blue-600">{{ multiSourceOverview.audit.global_gems }}</div>
+               <div class="text-xs text-slate-500 mt-1">🌍 全球佳作</div>
+            </div>
+            <div class="bg-indigo-50 rounded-xl p-4 text-center">
+               <div class="text-2xl font-bold text-indigo-600">{{ multiSourceOverview.audit.deep_audits }}</div>
+               <div class="text-xs text-slate-500 mt-1">🔬 深度审计</div>
+            </div>
+         </div>
+         <!-- 审计报告列表 -->
+         <div v-if="auditLogs.length > 0" class="space-y-3">
+            <div v-for="log in auditLogs.slice(0, 10)" :key="log.id" class="p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors">
+               <div class="flex items-center justify-between mb-2">
+                  <div class="font-bold text-slate-800">{{ log.book_title || '未知作品' }}</div>
+                  <div class="flex items-center gap-2">
+                     <span :class="log.risk_level === 'High' ? 'bg-red-100 text-red-600' : log.risk_level === 'Medium' ? 'bg-amber-100 text-amber-600' : log.risk_level === 'Low' ? 'bg-blue-100 text-blue-600' : 'bg-emerald-100 text-emerald-600'" class="px-2 py-0.5 rounded text-xs font-bold">
+                        {{ log.risk_level }}
+                     </span>
+                     <span class="px-2 py-0.5 bg-indigo-100 text-indigo-600 rounded text-xs font-bold">{{ log.risk_type }}</span>
+                  </div>
+               </div>
+               <div class="text-sm text-slate-600 line-clamp-2">{{ log.content_snippet || '无内容摘要' }}</div>
+               <div class="text-xs text-slate-400 mt-2">{{ log.created_at }}</div>
+            </div>
+         </div>
+         <div v-else class="text-center py-10 text-slate-400">
+            <CheckCircle2 class="w-12 h-12 mx-auto mb-3 opacity-50" />
+            <div>暂无审计报告</div>
+         </div>
+      </div>
+      <div class="px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex justify-between">
+         <button @click="router.push({ path: '/admin', query: { tab: 'audit' } }); showAuditModal = false" class="px-4 py-2 rounded-xl text-sm font-medium text-indigo-600 hover:bg-indigo-50 transition-colors">
+            查看全部审计报告 →
+         </button>
+         <button @click="showAuditModal = false" class="px-5 py-2 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100 transition-colors">
             关闭
          </button>
       </div>
