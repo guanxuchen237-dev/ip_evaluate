@@ -2501,16 +2501,16 @@ const formatPeriod = (period: string) => {
                 <div class="flex items-center gap-3">
                    <select v-model="auditFilterLevel" @change="fetchAuditLogs" class="h-9 px-3 bg-white/70 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 shadow-sm">
                       <option value="">所有风险等级</option>
-                      <option value="High">高风险 (High)</option>
-                      <option value="Medium">中风险 (Medium)</option>
-                      <option value="Low">低风险 (Low)</option>
-                      <option value="Positive">正向 (Positive)</option>
+                      <option value="High">高风险</option>
+                      <option value="Medium">中风险</option>
+                      <option value="Low">低风险</option>
+                      <option value="Positive">正向</option>
                    </select>
                    <select v-model="auditFilterStatus" @change="fetchAuditLogs" class="h-9 px-3 bg-white/70 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 shadow-sm">
                       <option value="">所有状态</option>
-                      <option value="Pending">待复核 (Pending)</option>
-                      <option value="Resolved">已解决 (Resolved)</option>
-                      <option value="Ignored">已忽略 (Ignored)</option>
+                      <option value="Pending">待复核</option>
+                      <option value="Resolved">已解决</option>
+                      <option value="Ignored">已忽略</option>
                    </select>
                 </div>
              </div>
@@ -2533,10 +2533,10 @@ const formatPeriod = (period: string) => {
                          </div>
                          <span class="px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider"
                                :class="log.risk_level === 'High' ? 'bg-rose-50 text-rose-600 border border-rose-100' : (log.risk_level === 'Medium' ? 'bg-amber-50 text-amber-600 border border-amber-100' : (log.risk_level === 'Positive' ? 'bg-indigo-50 text-indigo-600 border border-indigo-100' : 'bg-emerald-50 text-emerald-600 border border-emerald-100'))">
-                            {{ log.risk_level }} Risk
+                            {{ log.risk_level === 'High' ? '高风险' : (log.risk_level === 'Medium' ? '中风险' : (log.risk_level === 'Positive' ? '正面' : '低风险')) }}
                          </span>
                          <span class="px-2 py-0.5 rounded-md text-[10px] bg-slate-100 text-slate-600 border border-slate-200">
-                            {{ log.risk_type }}
+                            {{ log.risk_type === 'POTENTIAL_GEM' ? '潜力遗珠' : (log.risk_type === 'GLOBAL_GEM' ? '出海优选' : (log.risk_type === 'COMPLIANCE' ? '合规风险' : (log.risk_type === 'PLOT_TOXIC' ? '剧情毒性' : (log.risk_type === 'UPDATE_ENTROPY' ? '更新熵增' : (log.risk_type === 'DEEP_AUDIT' ? '深度审计' : '常规'))))) }}
                          </span>
                          
                          <span v-if="log.status === 'Resolved' || log.status === 'RESOLVED'" class="flex items-center gap-1 text-[11px] font-bold text-emerald-500 ml-2">
@@ -3672,9 +3672,9 @@ const formatPeriod = (period: string) => {
                   <div class="font-bold text-slate-800">{{ log.book_title || '未知作品' }}</div>
                   <div class="flex items-center gap-2">
                      <span :class="log.risk_level === 'High' ? 'bg-red-100 text-red-600' : log.risk_level === 'Medium' ? 'bg-amber-100 text-amber-600' : log.risk_level === 'Low' ? 'bg-blue-100 text-blue-600' : 'bg-emerald-100 text-emerald-600'" class="px-2 py-0.5 rounded text-xs font-bold">
-                        {{ log.risk_level }}
+                        {{ log.risk_level === 'High' ? '高风险' : (log.risk_level === 'Medium' ? '中风险' : (log.risk_level === 'Low' ? '低风险' : '正面')) }}
                      </span>
-                     <span class="px-2 py-0.5 bg-indigo-100 text-indigo-600 rounded text-xs font-bold">{{ log.risk_type }}</span>
+                     <span class="px-2 py-0.5 bg-indigo-100 text-indigo-600 rounded text-xs font-bold">{{ log.risk_type === 'POTENTIAL_GEM' ? '潜力遗珠' : (log.risk_type === 'GLOBAL_GEM' ? '出海优选' : (log.risk_type === 'COMPLIANCE' ? '合规风险' : (log.risk_type === 'PLOT_TOXIC' ? '剧情毒性' : (log.risk_type === 'UPDATE_ENTROPY' ? '更新熵增' : (log.risk_type === 'DEEP_AUDIT' ? '深度审计' : '常规'))))) }}</span>
                   </div>
                </div>
                <div class="text-sm text-slate-600 line-clamp-2">{{ log.content_snippet || '无内容摘要' }}</div>
