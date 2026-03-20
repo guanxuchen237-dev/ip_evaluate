@@ -909,7 +909,7 @@ async function doResolveAuditLog(id: number, action: string) {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({ action: action === 'resolve' ? 'Resolved' : 'Ignored' })
+            body: JSON.stringify({ status: action === 'resolve' ? 'Resolved' : 'Ignored' })
         })
         if (res.ok) {
             fetchAuditLogs()

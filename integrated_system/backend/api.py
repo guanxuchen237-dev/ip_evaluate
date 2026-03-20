@@ -3784,7 +3784,7 @@ def resolve_audit_log(log_id):
     """处理风控告警"""
     data = request.json or {}
     new_status = data.get('status', 'RESOLVED')
-    if new_status not in ['PENDING', 'REVIEWED', 'RESOLVED']:
+    if new_status not in ['PENDING', 'REVIEWED', 'RESOLVED', 'Ignored']:
         return jsonify({'error': 'Invalid status'}), 400
         
     try:
