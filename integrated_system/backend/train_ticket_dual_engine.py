@@ -307,7 +307,7 @@ class TicketDualEngine:
 print("\n【步骤3】训练双引擎模型...")
 
 X = df[feature_cols].values
-y_tickets = df['tickets_normalized'].values
+y_tickets = df['monthly_tickets'].values  # 使用原始月票作为目标（不再归一化）
 months = df['months_active'].values
 
 # 训练
