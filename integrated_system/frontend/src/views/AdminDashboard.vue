@@ -875,8 +875,10 @@ async function fetchAuditLogs() {
 }
 
 async function resolveAuditLog(id: number, action: string) {
+    console.log(`[resolveAuditLog] Called: id=${id}, action=${action}`)
     const log = auditLogs.value.find(l => l.id === id)
     const bookTitle = log?.book_title || '该作品'
+    console.log(`[resolveAuditLog] Found log:`, log?.status, log?.risk_type)
     
     if (action === 'resolve') {
       showConfirmDialog({
@@ -900,22 +902,34 @@ async function resolveAuditLog(id: number, action: string) {
 }
 
 async function doResolveAuditLog(id: number, action: string) {
+    console.log(`[doResolveAuditLog] Starting: id=${id}, action=${action}`)
     closeConfirmDialog()
     try {
         const token = localStorage.getItem('auth_token')
-        const res = await fetch(`${API_BASE}/admin/audit_logs/${id}/resolve`, {
+        const url = `${API_BASE}/admin/audit_logs/${id}/resolve`
+        const body = { status: action === 'resolve' ? 'Resolved' : 'Ignored' }
+        console.log(`[doResolveAuditLog] POST ${url}`, body)
+        const res = await fetch(url, {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({ status: action === 'resolve' ? 'Resolved' : 'Ignored' })
+            body: JSON.stringify(body)
         })
+        console.log(`[doResolveAuditLog] Response status: ${res.status}`)
         if (res.ok) {
+            const data = await res.json()
+            console.log(`[doResolveAuditLog] Success:`, data)
             fetchAuditLogs()
+        } else {
+            const err = await res.text()
+            console.error(`[doResolveAuditLog] Failed:`, err)
+            alert(`操作失败: ${err}`)
         }
     } catch (e) {
-        console.error(e)
+        console.error('[doResolveAuditLog] Error:', e)
+        alert(`操作出错: ${e}`)
     }
 }
 

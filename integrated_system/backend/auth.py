@@ -102,7 +102,7 @@ def init_auth_database():
                     content_snippet TEXT,
                     score FLOAT DEFAULT NULL,
                     trigger_source VARCHAR(50) DEFAULT 'virtual_reader',
-                    status ENUM('PENDING', 'REVIEWED', 'RESOLVED') DEFAULT 'PENDING',
+                    status ENUM('PENDING', 'REVIEWED', 'RESOLVED', 'Ignored') DEFAULT 'PENDING',
                     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
             """)
@@ -112,6 +112,15 @@ def init_auth_database():
                 cursor.execute("""
                     ALTER TABLE ip_audit_logs 
                     MODIFY COLUMN risk_type ENUM('COMPLIANCE', 'PLOT_TOXIC', 'UPDATE_ENTROPY', 'POTENTIAL_GEM', 'GLOBAL_GEM', 'NORMAL', 'DEEP_AUDIT') NOT NULL
+                """)
+            except Exception as e:
+                pass  # 表不存在或已是最新结构，忽略错误
+            
+            # 修改现有表的status ENUM值，添加'Ignored'（如果表已存在）
+            try:
+                cursor.execute("""
+                    ALTER TABLE ip_audit_logs 
+                    MODIFY COLUMN status ENUM('PENDING', 'REVIEWED', 'RESOLVED', 'Ignored') DEFAULT 'PENDING'
                 """)
             except Exception as e:
                 pass  # 表不存在或已是最新结构，忽略错误
