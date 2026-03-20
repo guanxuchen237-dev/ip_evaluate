@@ -26,6 +26,8 @@ try:
     from train_model_j_paper import PaperDualEngine, PlatformNormalizer, IPGradingSystem, IPWeightedScorer
     # 导入月票预测双引擎类
     from train_ticket_dual_engine import TicketDualEngine
+    # 导入SACD等级IP评分双引擎类
+    from train_model_sacd import IPDualEngineSACD, score_to_grade_sabcd
 except ImportError:
     from backend.data_manager import data_manager
     from backend.ai_service import ai_service
@@ -37,6 +39,7 @@ except ImportError:
     try:
         from backend.train_model_j_paper import PaperDualEngine, PlatformNormalizer, IPGradingSystem, IPWeightedScorer
         from backend.train_ticket_dual_engine import TicketDualEngine
+        from backend.train_model_sacd import IPDualEngineSACD, score_to_grade_sabcd
     except ImportError:
         PaperDualEngine = None
         PlatformNormalizer = None
@@ -53,6 +56,29 @@ _ip_model_error = None
 MODEL_J_PAPER_PATH = os.path.join(os.path.dirname(__file__), 'resources', 'models', 'model_j_paper.pkl')
 # 月票预测双引擎模型（XGBoost + K-Means）
 TICKET_DUAL_ENGINE_PATH = os.path.join(os.path.dirname(__file__), 'resources', 'models', 'ticket_dual_engine.pkl')
+# IP评分双引擎模型（S/A/C/D等级制）
+MODEL_SACD_PATH = os.path.join(os.path.dirname(__file__), 'resources', 'models', 'model_sacd.pkl')
+
+# SACD等级IP评分模型
+_ip_sacd_engine = None
+_ip_sacd_features = None
+
+def _load_ip_sacd_engine():
+    """Load XGBoost + K-Means IP scoring model (S/A/C/D grades)"""
+    global _ip_sacd_engine, _ip_sacd_features
+    if _ip_sacd_engine is not None:
+        return _ip_sacd_engine, _ip_sacd_features
+    
+    try:
+        m = joblib.load(MODEL_SACD_PATH)
+        _ip_sacd_engine = m.get('dual_engine')
+        _ip_sacd_features = m.get('features', [])
+        metrics = m.get('metrics', {})
+        print(f"[IP-SACD] Loaded XGBoost+K-Means IP model (S/A/C/D grades)")
+        print(f"[IP-SACD] RMSE: {metrics.get('rmse', 0):.2f}, Grade Accuracy: {metrics.get('grade_accuracy', 0)*100:.1f}%")
+    except Exception as e:
+        print(f"[IP-SACD] Failed to load: {e}")
+    return _ip_sacd_engine, _ip_sacd_features
 
 # 月票预测模型（单独加载）
 _ticket_dual_engine = None
@@ -162,104 +188,135 @@ def _score_to_grade(score):
 
 def _predict_with_model_j_paper(model_data, input_features):
     """
-    使用 Model J Paper (XGBoost + K-Means 双引擎) 进行预测
+    使用 XGBoost + K-Means 双引擎进行IP评分预测 (S/A/C/D等级制)
     
     model_data: 包含 dual_engine 的字典
     input_features: 包含 word_count, monthly_tickets, collections 等的字典
     """
     try:
-        # 提取输入特征
-        word_count = input_features.get('word_count', 0) or 0
-        monthly_tickets = input_features.get('monthly_tickets', 0) or 0
-        collections = input_features.get('collections', 0) or 0
-        total_recommend = input_features.get('recommendations', 0) or 0
-        fans_count = input_features.get('fans_count', 0) or 0
-        category = input_features.get('category', '玄幻')
-        status = input_features.get('status', '连载')
-        platform = input_features.get('platform', 'Qidian')
-        ranking = input_features.get('ranking', 0) or 0
+        # 优先使用SACD双引擎模型
+        sacd_engine, sacd_features = _load_ip_sacd_engine()
         
-        # 热门题材评分
-        HOT_GENRES = {'玄幻': 95, '奇幻': 90, '仙侠': 88, '都市': 85, '游戏': 82, '科幻': 80, '历史': 78, '悬疑': 75}
-        genre_hotness = HOT_GENRES.get(str(category), 70)
+        if sacd_engine is not None and sacd_features:
+            # 提取输入特征
+            word_count = input_features.get('word_count', 0) or 0
+            monthly_tickets = input_features.get('monthly_tickets', 0) or 0
+            collections = input_features.get('collections', 0) or 0
+            total_recommend = input_features.get('recommendations', 0) or 0
+            fans_count = input_features.get('fans_count', 0) or 0
+            platform = input_features.get('platform', 'Qidian')
+            ranking = input_features.get('ranking', 0) or 0
+            
+            # 平台归一化
+            platform_scale = 1.0 if platform == 'Qidian' else 8.0
+            tickets_normalized = monthly_tickets * platform_scale
+            collection_normalized = collections * platform_scale
+            recommend_normalized = total_recommend * platform_scale
+            
+            # 计算派生特征
+            log_word_count = np.log1p(word_count)
+            log_collection = np.log1p(collection_normalized)
+            log_recommend = np.log1p(recommend_normalized)
+            tickets_per_word = tickets_normalized / (word_count + 1) * 10000
+            collection_per_word = collection_normalized / (word_count + 1) * 10000
+            heat_index = (tickets_normalized + collection_normalized + recommend_normalized) / 3
+            
+            # 题材热度
+            HOT_GENRES = {'玄幻': 95, '奇幻': 90, '仙侠': 88, '都市': 85, '游戏': 82, '科幻': 80}
+            category = input_features.get('category', '玄幻')
+            genre_hotness = HOT_GENRES.get(str(category), 70)
+            
+            # 判断作品阶段
+            months = input_features.get('months', 0) or 0
+            if months == 0:
+                months = 6 if word_count >= 300000 else 3
+            
+            # 构建特征向量
+            feature_dict = {
+                'word_count': word_count,
+                'collection_count': collections,
+                'total_recommend': total_recommend,
+                'fan_count': fans_count,
+                'log_word_count': log_word_count,
+                'log_collection': log_collection,
+                'log_recommend': log_recommend,
+                'tickets_per_word': tickets_per_word,
+                'collection_per_word': collection_per_word,
+                'heat_index': heat_index,
+                'genre_hotness': genre_hotness,
+                'months_active': months,
+                'tickets_normalized': tickets_normalized,
+            }
+            
+            X = np.array([[feature_dict.get(f, 0) for f in sacd_features]])
+            
+            # 使用双引擎预测
+            pred = sacd_engine.predict(X, [months])[0]
+            pred = np.clip(pred, 0, 100)
+            
+            # 转换等级
+            grade = score_to_grade_sabcd(pred)
+            
+            # 确定引擎类型
+            if months >= 6 and sacd_engine.xgb_engine is not None:
+                engine_type = 'xgboost'
+            else:
+                engine_type = 'kmeans'
+            
+            stage = 'mature' if months >= 6 else 'nascent'
+            
+            return pred, engine_type, stage, grade
         
-        # 平台归一化（纵横数据缩放）
-        platform_scale = 1.0 if platform == 'Qidian' else 8.0
-        monthly_tickets_normalized = monthly_tickets * platform_scale
-        collection_normalized = collections * platform_scale
-        recommend_normalized = total_recommend * platform_scale
-        
-        # ================================================================
-        #  规则评分系统（确保区分度）
-        # ================================================================
-        
-        # 1. 商业分 (40%) - 基于月票、收藏、推荐
-        # 月票分：使用对数缩放
-        tickets_log = np.log1p(monthly_tickets_normalized)
-        tickets_score = min(100, tickets_log / np.log1p(50000) * 100)  # 5万月票为满分基准
-        
-        # 收藏分
-        collection_log = np.log1p(collection_normalized)
-        collection_score = min(100, collection_log / np.log1p(300000) * 100)  # 30万收藏为满分基准
-        
-        # 推荐分
-        recommend_log = np.log1p(recommend_normalized)
-        recommend_score = min(100, recommend_log / np.log1p(30000) * 100)  # 3万推荐为满分基准
-        
-        commercial_score = tickets_score * 0.5 + collection_score * 0.3 + recommend_score * 0.2
-        
-        # 排名加分：排名前100的作品获得额外加分
-        if ranking > 0 and ranking <= 100:
-            rank_bonus = (101 - ranking) * 0.2  # 排名第1加20分，第100加0.2分
-            commercial_score = min(100, commercial_score + rank_bonus)
-        
-        # 2. 粘性分 (15%) - 粉丝/收藏比率
-        if collections > 0 and fans_count > 0:
-            stickiness_score = min(100, fans_count / collections * 100)
-        elif collections > 0:
-            stickiness_score = min(100, collections / 10000)  # 收藏越多，粘性越高
         else:
-            stickiness_score = 50
-        
-        # 3. NLP分 (15%) - 默认值
-        nlp_quality_score = 50.0
-        
-        # 4. 趋势分 (15%) - 默认中等
-        trend_score = 50.0
-        
-        # 5. 改编分 (15%) - 基于字数和题材
-        word_score = min(100, word_count / 500000 * 100)  # 50万字为满分
-        adaptation_score = word_score * 0.4 + genre_hotness * 0.4 + (20 if word_count >= 500000 else 0)
-        adaptation_score = min(100, adaptation_score)
-        
-        # 综合IP评分
-        ip_score = (
-            commercial_score * 0.4 +
-            stickiness_score * 0.15 +
-            nlp_quality_score * 0.15 +
-            trend_score * 0.15 +
-            adaptation_score * 0.15
-        )
-        
-        # 确保分数在合理范围
-        ip_score = np.clip(ip_score, 0, 100)
-        
-        # 判断作品阶段
-        months = input_features.get('months', 0) or 0
-        if months == 0:
-            months = 6 if word_count >= 300000 else 3
-        
-        # 返回规则评分结果
-        engine_type = 'rule_commercial' if commercial_score >= 70 else 'rule_standard'
-        stage = 'mature' if months >= 6 else 'nascent'
-        
-        return ip_score, engine_type, stage
+            # 回退到规则评分
+            return _predict_ip_rule(input_features)
         
     except Exception as e:
-        print(f"[Model J Paper] Prediction error: {e}")
+        print(f"[IP-SACD] Prediction error: {e}")
         import traceback
         traceback.print_exc()
-        return None, None, str(e)
+        return None, None, None, None
+
+def _predict_ip_rule(input_features):
+    """规则评分回退方案"""
+    word_count = input_features.get('word_count', 0) or 0
+    monthly_tickets = input_features.get('monthly_tickets', 0) or 0
+    collections = input_features.get('collections', 0) or 0
+    ranking = input_features.get('ranking', 0) or 0
+    platform = input_features.get('platform', 'Qidian')
+    
+    platform_scale = 1.0 if platform == 'Qidian' else 8.0
+    tickets_normalized = monthly_tickets * platform_scale
+    collection_normalized = collections * platform_scale
+    
+    # 基础分
+    if ranking > 0 and ranking <= 10:
+        base_score = 95
+    elif ranking > 0 and ranking <= 50:
+        base_score = 85
+    elif ranking > 0 and ranking <= 100:
+        base_score = 75
+    elif ranking > 0 and ranking <= 200:
+        base_score = 65
+    else:
+        if tickets_normalized >= 30000:
+            base_score = 92
+        elif tickets_normalized >= 10000:
+            base_score = 82
+        elif tickets_normalized >= 3000:
+            base_score = 70
+        else:
+            base_score = 50
+    
+    # 调整分
+    tickets_adj = np.clip((np.log1p(tickets_normalized) / np.log1p(50000) - 0.5) * 20, -10, 10)
+    colls_adj = np.clip((np.log1p(collection_normalized) / np.log1p(300000) - 0.5) * 10, -5, 5)
+    word_adj = np.clip((word_count / 500000 - 0.5) * 6, -3, 3)
+    
+    ip_score = np.clip(base_score + tickets_adj + colls_adj + word_adj, 0, 100)
+    grade = score_to_grade_sabcd(ip_score)
+    
+    return ip_score, 'rule', 'fallback', grade
 
 def load_system_config() -> dict:
     """Load system configuration or return defaults"""
@@ -4826,12 +4883,12 @@ def predict_simple():
         
         # 尝试使用 Model J Paper (XGBoost + K-Means) 模型预测
         if model:
-            model_score, engine, stage = _predict_with_model_j_paper(model, input_features)
+            model_score, engine, stage, grade = _predict_with_model_j_paper(model, input_features)
             if model_score is not None:
                 score = model_score
                 used_engine = engine or 'unknown'
                 confidence = 'high' if engine == 'xgboost' else 'medium'
-                print(f"[Predict] Model J Paper predicted score={score:.1f}, engine={used_engine}, stage={stage}", flush=True)
+                print(f"[Predict] Model J Paper predicted score={score:.1f}, grade={grade}, engine={used_engine}, stage={stage}", flush=True)
         
         # 如果模型预测失败，使用规则评分
         if confidence == 'low' and model:
