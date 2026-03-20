@@ -5409,29 +5409,56 @@ def predict_simple():
 - 推荐：{total_recommend if total_recommend > 0 else '未提供'}
 - 排名：{f'第{ranking}名' if ranking > 0 else '未上榜'}
 
-六维度评分：
-1. 内容质量：{dimensions['内容质量']}/30分 - {dimension_details['内容质量']}
-2. 商业价值：{dimensions['商业价值']}/30分 - {dimension_details['商业价值']}
-3. 读者粘性：{dimensions['读者粘性']}/25分 - {dimension_details['读者粘性']}
-4. 更新稳定性：{dimensions['更新稳定性']}/20分 - {dimension_details['更新稳定性']}
-5. 市场潜力：{dimensions['市场潜力']}/20分 - {dimension_details['市场潜力']}
-6. IP延展性：{dimensions['IP延展性']}/15分 - {dimension_details['IP延展性']}
+六维度评分详情：
+1. 内容质量：{dimensions['内容质量']}/30分
+   - 评分依据：{dimension_details['内容质量']}
+   - 分析要点：字数规模、题材热度、内容完整性
 
-历史趋势：
+2. 商业价值：{dimensions['商业价值']}/30分
+   - 评分依据：{dimension_details['商业价值']}
+   - 分析要点：月票表现、收藏转化、商业变现潜力
+
+3. 读者粘性：{dimensions['读者粘性']}/25分
+   - 评分依据：{dimension_details['读者粘性']}
+   - 分析要点：收藏/月票比、粉丝活跃度、长期留存
+
+4. 更新稳定性：{dimensions['更新稳定性']}/20分
+   - 评分依据：{dimension_details['更新稳定性']}
+   - 分析要点：连载状态、更新频率、完结风险
+
+5. 市场潜力：{dimensions['市场潜力']}/20分
+   - 评分依据：{dimension_details['市场潜力']}
+   - 分析要点：增长趋势、题材风口、竞争格局
+
+6. IP延展性：{dimensions['IP延展性']}/15分
+   - 评分依据：{dimension_details['IP延展性']}
+   - 分析要点：改编潜力、受众广度、IP价值
+
+历史趋势分析：
 {history_trend}
 {future_pred_text}
 
 综合评分：{score:.1f}分 ({_score_to_grade(score)}级)
 
-请生成简洁评估报告（JSON格式）：
+请生成详细评估报告（JSON格式）：
 
-【综合评价】（150字内）：作品定位、核心优势、主要不足
+【综合评价】（200-300字）：
+- 作品定位与市场表现
+- 核心优势分析（结合各维度得分）
+- 主要不足与改进方向
+- 评分合理性说明
 
-【改进建议】（3条）：针对核心问题的具体建议
+【改进建议】（3-5条）：
+- 针对每个低分维度给出具体建议
+- 包含预期效果和实施难度
 
-【发展预测】（100字内）：短期走势和关键机会
+【发展预测】（150-200字）：
+- 短期走势（1-3个月）
+- 中期机会（3-6个月）
+- 风险提示
+- IP开发建议
 
-注意：使用中文标点，不要使用Markdown符号。
+注意：使用中文标点，不要使用Markdown符号，内容要详实有据。
 
 请用JSON格式返回：
 {json_example}"""
@@ -5439,7 +5466,7 @@ def predict_simple():
         try:
             # 使用 _call_model 方法，model_key='chat'
             messages = [{"role": "user", "content": prompt}]
-            response = ai_service._call_model('chat', messages, temperature=0.7, max_tokens=800, json_mode=False)
+            response = ai_service._call_model('chat', messages, temperature=0.7, max_tokens=1500, json_mode=False)
             
             if response:
                 import re
@@ -5514,12 +5541,14 @@ def predict_simple():
             'report': ai_report.get('report', ''),
             'prediction': ai_report.get('prediction', ''),
             'future_predictions': future_predictions,  # 未来3个月预测数值
+            'history_trend': history_trend,  # 历史趋势文本描述
             'platform': platform,
             'mode': mode,
             'confidence': confidence,
             'model_version': model.get('version', 'unknown') if model else 'fallback',
             'db_matched': db_match is not None,
             'db_title': db_match['title'] if db_match else None,
+            'db_author': db_match['author'] if db_match else None,
             'history': [{
                 'year': h['year'],
                 'month': h['month'],
