@@ -5482,78 +5482,30 @@ def predict_simple():
         newline_char = chr(10)
         json_example = '{"report": "综合评价报告完整内容...", "suggestions": ["建议1：针对XX维度，...具体措施...预期效果", "建议2...", ...], "prediction": "短期预测：...' + newline_char + '中期预测：...' + newline_char + '风险提示：...' + newline_char + '机会展望：..."}'
         
-        prompt = f"""你是一位专业的网络文学IP价值评估专家。请对以下作品进行全面深度分析：
+        # 简化提示词，加快响应速度
+        prompt = f"""你是网络文学IP评估专家。请分析以下作品：
 
-作品信息：
-- 书名：《{title}》
-- 作者：{author or '未知'}
-- 平台：{platform}
-- 题材：{category}
-- 状态：{status}
-- 字数：{word_count/10000:.1f}万字
-- 月票：{monthly_tickets if monthly_tickets > 0 else '未提供'}
-- 收藏：{collections if collections > 0 else '未提供'}
-- 推荐：{total_recommend if total_recommend > 0 else '未提供'}
-- 排名：{f'第{ranking}名' if ranking > 0 else '未上榜'}
+《{title}》- {author or '未知'} | {platform} | {category} | {status}
+字数：{word_count/10000:.1f}万 | 月票：{monthly_tickets if monthly_tickets > 0 else '无'} | 收藏：{collections if collections > 0 else '无'} | 排名：{f'第{ranking}名' if ranking > 0 else '未上榜'}
 
-六维度评分详情：
-1. 内容质量：{dimensions['内容质量']}/30分
-   - 评分依据：{dimension_details['内容质量']}
-   - 分析要点：字数规模、题材热度、内容完整性
+六维度评分（总分{score:.1f}分/{_score_to_grade(score)}级）：
+- 内容质量：{dimensions['内容质量']}/30（{dimension_details['内容质量']}）
+- 商业价值：{dimensions['商业价值']}/30（{dimension_details['商业价值']}）
+- 读者粘性：{dimensions['读者粘性']}/25（{dimension_details['读者粘性']}）
+- 更新稳定性：{dimensions['更新稳定性']}/20（{dimension_details['更新稳定性']}）
+- 市场潜力：{dimensions['市场潜力']}/20（{dimension_details['市场潜力']}）
+- IP延展性：{dimensions['IP延展性']}/15（{dimension_details['IP延展性']}）
 
-2. 商业价值：{dimensions['商业价值']}/30分
-   - 评分依据：{dimension_details['商业价值']}
-   - 分析要点：月票表现、收藏转化、商业变现潜力
-
-3. 读者粘性：{dimensions['读者粘性']}/25分
-   - 评分依据：{dimension_details['读者粘性']}
-   - 分析要点：收藏/月票比、粉丝活跃度、长期留存
-
-4. 更新稳定性：{dimensions['更新稳定性']}/20分
-   - 评分依据：{dimension_details['更新稳定性']}
-   - 分析要点：连载状态、更新频率、完结风险
-
-5. 市场潜力：{dimensions['市场潜力']}/20分
-   - 评分依据：{dimension_details['市场潜力']}
-   - 分析要点：增长趋势、题材风口、竞争格局
-
-6. IP延展性：{dimensions['IP延展性']}/15分
-   - 评分依据：{dimension_details['IP延展性']}
-   - 分析要点：改编潜力、受众广度、IP价值
-
-历史趋势分析：
-{history_trend}
+历史趋势：{history_trend}
 {future_pred_text}
 
-综合评分：{score:.1f}分 ({_score_to_grade(score)}级)
-
-请生成详细评估报告（JSON格式）：
-
-【综合评价】（200-300字）：
-- 作品定位与市场表现
-- 核心优势分析（结合各维度得分）
-- 主要不足与改进方向
-- 评分合理性说明
-
-【改进建议】（3-5条）：
-- 针对每个低分维度给出具体建议
-- 包含预期效果和实施难度
-
-【发展预测】（150-200字）：
-- 短期走势（1-3个月）
-- 中期机会（3-6个月）
-- 风险提示
-- IP开发建议
-
-注意：使用中文标点，不要使用Markdown符号，内容要详实有据。
-
-请用JSON格式返回：
-{json_example}"""
+请用JSON格式返回评估报告：
+{{"report": "综合评价（150-200字）：作品定位、核心优势、不足与改进方向", "suggestions": ["建议1", "建议2", "建议3"], "prediction": "发展预测（100-150字）：短期走势、中期机会、风险提示"}}"""
 
         try:
-            # 使用 _call_model 方法，model_key='chat'
+            # 使用 _call_model 方法，model_key='chat'，增加max_tokens
             messages = [{"role": "user", "content": prompt}]
-            response = ai_service._call_model('chat', messages, temperature=0.7, max_tokens=1500, json_mode=False)
+            response = ai_service._call_model('chat', messages, temperature=0.7, max_tokens=2000, json_mode=False)
             
             if response:
                 import re
@@ -5580,38 +5532,84 @@ def predict_simple():
             traceback.print_exc()
             ai_report = None
         
-        # 如果AI报告失败，生成默认报告
+        # 如果AI报告失败，生成详细默认报告
         if not ai_report:
-            total_dim = sum(dimensions.values())
+            # 找出最高和最低维度
+            dim_sorted = sorted(dimensions.items(), key=lambda x: x[1], reverse=True)
+            best_dim, best_score = dim_sorted[0]
+            worst_dim, worst_score = dim_sorted[-1]
+            
+            # 根据分数段生成详细报告
             if score >= 80:
+                report = f"""《{title}》在{platform}平台表现优异，综合评分{score:.1f}分（{_score_to_grade(score)}级）。
+
+【作品定位】该作品属于{category}题材头部作品，{dimension_details['商业价值']}，在平台上具有较强的市场竞争力。
+
+【核心优势】
+1. {best_dim}得分{best_score}分：{dimension_details[best_dim]}
+2. {dimension_details['内容质量']}
+3. {dimension_details['读者粘性']}
+
+【改进方向】{worst_dim}相对较弱（{worst_score}分），{dimension_details[worst_dim]}，建议针对性提升。
+
+【评分说明】六维度综合评估显示该作品具备头部IP潜力，各项指标均衡，建议重点关注和投入资源。"""
                 ai_report = {
-                    'report': f"《{title}》在{platform}平台表现优异，综合评分{score:.1f}分。{dimension_details['商业价值']}，{dimension_details['内容质量']}。作品具备头部IP潜力，建议重点关注和投入资源。",
+                    'report': report,
                     'suggestions': [
-                        "保持稳定更新，稳固榜单位置",
-                        "加强粉丝运营，提升互动活跃度",
-                        "可考虑IP衍生开发，如漫画、有声书等"
+                        f"保持稳定更新，稳固榜单位置，当前月票{monthly_tickets}表现优异",
+                        f"针对{worst_dim}进行优化，{dimension_details[worst_dim]}",
+                        "加强粉丝运营，提升互动活跃度，可考虑建立粉丝社群",
+                        "具备IP衍生开发潜力，建议评估漫画、有声书、影视改编等方向"
                     ],
-                    'prediction': '预计未来3个月保持头部地位，具备影视改编潜力'
+                    'prediction': f'基于当前{score:.1f}分评估，预计未来3个月保持头部地位。{history_trend}。建议关注{category}题材市场动态，把握IP开发时机。'
                 }
             elif score >= 60:
+                report = f"""《{title}》在{platform}平台表现良好，综合评分{score:.1f}分（{_score_to_grade(score)}级）。
+
+【作品定位】该作品为{category}题材中坚力量，{dimension_details['商业价值']}，有向上突破的潜力。
+
+【核心优势】
+1. {best_dim}得分{best_score}分：{dimension_details[best_dim]}
+2. {dimension_details['读者粘性']}
+
+【改进方向】
+1. {worst_dim}得分{worst_score}分：{dimension_details[worst_dim]}
+2. {dimension_details['内容质量']}
+
+【评分说明】作品有发展潜力但存在短板，建议针对性优化后可冲击更高评级。"""
                 ai_report = {
-                    'report': f"《{title}》在{platform}平台表现良好，综合评分{score:.1f}分。{dimension_details['商业价值']}，{dimension_details['读者粘性']}。作品有发展潜力，建议针对性优化。",
+                    'report': report,
                     'suggestions': [
-                        f"当前{dimension_details['内容质量']}，建议保持更新节奏",
-                        "优化作品简介，提升吸引力",
-                        "加强与读者互动，提升粉丝粘性"
+                        f"当前字数{word_count/10000:.1f}万，建议保持稳定更新节奏",
+                        f"针对{worst_dim}优化：{dimension_details[worst_dim]}",
+                        "优化作品简介和封面，提升新读者转化率",
+                        "加强与读者互动，定期开展粉丝活动提升粘性"
                     ],
-                    'prediction': '预计稳步增长，有晋升潜力'
+                    'prediction': f'预计稳步增长，有晋升{chr(65 + max(0, ord(_score_to_grade(score)[0]) - 65 - 1))}级潜力。{history_trend}。建议持续关注月票走势和读者反馈。'
                 }
             else:
+                report = f"""《{title}》在{platform}平台处于发展阶段，综合评分{score:.1f}分（{_score_to_grade(score)}级）。
+
+【作品现状】该作品为{category}题材新作，{dimension_details['内容质量']}，目前数据积累有限。
+
+【发展潜力】
+1. {best_dim}得分{best_score}分：{dimension_details[best_dim]}
+2. 字数{word_count/10000:.1f}万，具备成长空间
+
+【主要不足】
+1. {worst_dim}得分{worst_score}分：{dimension_details[worst_dim]}
+2. {dimension_details['商业价值']}
+
+【评分说明】作品处于起步阶段，建议补充更多数据或持续观察一段时间后再评估。"""
                 ai_report = {
-                    'report': f"《{title}》在{platform}平台处于起步阶段，综合评分{score:.1f}分。建议补充更多数据或持续观察一段时间后再评估。",
+                    'report': report,
                     'suggestions': [
-                        "完善作品信息，提供更多数据",
-                        "关注市场趋势，选择热门题材",
-                        "保持稳定更新，积累读者基础"
+                        "完善作品信息，积累更多读者数据",
+                        f"关注{category}题材市场趋势，选择热门切入点",
+                        "保持稳定更新，建议日更4000字以上积累读者基础",
+                        "加强与读者互动，积极回应评论提升粘性"
                     ],
-                    'prediction': '需要更多数据支持评估，建议持续观察'
+                    'prediction': f'需要更多数据支持评估。{history_trend}。建议持续观察2-3个月，关注月票增长和收藏转化情况。'
                 }
         
         suggestions = ai_report.get('suggestions', [])
