@@ -2299,7 +2299,7 @@ const formatPeriod = (period: string) => {
                 </div>
              </div>
              <!-- 审计报告 -->
-             <div class="col-span-6 lg:col-span-3 cursor-pointer" @click="router.push({ query: { tab: 'audit' } })">
+             <div class="col-span-6 lg:col-span-3 cursor-pointer" @click="router.push({ path: '/admin', query: { tab: 'audit' } })">
                 <div class="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-100 rounded-2xl p-5 shadow-sm relative overflow-hidden hover:shadow-md transition-shadow">
                    <div class="absolute -right-4 -top-4 w-16 h-16 rounded-full bg-amber-400/10"></div>
                    <div class="relative z-10">
