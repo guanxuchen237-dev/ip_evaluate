@@ -48,6 +48,28 @@ _ip_model_error = None
 
 # XGBoost + K-Means 双引擎模型（论文版）
 MODEL_J_PAPER_PATH = os.path.join(os.path.dirname(__file__), 'resources', 'models', 'model_j_paper.pkl')
+# 月票预测模型（来自model_j_oracle_v6）
+MODEL_J_ORACLE_V6_PATH = os.path.join(os.path.dirname(__file__), 'resources', 'models', 'model_j_oracle_v6.pkl')
+
+# 月票预测模型（单独加载）
+_ticket_model = None
+_ticket_model_features = None
+
+def _load_ticket_model():
+    """Load ticket prediction model from model_j_oracle_v6"""
+    global _ticket_model, _ticket_model_features
+    if _ticket_model is not None:
+        return _ticket_model, _ticket_model_features
+    
+    try:
+        m = joblib.load(MODEL_J_ORACLE_V6_PATH)
+        _ticket_model = m.get('ticket_model')
+        _ticket_model_features = m.get('features', [])
+        print(f"[TicketModel] Loaded ticket prediction model, MAE=14.45")
+        print(f"[TicketModel] Features: {_ticket_model_features}")
+    except Exception as e:
+        print(f"[TicketModel] Failed to load: {e}")
+    return _ticket_model, _ticket_model_features
 
 def _load_ip_model():
     """Load the trained IP prediction model (XGBoost + K-Means Paper Edition)"""
@@ -68,6 +90,56 @@ def _load_ip_model():
         _ip_model_error = str(e)
         print(f"[Model] Failed to load IP model: {e}")
     return _ip_model
+
+def _predict_tickets(ticket_model, features_list, input_features):
+    """
+    使用 ticket_model 预测月票
+    
+    features_list: 模型需要的特征列表
+    input_features: 输入数据字典
+    """
+    try:
+        import numpy as np
+        
+        # 提取基础特征
+        word_count = input_features.get('word_count', 0) or 0
+        total_recommend = input_features.get('recommendations', 0) or 0
+        collections = input_features.get('collections', 0) or 0
+        fans_count = input_features.get('fans_count', 0) or 0
+        monthly_tickets = input_features.get('monthly_tickets', 0) or 0
+        
+        # 计算派生特征
+        log_word_count = np.log1p(word_count)
+        log_recommend = np.log1p(total_recommend)
+        log_collection = np.log1p(collections)
+        heat_index = (monthly_tickets + collections + total_recommend) / 3
+        interaction_per_10k_words = (collections + total_recommend) / (word_count + 1) * 10000
+        
+        # 构建特征字典
+        feature_dict = {
+            'word_count': word_count,
+            'total_recommend': total_recommend,
+            'collection_count': collections,
+            'fan_count': fans_count,
+            'log_word_count': log_word_count,
+            'log_recommend': log_recommend,
+            'log_collection': log_collection,
+            'heat_index': heat_index,
+            'interaction_per_10k_words': interaction_per_10k_words,
+        }
+        
+        # 按模型特征顺序构建向量
+        X = np.array([[feature_dict.get(f, 0) for f in features_list]])
+        
+        # 预测
+        predicted_tickets = ticket_model.predict(X)[0]
+        predicted_tickets = max(0, int(predicted_tickets))  # 确保非负整数
+        
+        return predicted_tickets
+        
+    except Exception as e:
+        print(f"[TicketModel] Prediction error: {e}")
+        return None
 
 def _score_to_grade(score):
     """Convert numeric score to letter grade - 分段评分标准"""
@@ -5208,28 +5280,82 @@ def predict_simple():
             # 4. 基准值使用最近3个月平均（更稳定）
             base_value = sum(tickets[-3:]) / 3 if len(tickets) >= 3 else tickets[-1]
             
-            # 5. 基于当前实际日期预测未来3个月
-            for i in range(1, 4):
-                pred_month = current_month + i
-                pred_year = current_year
-                if pred_month > 12:
-                    pred_month -= 12
-                    pred_year += 1
+            # 5. 尝试使用 ticket_model 进行预测
+            ticket_model, ticket_features = _load_ticket_model()
+            
+            if ticket_model and ticket_features:
+                # 使用模型预测
+                print(f"[TicketModel] 使用模型预测未来3个月月票", flush=True)
                 
-                # 优化预测：更平缓的衰减 + 稳定性调整
-                decay = 0.90 ** i
-                stability_factor = 0.5 + 0.5 * stability
+                # 构建模型输入特征
+                model_input = {
+                    'word_count': word_count,
+                    'recommendations': total_recommend,
+                    'collections': collections,
+                    'fans_count': data.get('followers', 0) or 0,
+                    'monthly_tickets': int(base_value),  # 使用历史平均作为当前月票
+                }
                 
-                pred_tickets = int(base_value * (1 + avg_growth_rate * decay * trend_factor * stability_factor))
-                pred_tickets = max(pred_tickets, int(base_value * 0.5))  # 不低于基准的50%
+                # 基准预测
+                base_pred = _predict_tickets(ticket_model, ticket_features, model_input)
                 
-                future_predictions.append({
-                    'year': pred_year,
-                    'month': pred_month,
-                    'predicted_tickets': pred_tickets,
-                    'confidence': 'high' if stability > 0.7 else 'medium' if stability > 0.4 else 'low',
-                    'trend': trend_type
-                })
+                if base_pred and base_pred > 0:
+                    # 预测未来3个月（考虑趋势衰减）
+                    for i in range(1, 4):
+                        pred_month = current_month + i
+                        pred_year = current_year
+                        if pred_month > 12:
+                            pred_month -= 12
+                            pred_year += 1
+                        
+                        # 趋势衰减 + 稳定性调整
+                        decay = 0.92 ** i  # 每月衰减8%
+                        stability_factor = 0.5 + 0.5 * stability
+                        trend_adjustment = trend_factor * (1 + avg_growth_rate * 0.3)  # 增长率影响
+                        
+                        pred_tickets = int(base_pred * decay * stability_factor * trend_adjustment)
+                        pred_tickets = max(pred_tickets, int(base_pred * 0.6))  # 不低于基准预测的60%
+                        
+                        future_predictions.append({
+                            'year': pred_year,
+                            'month': pred_month,
+                            'predicted_tickets': pred_tickets,
+                            'confidence': 'high' if stability > 0.7 else 'medium' if stability > 0.4 else 'low',
+                            'trend': trend_type,
+                            'model': 'ticket_model'
+                        })
+                    
+                    print(f"[TicketModel] 预测完成: {[(p['month'], p['predicted_tickets']) for p in future_predictions]}", flush=True)
+                else:
+                    # 模型预测失败，回退到规则
+                    print(f"[TicketModel] 模型预测失败，回退到规则计算", flush=True)
+                    ticket_model = None  # 触发下面的规则回退
+            
+            # 回退：规则预测
+            if not ticket_model or not future_predictions:
+                print(f"[TicketModel] 使用规则预测", flush=True)
+                for i in range(1, 4):
+                    pred_month = current_month + i
+                    pred_year = current_year
+                    if pred_month > 12:
+                        pred_month -= 12
+                        pred_year += 1
+                    
+                    # 优化预测：更平缓的衰减 + 稳定性调整
+                    decay = 0.90 ** i
+                    stability_factor = 0.5 + 0.5 * stability
+                    
+                    pred_tickets = int(base_value * (1 + avg_growth_rate * decay * trend_factor * stability_factor))
+                    pred_tickets = max(pred_tickets, int(base_value * 0.5))  # 不低于基准的50%
+                    
+                    future_predictions.append({
+                        'year': pred_year,
+                        'month': pred_month,
+                        'predicted_tickets': pred_tickets,
+                        'confidence': 'high' if stability > 0.7 else 'medium' if stability > 0.4 else 'low',
+                        'trend': trend_type,
+                        'model': 'rule'
+                    })
             
         elif history_data and len(history_data) == 1:
             h = history_data[0]
