@@ -5306,6 +5306,7 @@ def predict_simple():
                     'collections': collections,
                     'fans_count': data.get('followers', 0) or 0,
                     'months': 6,  # 成熟期使用XGBoost
+                    'monthly_tickets': monthly_tickets,  # 当前月票（核心特征）
                 }
                 
                 # 基准预测
@@ -5314,7 +5315,7 @@ def predict_simple():
                 if base_pred and base_pred > 0:
                     print(f"[TicketDualEngine] 基准预测: {base_pred}, 引擎: {engine_type}", flush=True)
                     
-                    # 预测未来3个月（考虑趋势衰减）
+                    # 预测未来3个月（根据趋势调整）
                     for i in range(1, 4):
                         pred_month = current_month + i
                         pred_year = current_year
@@ -5322,13 +5323,21 @@ def predict_simple():
                             pred_month -= 12
                             pred_year += 1
                         
-                        # 趋势衰减 + 稳定性调整
-                        decay = 0.92 ** i  # 每月衰减8%
-                        stability_factor = 0.5 + 0.5 * stability
-                        trend_adjustment = trend_factor * (1 + avg_growth_rate * 0.3)  # 增长率影响
+                        # 根据趋势类型调整预测
+                        if trend_type == 'rising' or avg_growth_rate > 0.05:
+                            # 上升趋势：每月增长
+                            growth_factor = 1 + avg_growth_rate * i * 0.5
+                            pred_tickets = int(base_pred * growth_factor)
+                        elif trend_type == 'stable' or (avg_growth_rate >= -0.05 and avg_growth_rate <= 0.05):
+                            # 稳定趋势：保持基准
+                            pred_tickets = int(base_pred * (1 - 0.02 * i))  # 轻微下降2%
+                        else:
+                            # 下降趋势：加速衰减
+                            decay = 0.95 ** i
+                            pred_tickets = int(base_pred * decay)
                         
-                        pred_tickets = int(base_pred * decay * stability_factor * trend_adjustment)
-                        pred_tickets = max(pred_tickets, int(base_pred * 0.6))  # 不低于基准预测的60%
+                        # 确保不低于当前月票的50%
+                        pred_tickets = max(pred_tickets, int(monthly_tickets * 0.5))
                         
                         future_predictions.append({
                             'year': pred_year,
