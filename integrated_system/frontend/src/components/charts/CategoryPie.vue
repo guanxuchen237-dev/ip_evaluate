@@ -15,21 +15,34 @@ const initChart = async () => {
   const colors = ['#3b82f6', '#06b6d4', '#8b5cf6', '#64748b', '#94a3b8']; 
   // Blue, Cyan, Violet, Slate-Dark, Slate-Light
 
-  let data = [
-    { value: 1048, name: '都市' },
-    { value: 735, name: '玄幻' },
-    { value: 580, name: '科幻' },
-    { value: 484, name: '仙侠' },
-    { value: 300, name: '历史' }
-  ];
+  let data: any[] = [];
+  let hasError = false;
 
   try {
      const res = await axios.get(`${API_BASE}/charts/distribution`);
-     if (res.data && Array.isArray(res.data)) {
+     if (res.data && Array.isArray(res.data) && res.data.length > 0) {
          data = res.data; 
+     } else {
+         hasError = true;
      }
   } catch (e) {
      console.warn("Category Fetch Fail", e);
+     hasError = true;
+  }
+
+  if (hasError || data.length === 0) {
+    // 显示空状态
+    chartInstance.setOption({
+      title: {
+        text: '暂无数据',
+        subtext: '后端服务未启动或数据为空',
+        left: 'center',
+        top: 'center',
+        textStyle: { color: '#94a3b8', fontSize: 16 },
+        subtextStyle: { color: '#cbd5e1', fontSize: 12 }
+      }
+    });
+    return;
   }
 
   const option = {
