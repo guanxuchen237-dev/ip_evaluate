@@ -26,7 +26,6 @@ const route = useRoute()
 const menuItems: MenuItem[] = [
   { title: "仪表盘", titleEn: "Dashboard", url: "/", icon: LayoutDashboard },
   { title: "虚拟读者", titleEn: "Reader Space", url: "/reader-space", icon: Users },
-  { title: "灵感探索", titleEn: "AI Agent", url: "/search", icon: Sparkles },
   { title: "设置", titleEn: "Settings", url: "/settings", icon: Settings },
 ]
 
