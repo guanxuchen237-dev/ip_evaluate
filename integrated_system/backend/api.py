@@ -3888,7 +3888,7 @@ def audit_deep_scan():
         
         # --- 保存至审计日志 (ip_audit_logs) 以便前端展示 ---
         try:
-            conn = pymysql.connect(**QIDIAN_CONFIG)  # 复用起点库或专门的分析库
+            conn = pymysql.connect(**ZONGHENG_CONFIG)  # 使用纵横库（ip_ai_evaluation表所在库）
             with conn.cursor() as cursor:
                 # 1. 清理该书籍之前的旧审计记录（防止前端展示过时的 60 分报告）
                 # 同时清理 ip_ai_evaluation 表中的条目，确保详情页（Header）同步展示最新高分
