@@ -4805,6 +4805,7 @@ def predict_simple():
                     db_match = cur.fetchone()
                 else:
                     # 纵横：从zongheng_book_ranks获取，使用crawl_time提取年月
+                    print(f"[DEBUG] 纵横查询: title={title.strip()}, LIKE='%{title.strip()}%'", flush=True)
                     cur.execute(f"""
                         SELECT title, author, category, status, word_count,
                                monthly_ticket as monthly_tickets,
@@ -4815,8 +4816,9 @@ def predict_simple():
                         WHERE title LIKE %s
                         ORDER BY crawl_time DESC
                         LIMIT 1
-                    """, (f"%{title}%",))
+                    """, (f"%{title.strip()}%",))
                     db_match = cur.fetchone()
+                    print(f"[DEBUG] 纵横匹配结果: {db_match}", flush=True)
                 
                 if db_match:
                     # 获取历史数据
