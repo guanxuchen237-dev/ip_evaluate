@@ -23,6 +23,8 @@ const isCrawling = ref(false)
 const isBlacklisting = ref(false)
 const toastMessage = ref('')
 const toastType = ref<'success' | 'error' | 'info'>('info')
+const isBlacklisted = ref(false)
+const blacklistInfo = ref<any>(null)
 
 const showToast = (msg: string, type: 'success' | 'error' | 'info' = 'info') => {
     toastMessage.value = msg
@@ -44,10 +46,27 @@ const fetchBookDetail = async () => {
         if (platform.value) params.append('platform', platform.value)
         const res = await axios.get(`http://localhost:5000/api/library/detail?${params.toString()}`)
         book.value = res.data
+        // 加载黑名单状态
+        await checkBlacklistStatus()
     } catch (e: any) {
         error.value = e.response?.data?.error || '节点连接失败，无法获取到底层 Payload。'
     } finally {
         loading.value = false
+    }
+}
+
+// 检查书籍是否在黑名单中
+const checkBlacklistStatus = async () => {
+    if (!book.value?.id) return
+    try {
+        const res = await axios.get(`http://localhost:5000/api/admin/blacklist/status/${book.value.id}`)
+        if (res.data && res.data.success) {
+            isBlacklisted.value = res.data.is_blacklisted
+            blacklistInfo.value = res.data
+        }
+    } catch (e) {
+        // 静默失败，不影响主功能
+        console.log('检查黑名单状态失败:', e)
     }
 }
 
@@ -147,19 +166,36 @@ const handleTriggerSpider = async () => {
 }
 
 const handleBlacklist = async () => {
-    if (!book.value || !confirm(`危险操作：确定将《${book.value.basic.title}》标记为人工屏蔽/下架状态吗？`)) return
+    if (!book.value) return
+    
+    const isRemoving = isBlacklisted.value
+    const actionText = isRemoving ? '移出黑名单' : '加入黑名单'
+    const confirmMsg = isRemoving 
+        ? `确定将《${book.value.basic.title}》移出黑名单吗？`
+        : `危险操作：确定将《${book.value.basic.title}》标记为人工屏蔽/下架状态吗？`
+    
+    if (!confirm(confirmMsg)) return
+    
     isBlacklisting.value = true
     try {
         const payload = {
             novel_id: book.value.id || '',
-            title: book.value.basic.title
+            title: book.value.basic.title,
+            author: book.value.basic.author,
+            platform: book.value.basic.platform
         }
         const token = localStorage.getItem('auth_token')
         const hdrs = token ? { 'Authorization': `Bearer ${token}` } : {}
-        await axios.post('http://localhost:5000/api/admin/blacklist', payload, { headers: hdrs })
-        showToast(`操作成功，《${book.value.basic.title}》已加入系统黑名单和监控。`, 'success')
+        
+        const endpoint = isRemoving ? '/api/admin/whitelist' : '/api/admin/blacklist'
+        const res = await axios.post(`http://localhost:5000${endpoint}`, payload, { headers: hdrs })
+        
+        // 更新黑名单状态
+        isBlacklisted.value = !isRemoving
+        
+        showToast(res.data.message || `已成功${actionText}`, 'success')
     } catch (e: any) {
-         showToast(e.response?.data?.error || '加入黑名单失败', 'error')
+        showToast(e.response?.data?.error || `${actionText}失败`, 'error')
     } finally {
         isBlacklisting.value = false
     }
@@ -302,11 +338,14 @@ const handleBlacklist = async () => {
                     </div>
                     
                     <div>
-                        <button @click="handleBlacklist" :disabled="isBlacklisting" class="flex items-center justify-center gap-2 px-4 py-2 bg-white text-rose-500 hover:bg-rose-50 border border-rose-200 rounded-xl text-sm font-bold transition-colors group min-w-[180px] disabled:opacity-50">
-                            <div v-if="isBlacklisting" class="w-4 h-4 border-2 border-rose-500 border-t-transparent rounded-full animate-spin"></div>
-                            <ShieldCheck v-else class="w-4 h-4 group-hover:hidden text-rose-400" />
-                            <AlertTriangle v-if="!isBlacklisting" class="w-4 h-4 text-rose-500 hidden group-hover:block" />
-                            {{ isBlacklisting ? '正在阻断...' : '加入下架管控黑名单' }}
+                        <button @click="handleBlacklist" :disabled="isBlacklisting" :class="isBlacklisted ? 'bg-emerald-50 text-emerald-600 border-emerald-200 hover:bg-emerald-100' : 'bg-white text-rose-500 border-rose-200 hover:bg-rose-50'" class="flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-colors group min-w-[180px] disabled:opacity-50">
+                            <div v-if="isBlacklisting" class="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+                            <ShieldCheck v-else-if="isBlacklisted" class="w-4 h-4" />
+                            <template v-else>
+                                <ShieldCheck class="w-4 h-4 group-hover:hidden text-rose-400" />
+                                <AlertTriangle class="w-4 h-4 text-rose-500 hidden group-hover:block" />
+                            </template>
+                            {{ isBlacklisting ? (isBlacklisted ? '正在移出...' : '正在阻断...') : (isBlacklisted ? '移出黑名单（白名单）' : '加入下架管控黑名单') }}
                         </button>
                     </div>
                 </div>
