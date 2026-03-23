@@ -1860,7 +1860,7 @@ onMounted(() => {
                                 <!-- 最低估值 -->
                                 <div class="bg-white rounded-[20px] p-6 shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100 text-center group hover:shadow-lg transition-all">
                                     <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3">最低估值</p>
-                                    <p class="text-3xl font-serif font-black text-slate-700 tracking-tight">¥{{ formatPrice(valuationData.estimated_min) }}<span class="text-lg text-slate-400 font-medium ml-0.5">万</span></p>
+                                    <p class="text-3xl font-black text-slate-700 tracking-tight" style="font-family: 'FZLanTingHei', 'FZHei', 'Microsoft YaHei', sans-serif;">¥{{ formatPrice(valuationData.estimated_min) }}<span class="text-lg text-slate-400 font-medium ml-0.5">万</span></p>
                                     <div class="mt-3 h-1 w-12 mx-auto rounded-full bg-slate-200"></div>
                                 </div>
                                 <!-- AI建议价 -->
@@ -1871,14 +1871,14 @@ onMounted(() => {
                                             <DollarSign class="w-4 h-4 text-amber-600" />
                                             <p class="text-[11px] font-bold text-amber-700 uppercase tracking-widest">AI 建议价</p>
                                         </div>
-                                        <p class="text-4xl font-serif font-black text-slate-900 tracking-tight">¥{{ formatPrice(valuationData.estimated_value) }}<span class="text-xl text-slate-500 font-medium ml-0.5">万</span></p>
+                                        <p class="text-4xl font-black text-slate-900 tracking-tight" style="font-family: 'FZLanTingHei', 'FZHei', 'Microsoft YaHei', sans-serif;">¥{{ formatPrice(valuationData.estimated_value) }}<span class="text-xl text-slate-500 font-medium ml-0.5">万</span></p>
                                         <p class="text-[12px] text-amber-700/80 font-bold mt-2">置信度 {{ valuationData.confidence }}%</p>
                                     </div>
                                 </div>
                                 <!-- 最高估值 -->
                                 <div class="bg-white rounded-[20px] p-6 shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100 text-center group hover:shadow-lg transition-all">
                                     <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3">最高估值</p>
-                                    <p class="text-3xl font-serif font-black text-slate-700 tracking-tight">¥{{ formatPrice(valuationData.estimated_max) }}<span class="text-lg text-slate-400 font-medium ml-0.5">万</span></p>
+                                    <p class="text-3xl font-black text-slate-700 tracking-tight" style="font-family: 'FZLanTingHei', 'FZHei', 'Microsoft YaHei', sans-serif;">¥{{ formatPrice(valuationData.estimated_max) }}<span class="text-lg text-slate-400 font-medium ml-0.5">万</span></p>
                                     <div class="mt-3 h-1 w-12 mx-auto rounded-full bg-slate-200"></div>
                                 </div>
                             </div>
@@ -1892,7 +1892,7 @@ onMounted(() => {
                                             <Target class="w-5 h-5 text-slate-700" stroke-width="1.5" />
                                         </div>
                                         <div>
-                                            <h3 class="font-serif text-lg font-black text-slate-900 tracking-tight">价格影响因子</h3>
+                                            <h3 class="text-lg font-black text-slate-900 tracking-tight" style="font-family: 'FZLanTingHei', 'FZHei', 'Microsoft YaHei', sans-serif;">价格影响因子</h3>
                                             <p class="text-[11px] text-slate-400 font-medium">Price Impact Factors</p>
                                         </div>
                                     </div>
@@ -1929,7 +1929,7 @@ onMounted(() => {
                                             <History class="w-5 h-5 text-slate-700" stroke-width="1.5" />
                                         </div>
                                         <div>
-                                            <h3 class="font-serif text-lg font-black text-slate-900 tracking-tight">可比 IP 案例</h3>
+                                            <h3 class="text-lg font-black text-slate-900 tracking-tight" style="font-family: 'FZLanTingHei', 'FZHei', 'Microsoft YaHei', sans-serif;">可比 IP 案例</h3>
                                             <p class="text-[11px] text-slate-400 font-medium">Comparable IP Cases</p>
                                         </div>
                                     </div>
@@ -1953,7 +1953,7 @@ onMounted(() => {
                                                 </div>
                                                 <div class="text-right">
                                                     <div class="text-[12px] text-slate-400">估价</div>
-                                                    <div class="text-sm font-serif font-black text-slate-800">¥{{ formatPrice(comp.estimated_price) }}万</div>
+                                                    <div class="text-sm font-black text-slate-800" style="font-family: 'FZLanTingHei', 'FZHei', 'Microsoft YaHei', sans-serif;">¥{{ formatPrice(comp.estimated_price) }}万</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -1968,7 +1968,7 @@ onMounted(() => {
                                         <Clapperboard class="w-5 h-5 text-purple-700" stroke-width="1.5" />
                                     </div>
                                     <div>
-                                        <h3 class="font-serif text-lg font-black text-slate-900 tracking-tight">改编方向推荐</h3>
+                                        <h3 class="text-lg font-black text-slate-900 tracking-tight" style="font-family: 'FZLanTingHei', 'FZHei', 'Microsoft YaHei', sans-serif;">改编方向推荐</h3>
                                         <p class="text-[11px] text-slate-400 font-medium">Adaptation Recommendations · 基于 AI 评估与市场数据</p>
                                     </div>
                                 </div>
