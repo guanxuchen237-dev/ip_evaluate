@@ -5625,6 +5625,35 @@ def predict_simple():
                     'model': 'simple_decay'
                 })
         
+        # 为未来预测的每个月单独计算趋势标签（基于与前一个月的对比）
+        if future_predictions:
+            # 获取基准值（最后一个月的历史数据或当前月票）
+            base_value = monthly_tickets
+            if filtered_history and len(filtered_history) > 0:
+                base_value = filtered_history[-1].get('monthly_tickets', monthly_tickets) or monthly_tickets
+            
+            prev_value = base_value
+            for i, pred in enumerate(future_predictions):
+                curr_value = pred['predicted_tickets']
+                if prev_value > 0:
+                    change_rate = (curr_value - prev_value) / prev_value * 100
+                else:
+                    change_rate = 0 if curr_value == 0 else 100
+                
+                # 根据变化率判断趋势
+                if change_rate > 15:
+                    pred['trend'] = "快速增长"
+                elif change_rate > 5:
+                    pred['trend'] = "稳步上升"
+                elif change_rate > -5:
+                    pred['trend'] = "趋于平稳"
+                elif change_rate > -15:
+                    pred['trend'] = "有所下滑"
+                else:
+                    pred['trend'] = "明显下滑"
+                
+                prev_value = curr_value
+        
         # 构建AI提示词 - 使用纯文本格式，避免Markdown符号
         # 先构建预测部分（避免f-string中的反斜杠问题）
         future_pred_text = ""
