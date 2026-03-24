@@ -1263,7 +1263,19 @@ async function saveSettings(section: string) {
     })
     const data = await res.json()
     if (res.ok) {
-      showSettingsToast(data.message || '保存成功', 'success')
+      // AI配置保存成功使用美化对话框
+      if (section === 'ai') {
+        showConfirmDialog({
+          title: '配置保存成功',
+          message: data.message || 'AI 配置已更新，模型重新初始化中...',
+          type: 'info',
+          confirmText: '我知道了',
+          cancelText: '',
+          onConfirm: () => closeConfirmDialog()
+        })
+      } else {
+        showSettingsToast(data.message || '保存成功', 'success')
+      }
     } else {
       // AI配置错误使用美化对话框
       if (section === 'ai' && data.code) {

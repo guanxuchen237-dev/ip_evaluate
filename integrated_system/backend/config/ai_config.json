@@ -7,7 +7,7 @@
             "provider": "deepseek",
             "model_name": "deepseek-chat",
             "base_url": "https://api.deepseek.com/v1",
-            "api_key": "d1cc86c1f4604cf69f13b1e6db7bf72b"
+            "api_key": "sk-16db9723dfea45588e4d87cc4cde42dd"
         }
     ]
 }
