@@ -53,6 +53,11 @@ async function fetchBlacklist() {
     params.append('page', page.value.toString())
     params.append('per_page', pageSize.value.toString())
     params.append('status', filterStatus.value === 'all' ? 'all' : filterStatus.value)
+    if (searchQuery.value.trim()) {
+      params.append('search', searchQuery.value.trim())
+    }
+    
+    console.log('Fetching blacklist with status:', filterStatus.value)
     
     const res = await fetch(`${API_BASE}/admin/blacklist/list?${params}`, {
       headers: { 'Authorization': `Bearer ${token}` }
@@ -60,11 +65,13 @@ async function fetchBlacklist() {
     
     if (res.ok) {
       const data = await res.json()
+      console.log('Blacklist API response:', data)
       blacklist.value = data.items || []
       total.value = data.total || 0
       totalPages.value = data.total_pages || 0
     } else {
-      console.error('获取黑名单失败:', await res.text())
+      const err = await res.text()
+      console.error('获取黑名单失败:', err)
     }
   } catch (e) {
     console.error('获取黑名单失败:', e)
@@ -195,6 +202,17 @@ function showDetail(item: any) {
 function closeDetail() {
   detailModal.value.show = false
   detailModal.value.item = null
+}
+
+// 从详情弹窗恢复书籍
+function restoreFromDetail() {
+  const item = detailModal.value.item
+  if (!item || item.status !== 'active') return
+  closeDetail()
+  // 延迟一下确保弹窗关闭后再显示确认对话框
+  setTimeout(() => {
+    showRestoreDialog(item)
+  }, 50)
 }
 
 // 格式化日期
@@ -329,21 +347,21 @@ onMounted(() => {
                 <button 
                   @click="filterStatus = 'active'"
                   class="px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
-                  :class="filterStatus === 'active' ? 'bg-rose-50 text-rose-600 border border-rose-200' : 'text-slate-500 hover:bg-slate-50 border border-transparent'"
+                  :class="filterStatus === 'active' ? 'bg-rose-500 text-white border border-rose-500 shadow-sm' : 'text-slate-500 hover:bg-slate-50 border border-slate-200 bg-white'"
                 >
                   已下架
                 </button>
                 <button 
                   @click="filterStatus = 'removed'"
                   class="px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
-                  :class="filterStatus === 'removed' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'text-slate-500 hover:bg-slate-50 border border-transparent'"
+                  :class="filterStatus === 'removed' ? 'bg-emerald-500 text-white border border-emerald-500 shadow-sm' : 'text-slate-500 hover:bg-slate-50 border border-slate-200 bg-white'"
                 >
                   已恢复
                 </button>
                 <button 
                   @click="filterStatus = 'all'"
                   class="px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
-                  :class="filterStatus === 'all' ? 'bg-indigo-50 text-indigo-600 border border-indigo-200' : 'text-slate-500 hover:bg-slate-50 border border-transparent'"
+                  :class="filterStatus === 'all' ? 'bg-indigo-500 text-white border border-indigo-500 shadow-sm' : 'text-slate-500 hover:bg-slate-50 border border-slate-200 bg-white'"
                 >
                   全部
                 </button>
@@ -406,11 +424,24 @@ onMounted(() => {
               class="grid grid-cols-12 gap-4 px-6 py-4 items-center hover:bg-slate-50/50 transition-colors"
             >
               <div class="col-span-3">
-                <div class="font-medium text-slate-900 flex items-center gap-2">
-                  <BookOpen class="w-4 h-4 text-indigo-500" />
-                  {{ item.title }}
+                <div class="flex items-center gap-3">
+                  <!-- 封面图片 -->
+                  <div class="w-12 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-slate-100">
+                    <img 
+                      v-if="item.cover_url" 
+                      :src="item.cover_url" 
+                      class="w-full h-full object-cover"
+                      @error="($event.target as HTMLImageElement).style.display='none'"
+                    />
+                    <div v-else class="w-full h-full flex items-center justify-center">
+                      <BookOpen class="w-5 h-5 text-slate-300" />
+                    </div>
+                  </div>
+                  <div class="min-w-0">
+                    <div class="font-medium text-slate-900 truncate">{{ item.title }}</div>
+                    <div class="text-xs text-slate-400 mt-1">ID: {{ item.novel_id }}</div>
+                  </div>
                 </div>
-                <div class="text-xs text-slate-400 mt-1">ID: {{ item.novel_id }}</div>
               </div>
               <div class="col-span-2 text-sm text-slate-600">{{ item.author || '-' }}</div>
               <div class="col-span-1">
@@ -559,8 +590,19 @@ onMounted(() => {
           </div>
           
           <div v-if="detailModal.item" class="space-y-4">
-            <div class="flex items-start gap-3 p-4 bg-slate-50 rounded-xl">
-              <BookOpen class="w-5 h-5 text-indigo-500 mt-0.5" />
+            <div class="flex items-start gap-4 p-4 bg-slate-50 rounded-xl">
+              <!-- 封面图片 -->
+              <div class="w-16 h-22 rounded-lg overflow-hidden flex-shrink-0 bg-slate-100">
+                <img 
+                  v-if="detailModal.item.cover_url" 
+                  :src="detailModal.item.cover_url" 
+                  class="w-full h-full object-cover"
+                  @error="($event.target as HTMLImageElement).style.display='none'"
+                />
+                <div v-else class="w-full h-full flex items-center justify-center">
+                  <BookOpen class="w-6 h-6 text-slate-300" />
+                </div>
+              </div>
               <div>
                 <div class="font-medium text-slate-900">{{ detailModal.item.title }}</div>
                 <div class="text-xs text-slate-500 mt-1">书籍ID: {{ detailModal.item.novel_id }}</div>
@@ -616,7 +658,7 @@ onMounted(() => {
             </button>
             <button 
               v-if="detailModal.item?.status === 'active'"
-              @click="closeDetail(); showRestoreDialog(detailModal.item)"
+              @click="restoreFromDetail"
               class="px-4 py-2 rounded-xl text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 transition-colors"
             >
               <RotateCcw class="w-4 h-4 inline mr-1" />

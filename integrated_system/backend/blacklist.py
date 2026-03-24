@@ -26,6 +26,7 @@ def init_blacklist_table():
                     title VARCHAR(500) NOT NULL,
                     author VARCHAR(255) DEFAULT '',
                     platform VARCHAR(50) DEFAULT '',
+                    cover_url VARCHAR(1000) DEFAULT '',
                     reason TEXT,
                     admin_id INT DEFAULT NULL,
                     admin_name VARCHAR(100) DEFAULT '',
@@ -38,6 +39,15 @@ def init_blacklist_table():
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
             """)
             conn.commit()
+            
+            # 迁移：添加 cover_url 字段（如果表已存在但没有该字段）
+            try:
+                cursor.execute("ALTER TABLE ip_blacklist ADD COLUMN cover_url VARCHAR(1000) DEFAULT '' AFTER platform")
+                conn.commit()
+                print("[MIGRATION] Added cover_url column to ip_blacklist")
+            except Exception as e:
+                # 字段已存在或其他错误，忽略
+                pass
     finally:
         conn.close()
 
@@ -46,6 +56,7 @@ def init_blacklist_table():
 # ============================================================
 
 @blacklist_bp.route('/admin/blacklist', methods=['POST'])
+@admin_required
 def admin_add_blacklist():
     """管理端接口：加入下架管控黑名单"""
     data = request.json or {}
@@ -54,6 +65,7 @@ def admin_add_blacklist():
     reason = data.get('reason', 'Admin manual enforcement')
     author = data.get('author', '')
     platform = data.get('platform', '')
+    cover_url = data.get('cover_url', '')
     
     if not novel_id or not title:
         return jsonify({'success': False, 'error': '缺少必要参数: novel_id 和 title'}), 400
@@ -84,15 +96,15 @@ def admin_add_blacklist():
                     cursor.execute("""
                         UPDATE ip_blacklist 
                         SET status = 'active', reason = %s, admin_id = %s, admin_name = %s,
-                            author = %s, platform = %s, updated_at = NOW(), removed_at = NULL
+                            author = %s, platform = %s, cover_url = %s, updated_at = NOW(), removed_at = NULL
                         WHERE novel_id = %s
-                    """, (reason, admin_id, admin_name, author, platform, novel_id))
+                    """, (reason, admin_id, admin_name, author, platform, cover_url, novel_id))
             else:
                 # 新加入黑名单
                 cursor.execute("""
-                    INSERT INTO ip_blacklist (novel_id, title, author, platform, reason, admin_id, admin_name)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s)
-                """, (novel_id, title, author, platform, reason, admin_id, admin_name))
+                    INSERT INTO ip_blacklist (novel_id, title, author, platform, cover_url, reason, admin_id, admin_name)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                """, (novel_id, title, author, platform, cover_url, reason, admin_id, admin_name))
             
             conn.commit()
             
@@ -110,6 +122,7 @@ def admin_add_blacklist():
 
 
 @blacklist_bp.route('/admin/whitelist', methods=['POST'])
+@admin_required
 def admin_remove_blacklist():
     """管理端接口：将书籍移出黑名单（加入白名单）"""
     data = request.json or {}
@@ -211,40 +224,53 @@ def get_blacklist_status(novel_id):
 
 
 @blacklist_bp.route('/admin/blacklist/list', methods=['GET'])
+@admin_required
 def get_blacklist():
     """获取黑名单列表"""
     status = request.args.get('status', 'active')  # active, removed, all
     page = int(request.args.get('page', 1))
     per_page = int(request.args.get('per_page', 20))
+    search = request.args.get('search', '').strip()
     
     conn = pymysql.connect(**AUTH_DB_CONFIG)
     try:
         with conn.cursor() as cursor:
-            where_clause = ""
+            where_clauses = []
             params = []
             
             if status == 'active':
-                where_clause = "WHERE status = 'active'"
+                where_clauses.append("status = 'active'")
             elif status == 'removed':
-                where_clause = "WHERE status = 'removed'"
+                where_clauses.append("status = 'removed'")
             
-            # 获取总数
+            # 搜索条件
+            if search:
+                where_clauses.append("(title LIKE %s OR author LIKE %s OR novel_id LIKE %s)")
+                search_pattern = f"%{search}%"
+                params.extend([search_pattern, search_pattern, search_pattern])
+            
+            where_clause = "WHERE " + " AND ".join(where_clauses) if where_clauses else ""
+            
             count_sql = f"SELECT COUNT(*) FROM ip_blacklist {where_clause}"
+            print(f"[DEBUG] Blacklist count SQL: {count_sql}, params: {params}")
             cursor.execute(count_sql, params)
             total = cursor.fetchone()[0]
+            print(f"[DEBUG] Total blacklist items: {total}")
             
             # 获取列表
             offset = (page - 1) * per_page
             data_sql = f"""
-                SELECT novel_id, title, author, platform, reason, admin_name, 
+                SELECT novel_id, title, author, platform, cover_url, reason, admin_name, 
                        status, created_at, removed_at
                 FROM ip_blacklist {where_clause}
                 ORDER BY created_at DESC
                 LIMIT %s OFFSET %s
             """
+            print(f"[DEBUG] Blacklist data SQL: {data_sql}, params: {params + [per_page, offset]}")
             cursor.execute(data_sql, params + [per_page, offset])
             
             results = cursor.fetchall()
+            print(f"[DEBUG] Query returned {len(results)} rows")
             items = []
             for row in results:
                 items.append({
@@ -252,11 +278,12 @@ def get_blacklist():
                     'title': row[1],
                     'author': row[2],
                     'platform': row[3],
-                    'reason': row[4],
-                    'admin_name': row[5],
-                    'status': row[6],
-                    'created_at': row[7].isoformat() if row[7] else None,
-                    'removed_at': row[8].isoformat() if row[8] else None
+                    'cover_url': row[4],
+                    'reason': row[5],
+                    'admin_name': row[6],
+                    'status': row[7],
+                    'created_at': row[8].isoformat() if row[8] else None,
+                    'removed_at': row[9].isoformat() if row[9] else None
                 })
             
             return jsonify({

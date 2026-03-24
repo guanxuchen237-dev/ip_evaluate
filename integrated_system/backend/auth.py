@@ -208,6 +208,31 @@ def login_required(f):
             payload = decode_token(token)
             g.current_user_id = payload['user_id']
             g.current_user_role = payload['role']
+            # 设置 g.user 供其他模块使用
+            g.user = {
+                'id': payload['user_id'],
+                'role': payload['role']
+            }
+            # 尝试从数据库获取用户名并更新活跃时间
+            try:
+                conn = get_auth_db()
+                with conn.cursor() as cursor:
+                    cursor.execute(
+                        "SELECT username FROM users WHERE id = %s",
+                        (payload['user_id'],)
+                    )
+                    user = cursor.fetchone()
+                    if user:
+                        g.user['username'] = user['username']
+                    # 更新用户活跃时间（用于在线状态判断）
+                    cursor.execute(
+                        "UPDATE users SET last_active_at = NOW() WHERE id = %s",
+                        (payload['user_id'],)
+                    )
+                    conn.commit()
+                conn.close()
+            except Exception as e:
+                print(f"[AUTH] 更新用户活跃时间失败: {e}")
         except jwt.ExpiredSignatureError:
             return jsonify({'error': '令牌已过期，请重新登录', 'code': 'TOKEN_EXPIRED'}), 401
         except jwt.InvalidTokenError:
@@ -590,7 +615,7 @@ def manage_users():
                     return jsonify({'error': '用户名或邮箱已存在'}), 400
 
                 cursor.execute(
-                    "INSERT INTO users (username, password_hash, email, role, is_active) VALUES (%s, %s, %s, %s, %s)",
+                    "INSERT INTO users (username, password_hash, email, role, is_active, last_active_at) VALUES (%s, %s, %s, %s, %s, NULL)",
                     (username, hashed_password, email, role, is_active)
                 )
                 conn.commit()
@@ -696,6 +721,7 @@ def manage_single_user(user_id):
     role = data.get('role')
     is_active = data.get('is_active')
     token_limit = data.get('token_limit', 0)
+    password = data.get('password')  # 新增：获取密码字段
 
     if not username:
         return jsonify({'error': '用户名不能为空'}), 400
@@ -715,10 +741,19 @@ def manage_single_user(user_id):
             if cursor.fetchone():
                 return jsonify({'error': '用户名或邮箱已被其他人使用'}), 400
 
-            cursor.execute(
-                "UPDATE users SET username = %s, email = %s, role = %s, is_active = %s, token_limit = %s WHERE id = %s",
-                (username, email, role, is_active, int(token_limit or 0), user_id)
-            )
+            # 如果有密码，则更新密码
+            if password and len(password) >= 6:
+                from werkzeug.security import generate_password_hash
+                password_hash = generate_password_hash(password)
+                cursor.execute(
+                    "UPDATE users SET username = %s, email = %s, role = %s, is_active = %s, token_limit = %s, password_hash = %s WHERE id = %s",
+                    (username, email, role, is_active, int(token_limit or 0), password_hash, user_id)
+                )
+            else:
+                cursor.execute(
+                    "UPDATE users SET username = %s, email = %s, role = %s, is_active = %s, token_limit = %s WHERE id = %s",
+                    (username, email, role, is_active, int(token_limit or 0), user_id)
+                )
             conn.commit()
         conn.close()
         return jsonify({'message': '用户信息更新成功'})

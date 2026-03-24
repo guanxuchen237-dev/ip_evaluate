@@ -26,6 +26,21 @@ const toastType = ref<'success' | 'error' | 'info'>('info')
 const isBlacklisted = ref(false)
 const blacklistInfo = ref<any>(null)
 
+// 确认对话框状态
+const confirmDialog = ref({
+  show: false,
+  title: '',
+  message: '',
+  type: 'warning' as 'info' | 'warning' | 'danger',
+  confirmText: '确定',
+  cancelText: '取消',
+  onConfirm: () => {},
+  onCancel: () => {}
+})
+
+// 待执行的黑名单操作
+const pendingBlacklistAction = ref<{ isRemoving: boolean; actionText: string } | null>(null)
+
 const showToast = (msg: string, type: 'success' | 'error' | 'info' = 'info') => {
     toastMessage.value = msg
     toastType.value = type
@@ -166,23 +181,56 @@ const handleTriggerSpider = async () => {
 }
 
 const handleBlacklist = async () => {
-    if (!book.value) return
+    console.log('handleBlacklist clicked, book.value:', book.value)
+    if (!book.value) {
+        console.log('book.value is null, returning')
+        return
+    }
     
     const isRemoving = isBlacklisted.value
     const actionText = isRemoving ? '移出黑名单' : '加入黑名单'
-    const confirmMsg = isRemoving 
-        ? `确定将《${book.value.basic.title}》移出黑名单吗？`
-        : `危险操作：确定将《${book.value.basic.title}》标记为人工屏蔽/下架状态吗？`
+    console.log('isRemoving:', isRemoving, 'actionText:', actionText)
     
-    if (!confirm(confirmMsg)) return
+    // 设置待执行的操作
+    pendingBlacklistAction.value = { isRemoving, actionText }
+    
+    // 显示美化的确认对话框
+    confirmDialog.value = {
+        show: true,
+        title: isRemoving ? '移出黑名单' : '危险操作：加入下架管控',
+        message: isRemoving 
+            ? `确定将《${book.value.basic.title}》移出黑名单吗？\n\n移出后该书将恢复正常展示状态。`
+            : `确定将《${book.value.basic.title}》标记为人工屏蔽/下架状态吗？\n\n下架后该书将从推荐列表中移除，用户无法查看详情。`,
+        type: isRemoving ? 'info' : 'danger',
+        confirmText: isRemoving ? '确认移出' : '确认下架',
+        cancelText: '取消',
+        onConfirm: executeBlacklistAction,
+        onCancel: closeConfirmDialog
+    }
+    console.log('confirmDialog set to:', confirmDialog.value)
+}
+
+const closeConfirmDialog = () => {
+    confirmDialog.value.show = false
+    pendingBlacklistAction.value = null
+}
+
+const executeBlacklistAction = async () => {
+    if (!book.value || !pendingBlacklistAction.value) return
+    
+    // 先保存操作信息，再关闭对话框
+    const { isRemoving, actionText } = pendingBlacklistAction.value
+    closeConfirmDialog()
     
     isBlacklisting.value = true
+    
     try {
         const payload = {
             novel_id: book.value.id || '',
             title: book.value.basic.title,
             author: book.value.basic.author,
-            platform: book.value.basic.platform
+            platform: book.value.basic.platform,
+            cover_url: book.value.basic.cover || ''
         }
         const token = localStorage.getItem('auth_token')
         const hdrs = token ? { 'Authorization': `Bearer ${token}` } : {}
@@ -198,12 +246,58 @@ const handleBlacklist = async () => {
         showToast(e.response?.data?.error || `${actionText}失败`, 'error')
     } finally {
         isBlacklisting.value = false
+        pendingBlacklistAction.value = null
     }
 }
 </script>
 
 <template>
     <div class="min-h-screen bg-slate-50 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] relative">
+        <!-- Confirm Dialog -->
+        <Teleport to="body">
+            <div v-if="confirmDialog.show" class="fixed inset-0 z-[9999] flex items-center justify-center p-4" style="background: rgba(0,0,0,0.5);">
+                <div class="absolute inset-0" @click="closeConfirmDialog"></div>
+                <div class="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-6" style="z-index: 10000;">
+                    <div class="flex items-start gap-4">
+                        <div 
+                            class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+                            :class="{
+                                'bg-indigo-50 text-indigo-600': confirmDialog.type === 'info',
+                                'bg-amber-50 text-amber-600': confirmDialog.type === 'warning',
+                                'bg-rose-50 text-rose-600': confirmDialog.type === 'danger'
+                            }"
+                        >
+                            <AlertTriangle v-if="confirmDialog.type === 'warning' || confirmDialog.type === 'danger'" class="w-6 h-6" />
+                            <CheckCircle2 v-else class="w-6 h-6" />
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-slate-900 mb-2">{{ confirmDialog.title }}</h3>
+                            <p class="text-sm text-slate-600 whitespace-pre-line leading-relaxed">{{ confirmDialog.message }}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-end gap-3 mt-6">
+                        <button 
+                            @click="closeConfirmDialog"
+                            class="px-4 py-2 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100 transition-colors"
+                        >
+                            {{ confirmDialog.cancelText }}
+                        </button>
+                        <button 
+                            @click="confirmDialog.onConfirm"
+                            class="px-4 py-2 rounded-xl text-sm font-medium text-white transition-colors"
+                            :class="{
+                                'bg-indigo-600 hover:bg-indigo-700': confirmDialog.type === 'info',
+                                'bg-amber-600 hover:bg-amber-700': confirmDialog.type === 'warning',
+                                'bg-rose-600 hover:bg-rose-700': confirmDialog.type === 'danger'
+                            }"
+                        >
+                            {{ confirmDialog.confirmText }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </Teleport>
+
         <!-- Toast Notification -->
         <div v-if="toastMessage" class="fixed top-8 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-6 py-3 rounded-full shadow-lg border animate-fade-in-down transition-all"
              :class="{
