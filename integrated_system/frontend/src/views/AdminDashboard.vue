@@ -10,7 +10,7 @@ import {
   Cpu, HardDrive, Database, LayoutDashboard, Library, Settings, BookOpen, TrendingUp,
   Zap, FileText, AlertOctagon, RotateCcw, Eye, EyeOff, ChevronLeft, ChevronRight, Filter,
   Save, TestTube, Info, RefreshCw, KeyRound, Link, Bot, Bug,
-  Download, Sparkles, Radar, MessageSquare, BarChart3, Scan, Crown, Cloud, Grid3X3
+  Download, Sparkles, Radar, MessageSquare, BarChart3, Scan, Crown, Cloud, Grid3X3, Ban
 } from 'lucide-vue-next'
 
 const router = useRouter()
@@ -27,6 +27,7 @@ const adminDockItems = [
   { title: "总览", titleEn: "Overview", url: "/admin?tab=overview", icon: LayoutDashboard },
   { title: "用户管理", titleEn: "Users", url: "/admin?tab=users", icon: Users },
   { title: "书籍管理", titleEn: "Books", url: "/admin?tab=books", icon: Library },
+  { title: "黑名单", titleEn: "Blacklist", url: "/admin?tab=blacklist", icon: Ban },
   { title: "平台监控", titleEn: "Platform", url: "/admin?tab=platform", icon: Globe },
   { title: "数据采集", titleEn: "Pipeline", url: "/admin?tab=monitor", icon: Database },
   { title: "智能审计", titleEn: "Audit", url: "/admin?tab=audit", icon: Shield },

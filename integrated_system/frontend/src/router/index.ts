@@ -111,6 +111,12 @@ const router = createRouter({
             meta: { requiresAuth: true, requiresAdmin: true }
         },
         {
+            path: '/admin/blacklist',
+            name: 'admin-blacklist',
+            component: () => import('../views/BlacklistManageView.vue'),
+            meta: { requiresAuth: true, requiresAdmin: true }
+        },
+        {
             path: '/private',
             name: 'private',
             component: PrivateView,
