@@ -1265,7 +1265,19 @@ async function saveSettings(section: string) {
     if (res.ok) {
       showSettingsToast(data.message || '保存成功', 'success')
     } else {
-      showSettingsToast(data.error || '保存失败', 'error')
+      // AI配置错误使用美化对话框
+      if (section === 'ai' && data.code) {
+        showConfirmDialog({
+          title: data.error || '配置保存失败',
+          message: data.detail || data.error || '请检查您的 API Key 和配置',
+          type: 'warning',
+          confirmText: '我知道了',
+          cancelText: '',
+          onConfirm: () => closeConfirmDialog()
+        })
+      } else {
+        showSettingsToast(data.error || '保存失败', 'error')
+      }
     }
   } catch (e) {
     showSettingsToast('网络错误', 'error')

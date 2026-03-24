@@ -3539,6 +3539,58 @@ def update_admin_settings():
             current_cfg = ai_service.load_config()
             if 'api_key' in values and '*' in values['api_key']:
                 values['api_key'] = current_cfg.get('api_key', '')
+            
+            # 验证API Key有效性
+            api_key = values.get('api_key', '')
+            base_url = values.get('base_url', '')
+            provider = values.get('provider', '')
+            
+            if api_key and base_url and provider != 'gemini':  # gemini是本地服务，不需要验证
+                try:
+                    from openai import OpenAI
+                    import httpx
+                    
+                    http_client = httpx.Client(verify=False, timeout=30.0, trust_env=False)
+                    test_client = OpenAI(
+                        base_url=base_url,
+                        api_key=api_key,
+                        http_client=http_client
+                    )
+                    
+                    # 发送一个简单的测试请求
+                    test_response = test_client.chat.completions.create(
+                        model=values.get('model_name', 'gpt-4o'),
+                        messages=[{"role": "user", "content": "Hello"}],
+                        max_tokens=5
+                    )
+                    
+                except Exception as e:
+                    error_msg = str(e)
+                    if '401' in error_msg or 'Authentication' in error_msg or 'invalid' in error_msg.lower():
+                        return jsonify({
+                            'error': 'API Key 无效',
+                            'detail': '无法通过身份验证，请检查您的 API Key 是否正确',
+                            'code': 'API_KEY_INVALID'
+                        }), 400
+                    elif '404' in error_msg:
+                        return jsonify({
+                            'error': '模型或接口不存在',
+                            'detail': '请检查模型名称或 Base URL 是否正确',
+                            'code': 'MODEL_NOT_FOUND'
+                        }), 400
+                    elif '429' in error_msg:
+                        return jsonify({
+                            'error': '请求过于频繁',
+                            'detail': 'API 请求被限流，请稍后再试',
+                            'code': 'RATE_LIMITED'
+                        }), 400
+                    else:
+                        return jsonify({
+                            'error': '连接失败',
+                            'detail': f'无法连接到 AI 服务: {error_msg[:100]}',
+                            'code': 'CONNECTION_ERROR'
+                        }), 400
+            
             ai_service.update_config(values)
             return jsonify({'status': 'success', 'message': 'AI 配置已更新，模型重新初始化中...'})
 
