@@ -933,6 +933,44 @@ async function doResolveAuditLog(id: number, action: string) {
     }
 }
 
+async function deleteAuditLog(id: number, bookTitle?: string) {
+    const title = bookTitle || '该记录'
+    
+    showConfirmDialog({
+        title: '删除审计记录',
+        message: `确定要删除《${title}》的审计记录吗？\n\n此操作不可恢复！`,
+        type: 'danger',
+        confirmText: '确定删除',
+        cancelText: '取消',
+        onConfirm: async () => {
+            closeConfirmDialog()
+            await executeDeleteAuditLog(id, title)
+        },
+        onCancel: () => closeConfirmDialog()
+    })
+}
+
+async function executeDeleteAuditLog(id: number, title: string) {
+    try {
+        const token = localStorage.getItem('auth_token')
+        const res = await fetch(`${API_BASE}/admin/audit_logs/${id}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        })
+        
+        if (res.ok) {
+            fetchAuditLogs()
+            showToast(`《${title}》已删除`, 'success')
+        } else {
+            const err = await res.text()
+            showToast(`删除失败: ${err}`, 'error')
+        }
+    } catch (e) {
+        console.error('删除审计日志失败:', e)
+        showToast('删除失败，请检查网络', 'error')
+    }
+}
+
 const gemScanLoading = ref(false)
 
 async function triggerGemScan() {
@@ -2571,18 +2609,31 @@ const formatPeriod = (period: string) => {
                           </div>
                           
                           <!-- Actions -->
-                          <div class="flex gap-2">
-                              <button v-if="log.status === 'Pending' || log.status === 'PENDING'" @click="resolveAuditLog(log.id, 'resolve')" class="flex-1 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded drop-shadow-sm text-xs font-bold transition-colors" title="标记该作品已通过复核">已处理</button>
-                              <button v-if="log.status === 'Pending' || log.status === 'PENDING'" @click="resolveAuditLog(log.id, 'ignore')" class="flex-1 py-1.5 px-3 bg-white border border-slate-200 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 text-slate-500 rounded drop-shadow-sm text-xs font-bold transition-colors" title="取消该作品的潜力遗珠标记">取消标记</button>
+                          <div class="grid grid-cols-2 gap-2">
+                              <button v-if="log.status === 'Pending' || log.status === 'PENDING'" @click="resolveAuditLog(log.id, 'resolve')" 
+                                      class="py-2 px-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-md shadow-sm text-xs font-bold transition-colors flex items-center justify-center gap-1.5" 
+                                      title="标记该作品已通过复核">
+                                  <CheckCircle2 class="w-3.5 h-3.5" /> 已处理
+                              </button>
+                              <button v-if="log.status === 'Pending' || log.status === 'PENDING'" @click="resolveAuditLog(log.id, 'ignore')" 
+                                      class="py-2 px-2 bg-white border border-slate-200 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 text-slate-500 rounded-md shadow-sm text-xs font-bold transition-colors flex items-center justify-center gap-1.5" 
+                                      title="取消该作品的潜力遗珠标记">
+                                  <X class="w-3.5 h-3.5" /> 取消标记
+                              </button>
+                              <button @click="deleteAuditLog(log.id, log.book_title)" 
+                                      class="py-2 px-2 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-md shadow-sm text-xs font-bold transition-colors flex items-center justify-center gap-1.5" 
+                                      title="删除该记录">
+                                  <Trash2 class="w-3.5 h-3.5" /> 删除
+                              </button>
                               <!-- 有报告时显示展开/收起 -->
                               <button v-if="log.markdown_report && log.markdown_report.length > 100" @click="toggleLogExpand(log.id)" 
-                                      class="flex-1 py-1.5 bg-violet-50 hover:bg-violet-100 text-violet-600 rounded drop-shadow-sm text-xs font-bold transition-colors flex items-center justify-center gap-1">
-                                 <FileText class="w-3 h-3" /> {{ expandedLogId === log.id ? '收起报告' : '展开报告' }}
+                                      class="py-2 px-2 bg-violet-50 hover:bg-violet-100 text-violet-600 rounded-md shadow-sm text-xs font-bold transition-colors flex items-center justify-center gap-1.5">
+                                  <FileText class="w-3.5 h-3.5" /> {{ expandedLogId === log.id ? '收起' : '展开' }}
                               </button>
                               <!-- 没有报告时显示生成按钮 -->
                               <button v-else @click="toggleLogExpand(log.id)" :disabled="isReportLoading(log.id)"
-                                      class="flex-1 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-600 rounded drop-shadow-sm text-xs font-bold transition-colors flex items-center justify-center gap-1 disabled:opacity-50">
-                                 <Sparkles class="w-3 h-3" :class="{'animate-spin': isReportLoading(log.id)}" /> {{ isReportLoading(log.id) ? '生成中...' : 'AI分析' }}
+                                      class="py-2 px-2 bg-amber-50 hover:bg-amber-100 text-amber-600 rounded-md shadow-sm text-xs font-bold transition-colors flex items-center justify-center gap-1.5 disabled:opacity-50">
+                                  <Sparkles class="w-3.5 h-3.5" :class="{'animate-spin': isReportLoading(log.id)}" /> {{ isReportLoading(log.id) ? '生成中' : 'AI分析' }}
                               </button>
                           </div>
                        </div>

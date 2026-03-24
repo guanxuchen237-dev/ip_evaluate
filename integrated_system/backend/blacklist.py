@@ -6,7 +6,7 @@
 from flask import Blueprint, request, jsonify, g
 from datetime import datetime
 import pymysql
-from auth import AUTH_DB_CONFIG, require_admin
+from auth import AUTH_DB_CONFIG, admin_required
 
 blacklist_bp = Blueprint('blacklist', __name__, url_prefix='/api')
 
@@ -26,14 +26,14 @@ def init_blacklist_table():
                     title VARCHAR(500) NOT NULL,
                     author VARCHAR(255) DEFAULT '',
                     platform VARCHAR(50) DEFAULT '',
-                    reason TEXT DEFAULT '',
+                    reason TEXT,
                     admin_id INT DEFAULT NULL,
                     admin_name VARCHAR(100) DEFAULT '',
                     status ENUM('active', 'removed') DEFAULT 'active',
                     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                     removed_at DATETIME DEFAULT NULL,
-                    removed_reason TEXT DEFAULT '',
+                    removed_reason TEXT,
                     UNIQUE KEY uk_novel (novel_id)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
             """)

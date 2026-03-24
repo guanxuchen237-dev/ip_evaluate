@@ -179,7 +179,7 @@ def scan_and_trigger_gems(title_filter=None):
             cur.execute("""
                 SELECT title, author, category, 
                        total_rec as finance, monthly_ticket as monthly_tickets, word_count,
-                       total_click as collection_count, 0 as reward_count, 0 as fans_count
+                       total_click as collection_count, total_click as interaction, 0 as reward_count, 0 as fans_count
                 FROM zongheng_book_ranks
                 WHERE word_count > 50000 OR monthly_ticket > 0
                 ORDER BY monthly_ticket DESC
@@ -194,7 +194,7 @@ def scan_and_trigger_gems(title_filter=None):
                     'category': row['category'],
                     'platform': 'Zongheng',
                     'finance': row['finance'] or 0,
-                    'interaction': row['interaction'] or 0,
+                    'interaction': row.get('interaction', 0) or 0,
                     'word_count': row['word_count'] or 0,
                     'collection_count': row.get('collection_count', 0) or 0,
                     'reward_count': row.get('reward_count', 0) or 0,

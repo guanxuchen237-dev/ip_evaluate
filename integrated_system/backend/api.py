@@ -3887,6 +3887,40 @@ def resolve_audit_log(log_id):
         print(f"Failed to resolve audit log: {e}")
         return jsonify({'error': str(e)}), 500
 
+
+@api_bp.route('/admin/audit_logs/<int:log_id>', methods=['DELETE'])
+def delete_audit_log(log_id):
+    """删除审计日志记录"""
+    try:
+        from auth import get_auth_db
+        conn = get_auth_db()
+        with conn.cursor() as cursor:
+            # 先获取记录信息用于返回
+            cursor.execute("SELECT book_title FROM ip_audit_logs WHERE id = %s", (log_id,))
+            log = cursor.fetchone()
+            
+            if not log:
+                conn.close()
+                return jsonify({'error': '记录不存在'}), 404
+            
+            # 删除记录
+            cursor.execute("DELETE FROM ip_audit_logs WHERE id = %s", (log_id,))
+            conn.commit()
+            deleted = cursor.rowcount > 0
+        conn.close()
+        
+        if deleted:
+            return jsonify({
+                'status': 'success', 
+                'message': f'《{log["book_title"]}》的审计记录已删除',
+                'deleted_id': log_id
+            })
+        else:
+            return jsonify({'error': '删除失败'}), 500
+    except Exception as e:
+        print(f"Failed to delete audit log: {e}")
+        return jsonify({'error': str(e)}), 500
+
 @api_bp.route('/admin/scan_gems', methods=['POST'])
 def trigger_scan_gems():
     """手动触发潜力遗珠扫描"""
