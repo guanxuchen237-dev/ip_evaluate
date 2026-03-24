@@ -3,6 +3,7 @@ import sys
 import os
 import joblib
 import numpy as np
+from datetime import datetime
 
 # Ensure backend directory is in path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -63,41 +64,163 @@ def predict_with_oracle_model(word_count, total_recommend, platform='Qidian'):
         print(f"[Oracle Model] Prediction error: {e}")
         return None
 
-def fetch_realtime_trend(title):
-    """从实时监控表查询书籍最近月票走势，供审计报告使用"""
-    trend = {}
-    for config_key, table_name in [('qidian', 'novel_realtime_tracking'), ('zongheng', 'zongheng_realtime_tracking')]:
-        try:
-            db_config = QIDIAN_CONFIG if config_key == 'qidian' else ZONGHENG_CONFIG
-            conn = pymysql.connect(**db_config, cursorclass=pymysql.cursors.DictCursor)
-            with conn.cursor() as cur:
-                time_col = 'crawl_time'
-                cur.execute(f"""
-                    SELECT monthly_tickets, {time_col} 
-                    FROM {table_name} 
-                    WHERE title = %s 
-                    ORDER BY {time_col} DESC LIMIT 10
-                """, (title,))
-                rows = cur.fetchall()
-                if rows:
-                    tickets = [int(r['monthly_tickets'] or 0) for r in rows]
-                    latest = tickets[0]
-                    oldest = tickets[-1] if len(tickets) > 1 else latest
-                    growth = round((latest - oldest) / max(oldest, 1) * 100, 1) if oldest > 0 else 0
-                    direction = '上升' if growth > 5 else ('下降' if growth < -5 else '稳定')
-                    trend = {
-                        'direction': direction,
-                        'latest_tickets': latest,
-                        'growth_rate': growth,
-                        'data_points': len(rows),
-                        'source': config_key
-                    }
-            conn.close()
-            if trend:
-                break
-        except Exception as e:
-            print(f"Realtime Trend Error ({config_key}): {e}")
-    return trend
+def fetch_book_historical_trend(title, platform='Qidian'):
+    """
+    从历史数据表分析书籍长期趋势
+    返回：历史均值、增长趋势、稳定性评分
+    """
+    try:
+        if platform == 'Qidian':
+            config = QIDIAN_CONFIG
+            table = 'novel_monthly_stats'
+            ticket_col = 'monthly_tickets_on_list'
+        else:
+            config = ZONGHENG_CONFIG
+            table = 'zongheng_book_ranks'
+            ticket_col = 'monthly_ticket'
+        
+        conn = pymysql.connect(**config, cursorclass=pymysql.cursors.DictCursor)
+        with conn.cursor() as cur:
+            cur.execute(f"""
+                SELECT {ticket_col}, year, month 
+                FROM {table} 
+                WHERE title = %s AND {ticket_col} > 0
+                ORDER BY year DESC, month DESC
+                LIMIT 6
+            """, (title,))
+            rows = cur.fetchall()
+        conn.close()
+        
+        if len(rows) < 3:
+            return {'historical_avg': 0, 'trend_direction': 'unknown', 'stability': 0, 'months_tracked': len(rows)}
+        
+        tickets = [r[ticket_col] for r in rows]
+        avg_ticket = sum(tickets) / len(tickets)
+        
+        # 计算趋势方向（最近3个月 vs 前3个月）
+        recent_avg = sum(tickets[:3]) / 3 if len(tickets) >= 3 else avg_ticket
+        older_avg = sum(tickets[3:6]) / 3 if len(tickets) >= 6 else avg_ticket
+        
+        if recent_avg > older_avg * 1.15:
+            trend = 'rising'
+        elif recent_avg < older_avg * 0.85:
+            trend = 'declining'
+        else:
+            trend = 'stable'
+        
+        # 稳定性评分（变异系数倒数）
+        std = np.std(tickets) if len(tickets) > 1 else 0
+        stability = max(0, 1 - std / (avg_ticket + 1)) if avg_ticket > 0 else 0
+        
+        return {
+            'historical_avg': round(avg_ticket, 0),
+            'trend_direction': trend,
+            'stability': round(stability, 2),
+            'months_tracked': len(rows),
+            'latest_monthly': tickets[0] if tickets else 0
+        }
+    except Exception as e:
+        print(f"Historical Trend Error ({platform}): {e}")
+        return {'historical_avg': 0, 'trend_direction': 'error', 'stability': 0, 'months_tracked': 0}
+
+
+def fetch_realtime_latest(title, platform='Qidian'):
+    """
+    从实时表获取最新数据
+    返回：最新月票、收藏、排名、更新时间
+    """
+    try:
+        if platform == 'Qidian':
+            config = QIDIAN_CONFIG
+            table = 'novel_realtime_tracking'
+            ticket_col = 'monthly_tickets'
+            rank_col = 'monthly_ticket_rank'
+            extra_col = 'collection_count'
+        else:
+            config = ZONGHENG_CONFIG
+            table = 'zongheng_realtime_tracking'
+            ticket_col = 'monthly_tickets'
+            rank_col = 'monthly_ticket_rank'
+            extra_col = 'total_recommend'
+        
+        conn = pymysql.connect(**config, cursorclass=pymysql.cursors.DictCursor)
+        with conn.cursor() as cur:
+            cur.execute(f"""
+                SELECT {ticket_col}, {rank_col}, {extra_col}, crawl_time
+                FROM {table}
+                WHERE title = %s
+                ORDER BY crawl_time DESC
+                LIMIT 1
+            """, (title,))
+            row = cur.fetchone()
+        conn.close()
+        
+        if row:
+            return {
+                'realtime_tickets': row.get(ticket_col, 0) or 0,
+                'realtime_rank': row.get(rank_col, 9999) or 9999,
+                'extra_metric': row.get(extra_col, 0) or 0,  # 起点是收藏数，纵横是推荐数
+                'crawl_time': row.get('crawl_time', ''),
+                'has_realtime': True
+            }
+        return {'realtime_tickets': 0, 'realtime_rank': 9999, 'extra_metric': 0, 'crawl_time': '', 'has_realtime': False}
+    except Exception as e:
+        print(f"Realtime Fetch Error ({platform}): {e}")
+        return {'realtime_tickets': 0, 'realtime_rank': 9999, 'extra_metric': 0, 'crawl_time': '', 'has_realtime': False}
+
+
+def calculate_combined_score(historical_data, realtime_data, book_info):
+    """
+    综合历史数据和实时数据计算潜力评分
+    """
+    # 基础分：历史平均值权重 40%
+    hist_avg = historical_data.get('historical_avg', 0)
+    hist_weight = 0.4
+    
+    # 实时分：最新月票权重 35%
+    realtime_tickets = realtime_data.get('realtime_tickets', 0)
+    realtime_weight = 0.35
+    
+    # 增长分：趋势加分权重 15%
+    trend_bonus = 0
+    if historical_data.get('trend_direction') == 'rising':
+        trend_bonus = 10  # 上升趋势加分
+    elif historical_data.get('trend_direction') == 'declining':
+        trend_bonus = -5  # 下降趋势扣分
+    trend_weight = 0.15
+    
+    # 稳定性分：历史稳定性权重 10%
+    stability = historical_data.get('stability', 0)
+    stability_bonus = stability * 10  # 0-10分
+    stability_weight = 0.1
+    
+    # 排名惩罚：排名太高的不算是遗珠（已经红了）
+    rank = realtime_data.get('realtime_rank', 9999)
+    rank_penalty = 0
+    if rank < 100:
+        rank_penalty = (100 - rank) * 0.1  # 前100名每靠前1名扣0.1分
+    
+    # 计算综合分（假设满分100分对应月票100000）
+    base_score = (
+        min(hist_avg / 1000, 50) * hist_weight +
+        min(realtime_tickets / 1000, 50) * realtime_weight +
+        trend_bonus * trend_weight +
+        stability_bonus * stability_weight
+    )
+    
+    final_score = max(0, base_score - rank_penalty)
+    
+    return {
+        'score': round(final_score, 1),
+        'components': {
+            'historical_avg': hist_avg,
+            'realtime_tickets': realtime_tickets,
+            'trend': historical_data.get('trend_direction'),
+            'stability': stability,
+            'rank': rank,
+            'rank_penalty': round(rank_penalty, 1)
+        }
+    }
 
 
 def fetch_vr_comments(title):
@@ -175,18 +298,22 @@ def scan_and_trigger_gems(title_filter=None):
     try:
         conn = pymysql.connect(**ZONGHENG_CONFIG, cursorclass=pymysql.cursors.DictCursor)
         with conn.cursor() as cur:
-            # 获取有数据的作品 - 使用 zongheng_book_ranks 表（按月度统计）
+            # 获取有数据的作品 - 使用 zongheng_book_ranks 表（按月度统计），过滤完结和过时数据
             cur.execute("""
                 SELECT title, author, category, 
                        total_rec as finance, monthly_ticket as monthly_tickets, word_count,
-                       total_click as collection_count, total_click as interaction, 0 as reward_count, 0 as fans_count
+                       total_click as collection_count, total_click as interaction, 0 as reward_count, 0 as fans_count,
+                       status, updated_at
                 FROM zongheng_book_ranks
-                WHERE word_count > 50000 OR monthly_ticket > 0
+                WHERE (word_count > 50000 OR monthly_ticket > 0)
+                  AND status != 'completed' 
+                  AND status != '完结'
+                  AND updated_at >= DATE_SUB(NOW(), INTERVAL 3 MONTH)
                 ORDER BY monthly_ticket DESC
                 LIMIT 100
             """)
             rows = cur.fetchall()
-            print(f"[Gem Scanner] Zongheng found {len(rows)} books")
+            print(f"[Gem Scanner] Zongheng found {len(rows)} books (after filtering completed/outdated)")
             for row in rows:
                 book_info = {
                     'title': row['title'],
@@ -199,7 +326,9 @@ def scan_and_trigger_gems(title_filter=None):
                     'collection_count': row.get('collection_count', 0) or 0,
                     'reward_count': row.get('reward_count', 0) or 0,
                     'fans_count': row.get('fans_count', 0) or 0,
-                    'monthly_tickets': row.get('monthly_tickets', 0) or 0
+                    'monthly_tickets': row.get('monthly_tickets', 0) or 0,
+                    'status': row.get('status', ''),
+                    'updated_at': row.get('updated_at', '')
                 }
                 gems_found.append(book_info)
         conn.close()
@@ -212,7 +341,7 @@ def scan_and_trigger_gems(title_filter=None):
     try:
         conn = pymysql.connect(**QIDIAN_CONFIG, cursorclass=pymysql.cursors.DictCursor)
         with conn.cursor() as cur:
-            # 获取有数据的起点作品（扩展字段）
+            # 获取有数据的起点作品（扩展字段），包含状态和时间过滤
             cur.execute("""
                 SELECT DISTINCT m.title, m.author, m.category,
                        MAX(m.monthly_tickets_on_list) as finance,
@@ -221,15 +350,20 @@ def scan_and_trigger_gems(title_filter=None):
                        MAX(m.collection_count) as collection_count,
                        MAX(m.reward_count) as reward_count,
                        MAX(m.collection_rank) as collection_rank,
-                       MAX(m.monthly_ticket_rank) as ticket_rank
+                       MAX(m.monthly_ticket_rank) as ticket_rank,
+                       MAX(m.status) as status,
+                       MAX(m.updated_at) as updated_at
                 FROM novel_monthly_stats m
-                WHERE m.word_count > 50000 OR m.monthly_tickets_on_list > 0
+                WHERE (m.word_count > 50000 OR m.monthly_tickets_on_list > 0)
+                  AND m.status != 'completed' 
+                  AND m.status != '完结'
+                  AND m.updated_at >= DATE_SUB(NOW(), INTERVAL 3 MONTH)
                 GROUP BY m.title, m.author, m.category
                 ORDER BY MAX(m.monthly_tickets_on_list) DESC
                 LIMIT 100
             """)
             rows = cur.fetchall()
-            print(f"[Gem Scanner] Qidian found {len(rows)} books")
+            print(f"[Gem Scanner] Qidian found {len(rows)} books (after filtering completed/outdated)")
             for row in rows:
                 # 避免跨平台重复
                 if not any(g['title'] == row['title'] for g in gems_found):
@@ -244,7 +378,9 @@ def scan_and_trigger_gems(title_filter=None):
                         'collection_count': row.get('collection_count', 0) or 0,
                         'reward_count': row.get('reward_count', 0) or 0,
                         'collection_rank': row.get('collection_rank', 9999) or 9999,
-                        'ticket_rank': row.get('ticket_rank', 9999) or 9999
+                        'ticket_rank': row.get('ticket_rank', 9999) or 9999,
+                        'status': row.get('status', ''),
+                        'updated_at': row.get('updated_at', '')
                     }
                     gems_found.append(book_info)
         conn.close()
@@ -290,28 +426,15 @@ def scan_and_trigger_gems(title_filter=None):
                     print(f"[Gem Scanner] Skipping '{title}' - already scanned today")
                     continue
             
-            # 聚合各种外部数据
-            vr_comments = fetch_vr_comments(title) or "暂无虚拟读者反馈"
-            global_stats = fetch_global_stats(title)
-            ai_eval_stats = fetch_ai_eval(title)
-            realtime_trend = fetch_realtime_trend(title)
-
-            # Predict Score - 结合实时数据
-            realtime_latest = realtime_trend.get('latest_tickets', 0) if isinstance(realtime_trend, dict) else 0
-            max_finance = max(bk['finance'], realtime_latest)
+            # 获取历史和实时数据
+            historical = fetch_book_historical_trend(title, bk.get('platform', 'Qidian'))
+            realtime = fetch_realtime_latest(title, bk.get('platform', 'Qidian'))
             
-            # 使用现有模型预测
-            predict_res = dm.predict_ip({
-                'title': title, 
-                'category': bk['category'],
-                'word_count': bk.get('word_count', 0),
-                'finance': max_finance,
-                'interaction': bk.get('interaction', 0),
-                'popularity': bk.get('interaction', 0) * 0.2
-            })
-            model_score = predict_res.get('score', 80.0)
+            # 计算综合评分
+            combined = calculate_combined_score(historical, realtime, bk)
+            final_score = combined['score']
             
-            # 使用用户的 oracle_v7 模型预测
+            # Oracle模型预测（作为参考）
             oracle_result = predict_with_oracle_model(
                 word_count=bk.get('word_count', 0),
                 total_recommend=bk.get('interaction', 0),
@@ -320,50 +443,44 @@ def scan_and_trigger_gems(title_filter=None):
             oracle_score = oracle_result.get('score', 0) if oracle_result else 0
             oracle_grade = oracle_result.get('grade', 'D') if oracle_result else 'D'
             
-            # 综合评分：取两者较高值
-            final_score = max(model_score, oracle_score) if oracle_score > 0 else model_score
+            # 融合评分（综合评分占70%，Oracle占30%）
+            if oracle_score > 0:
+                final_score = final_score * 0.7 + (oracle_score / 10) * 0.3  # Oracle满分1000，需要归一化
             
             # ========== 严格判定逻辑：真正的潜力遗珠 ==========
-            # 必须同时满足：
-            # 1. 月票持续增长（不是一次性高分）
-            # 2. 数据稳定性（有足够历史数据点）
-            # 3. 高评分（综合评分>=85）
-            # 4. 基础数据门槛（月票>1000，字数>10万）
-            
             # 基础门槛
             word_count = int(bk.get('word_count', 0) or 0)
-            current_tickets = max_finance
+            current_tickets = realtime.get('realtime_tickets', bk['finance'])
             
             # 必须满足基础门槛
             base_qualified = word_count >= 100000 and current_tickets >= 1000
             
-            # 评分门槛：必须优秀
-            score_qualified = final_score >= 85 and oracle_grade in ['S', 'A']
+            # 评分门槛：必须优秀 (基于新的综合评分，阈值调整为70)
+            score_qualified = final_score >= 70
             
-            # 实时趋势分析（必须有足够数据点）
-            has_realtime_data = bool(realtime_trend) and realtime_trend.get('data_points', 0) >= 3
-            is_growing = has_realtime_data and realtime_trend.get('growth_rate', 0) > 5  # 至少5%增长
-            is_stable = has_realtime_data and realtime_trend.get('growth_rate', 0) < 200  # 增长不能是异常的
+            # 排名门槛：真正的遗珠排名应该在100-500之间（不算太冷门也不算太热门）
+            rank = realtime.get('realtime_rank', 9999)
+            rank_qualified = 50 < rank < 500  # 太靠前的是热门书，太靠后的可能质量不行
             
-            # 增长稳定性（连续增长）
-            consistent_growth = is_growing and is_stable and has_realtime_data
+            # 历史趋势门槛：必须稳定增长或保持稳定
+            trend_ok = historical.get('trend_direction') in ['rising', 'stable'] and historical.get('months_tracked', 0) >= 3
             
-            # AI评估门槛（如果存在AI评估）
-            ai_overall = ai_eval_stats.get('overall_score', 0) if ai_eval_stats else 0
-            ai_qualified = ai_overall == 0 or ai_overall >= 75  # 要么没有AI评估，要么AI评分高
+            # 实时数据门槛：必须有实时数据支持
+            has_realtime = realtime.get('has_realtime', False)
             
             # 严格判定：必须同时满足所有条件
-            is_gem = base_qualified and score_qualified and consistent_growth and ai_qualified
+            is_gem = base_qualified and score_qualified and rank_qualified and trend_ok and has_realtime
             
             # 出海优选判定（更严格的全球市场标准）
-            is_global = (base_qualified and score_qualified and 
-                        bool(global_stats) and global_stats.get('overseas_revenue_prediction') in ['S', 'A'])
+            is_global = (is_gem and 
+                        bool(global_stats) and 
+                        global_stats.get('overseas_revenue_prediction') in ['S', 'A'])
             
             # 调试打印
             if total_scanned <= 10 or is_gem:
-                print(f"[Gem Debug] '{title[:20]}': 综合={final_score:.1f}, Oracle={oracle_grade}, 月票={current_tickets}")
-                print(f"[Gem Debug]   基础门槛={base_qualified}, 评分门槛={score_qualified}, 稳定增长={consistent_growth}")
-                print(f"[Gem Debug]   实时数据={has_realtime_data}, 增长率={realtime_trend.get('growth_rate', 0):.1f}% if realtime_trend else 'N/A'")
+                print(f"[Gem Debug] '{title[:20]}': 综合={final_score:.1f}, Oracle={oracle_grade}, 月票={current_tickets}, 排名={rank}")
+                print(f"[Gem Debug]   基础={base_qualified}, 评分={score_qualified}, 排名区间={rank_qualified}, 趋势={historical.get('trend_direction')}, 实时={has_realtime}")
+                print(f"[Gem Debug]   历史均值={historical.get('historical_avg')}, 跟踪月数={historical.get('months_tracked')}, 稳定性={historical.get('stability')}")
                 print(f"[Gem Debug]   判定={is_gem}, 出海={is_global}")
             
             # 定义risk_type
@@ -381,9 +498,9 @@ def scan_and_trigger_gems(title_filter=None):
                 if is_global: 
                     reasons.append("出海优选")
                 if is_gem:
-                    reasons.append(f"评分{final_score:.1f}")
-                    if has_realtime_data:
-                        reasons.append(f"月票增长{realtime_trend.get('growth_rate', 0):.0f}%")
+                    reasons.append(f"综合评分{final_score:.1f}")
+                    reasons.append(f"历史趋势-{historical.get('trend_direction')}")
+                    reasons.append(f"排名{realtime.get('realtime_rank')}")
                     reasons.append(f"Oracle-{oracle_grade}")
                 print(f"[Gem Scanner] '{title}' → {risk_type} | 原因: {' | '.join(reasons)}")
             
@@ -392,12 +509,12 @@ def scan_and_trigger_gems(title_filter=None):
                 # 普通作品跳过，不记录也不调用AI
                 continue
             
-            # 生成 snippet 显示（不调用AI，节省token）
+            # 生成 snippet 显示
             if risk_type == 'GLOBAL_GEM':
-                snippet = f"【出海优选】模型评分: {final_score:.1f} | Oracle评级: {oracle_grade} | 月票: {max_finance} | 目标市场: {global_stats.get('target_regions', '待定') if global_stats else '待分析'}"
+                snippet = f"【出海优选】综合评分: {final_score:.1f} | Oracle评级: {oracle_grade} | 实时月票: {realtime.get('realtime_tickets', 0)} | 排名: {realtime.get('realtime_rank')} | 目标市场: {global_stats.get('target_regions', '待定') if global_stats else '待分析'}"
             elif risk_type == 'POTENTIAL_GEM':
-                growth_info = f" | 增长{realtime_trend.get('growth_rate', 0):.0f}%" if realtime_trend else ""
-                snippet = f"【潜力遗珠】模型评分: {final_score:.1f} | Oracle评级: {oracle_grade} | 月票: {max_finance}{growth_info} | 点击查看AI深度分析"
+                trend_text = f"历史{historical.get('trend_direction')}" if historical.get('trend_direction') else ""
+                snippet = f"【潜力遗珠】综合评分: {final_score:.1f} | Oracle评级: {oracle_grade} | 实时月票: {realtime.get('realtime_tickets', 0)} | 排名: {realtime.get('realtime_rank')} | {trend_text} | 点击查看AI深度分析"
             
             # 先插入基础记录，不调用AI（大幅加速）
             with conn.cursor() as cur:
