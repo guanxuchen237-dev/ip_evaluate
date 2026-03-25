@@ -10,7 +10,7 @@ import {
   Cpu, HardDrive, Database, LayoutDashboard, Library, Settings, BookOpen, TrendingUp,
   Zap, FileText, AlertOctagon, RotateCcw, Eye, EyeOff, ChevronLeft, ChevronRight, Filter,
   Save, TestTube, Info, RefreshCw, KeyRound, Link, Bot, Bug,
-  Download, Sparkles, Radar, MessageSquare, BarChart3, Scan, Crown, Cloud, Grid3X3, Ban
+  Download, Sparkles, Radar, MessageSquare, BarChart3, Scan, Crown, Cloud, Grid3X3, Ban, X, Trash2
 } from 'lucide-vue-next'
 
 const router = useRouter()
@@ -27,7 +27,7 @@ const adminDockItems = [
   { title: "总览", titleEn: "Overview", url: "/admin?tab=overview", icon: LayoutDashboard },
   { title: "用户管理", titleEn: "Users", url: "/admin?tab=users", icon: Users },
   { title: "书籍管理", titleEn: "Books", url: "/admin?tab=books", icon: Library },
-  { title: "黑名单", titleEn: "Blacklist", url: "/admin?tab=blacklist", icon: Ban },
+  { title: "黑名单", titleEn: "Blacklist", url: "/admin/blacklist", icon: Ban },
   { title: "平台监控", titleEn: "Platform", url: "/admin?tab=platform", icon: Globe },
   { title: "数据采集", titleEn: "Pipeline", url: "/admin?tab=monitor", icon: Database },
   { title: "智能审计", titleEn: "Audit", url: "/admin?tab=audit", icon: Shield },
@@ -843,6 +843,7 @@ const auditStatsCards = computed(() => [
 
 const auditFilterLevel = ref('')
 const auditFilterStatus = ref('')
+const auditSearchQuery = ref('')
 
 async function fetchAuditLogs() {
   auditLoading.value = true
@@ -854,6 +855,10 @@ async function fetchAuditLogs() {
     params.append('offset', offset.toString())
     if (auditFilterLevel.value) params.append('risk_level', auditFilterLevel.value)
     if (auditFilterStatus.value) params.append('status', auditFilterStatus.value)
+    if (auditSearchQuery.value.trim()) params.append('search', auditSearchQuery.value.trim())
+
+    console.log('[fetchAuditLogs] search query:', auditSearchQuery.value)
+    console.log('[fetchAuditLogs] params:', params.toString())
 
     const res = await fetch(`${API_BASE}/admin/audit_logs?${params}`, {
       headers: { 'Authorization': `Bearer ${token}` }
@@ -961,14 +966,14 @@ async function executeDeleteAuditLog(id: number, title: string) {
         
         if (res.ok) {
             fetchAuditLogs()
-            showToast(`《${title}》已删除`, 'success')
+            showSettingsToast(`《${title}》已删除`, 'success')
         } else {
             const err = await res.text()
-            showToast(`删除失败: ${err}`, 'error')
+            showSettingsToast(`删除失败: ${err}`, 'error')
         }
     } catch (e) {
         console.error('删除审计日志失败:', e)
-        showToast('删除失败，请检查网络', 'error')
+        showSettingsToast('删除失败，请检查网络', 'error')
     }
 }
 
@@ -2562,6 +2567,16 @@ const formatPeriod = (period: string) => {
                 </h3>
                 <!-- Filters -->
                 <div class="flex items-center gap-3">
+                   <!-- 搜索框 -->
+                   <div class="relative">
+                      <Search class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                      <input 
+                         v-model="auditSearchQuery" 
+                         @keyup.enter="fetchAuditLogs"
+                         placeholder="搜索书名..." 
+                         class="h-9 pl-9 pr-4 bg-white/70 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 shadow-sm w-48"
+                      />
+                   </div>
                    <select v-model="auditFilterLevel" @change="fetchAuditLogs" class="h-9 px-3 bg-white/70 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 shadow-sm">
                       <option value="">所有风险等级</option>
                       <option value="High">高风险</option>
@@ -2575,6 +2590,9 @@ const formatPeriod = (period: string) => {
                       <option value="Resolved">已解决</option>
                       <option value="Ignored">已忽略</option>
                    </select>
+                   <button v-if="auditSearchQuery" @click="auditSearchQuery = ''; fetchAuditLogs()" class="p-2 text-slate-400 hover:text-slate-600 transition-colors">
+                      <X class="w-4 h-4" />
+                   </button>
                 </div>
              </div>
              
@@ -2594,6 +2612,23 @@ const formatPeriod = (period: string) => {
                          <div class="font-bold text-slate-900 text-lg">
                              《{{ log.book_title || log.book_id }}》
                          </div>
+                         <!-- AI评审等级徽章 -->
+                         <span v-if="log.details?.ai_review?.grade" 
+                               class="w-7 h-7 rounded-lg flex items-center justify-center text-sm font-black"
+                               :class="{
+                                 'bg-indigo-600 text-white': log.details.ai_review.grade === 'S',
+                                 'bg-amber-500 text-white': log.details.ai_review.grade === 'A',
+                                 'bg-emerald-500 text-white': log.details.ai_review.grade === 'B',
+                                 'bg-slate-400 text-white': log.details.ai_review.grade === 'C',
+                                 'bg-rose-500 text-white': log.details.ai_review.grade === 'D'
+                               }">
+                            {{ log.details.ai_review.grade }}
+                         </span>
+                         <!-- 遗珠标记 -->
+                         <span v-if="log.details?.ai_review?.is_gem" 
+                               class="flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-gradient-to-r from-amber-500 to-orange-500 text-white">
+                            <Sparkles class="w-3 h-3" /> 潜力遗珠
+                         </span>
                          <span class="px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider"
                                :class="log.risk_level === 'High' ? 'bg-rose-50 text-rose-600 border border-rose-100' : (log.risk_level === 'Medium' ? 'bg-amber-50 text-amber-600 border border-amber-100' : (log.risk_level === 'Positive' ? 'bg-indigo-50 text-indigo-600 border border-indigo-100' : 'bg-emerald-50 text-emerald-600 border border-emerald-100'))">
                             {{ log.risk_level === 'High' ? '高风险' : (log.risk_level === 'Medium' ? '中风险' : (log.risk_level === 'Positive' ? '正面' : '低风险')) }}
@@ -2621,6 +2656,9 @@ const formatPeriod = (period: string) => {
                    <div class="flex gap-4">
                        <div class="flex-1 text-sm text-slate-600 bg-slate-50 rounded-lg p-3 border border-slate-100 font-mono leading-relaxed" v-if="log.content_snippet">
                           "{{ log.content_snippet }}"
+                       </div>
+                       <div v-else class="flex-1 text-sm text-slate-400 bg-slate-50/50 rounded-lg p-3 border border-slate-100 border-dashed flex items-center justify-center">
+                          <span class="italic">用户端 AI 审计报告，点击「展开」查看详情</span>
                        </div>
                        
                        <div class="min-w-[200px] w-[240px] bg-slate-50 rounded-lg p-3 border border-slate-100 flex flex-col justify-between">
@@ -2667,6 +2705,33 @@ const formatPeriod = (period: string) => {
                    <!-- 展开的 Markdown 报告 -->
                    <div v-if="expandedLogId === log.id && log.markdown_report" 
                         class="mt-4 p-4 bg-gradient-to-br from-slate-50 to-indigo-50/30 border border-slate-200 rounded-xl transition-all">
+                      <!-- AI评审信息横幅 -->
+                      <div v-if="log.details?.ai_review" class="mb-4 p-3 rounded-lg bg-white border border-slate-200 shadow-sm">
+                         <div class="flex items-center gap-3 mb-2">
+                            <div class="w-10 h-10 rounded-xl flex items-center justify-center text-lg font-black"
+                                 :class="{
+                                   'bg-indigo-600 text-white': log.details.ai_review.grade === 'S',
+                                   'bg-amber-500 text-white': log.details.ai_review.grade === 'A',
+                                   'bg-emerald-500 text-white': log.details.ai_review.grade === 'B',
+                                   'bg-slate-400 text-white': log.details.ai_review.grade === 'C',
+                                   'bg-rose-500 text-white': log.details.ai_review.grade === 'D'
+                                 }">
+                               {{ log.details.ai_review.grade }}
+                            </div>
+                            <div>
+                               <div class="text-sm font-bold text-slate-800">{{ log.details.ai_review.grade_title }}</div>
+                               <div class="text-xs text-slate-500">模型评分: {{ log.score }}</div>
+                            </div>
+                            <span v-if="log.details.ai_review.is_gem" 
+                                  class="ml-auto flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold bg-gradient-to-r from-amber-500 to-orange-500 text-white">
+                               <Sparkles class="w-3.5 h-3.5" /> 潜力遗珠
+                            </span>
+                         </div>
+                         <div v-if="log.details.ai_review.grade_reason" class="text-sm text-slate-600 leading-relaxed pl-13 border-l-2 border-slate-200 ml-5">
+                            {{ log.details.ai_review.grade_reason }}
+                         </div>
+                      </div>
+                      
                       <div class="flex items-center gap-2 mb-3 pb-2 border-b border-slate-200">
                          <FileText class="w-4 h-4 text-indigo-500" />
                          <span class="text-sm font-bold text-slate-700">AI 深度审计报告</span>

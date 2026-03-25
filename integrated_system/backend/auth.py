@@ -124,6 +124,24 @@ def init_auth_database():
                 """)
             except Exception as e:
                 pass  # 表不存在或已是最新结构，忽略错误
+            
+            # 添加 markdown_report 字段（存储AI审计报告）
+            try:
+                cursor.execute("""
+                    ALTER TABLE ip_audit_logs 
+                    ADD COLUMN markdown_report MEDIUMTEXT DEFAULT NULL
+                """)
+            except Exception as e:
+                pass  # 字段已存在，忽略错误
+            
+            # 添加 details 字段（存储审计详情JSON）
+            try:
+                cursor.execute("""
+                    ALTER TABLE ip_audit_logs 
+                    ADD COLUMN details JSON DEFAULT NULL
+                """)
+            except Exception as e:
+                pass  # 字段已存在，忽略错误
 
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS ip_chapters (

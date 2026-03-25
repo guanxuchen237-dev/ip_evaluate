@@ -236,7 +236,7 @@ class TicketDualEngine:
             r2_mature = r2_score(y_mature, y_pred_mature)
             print(f"    XGBoost RMSE: {rmse_mature:.2f}")
             print(f"    XGBoost MAE: {mae_mature:.2f}")
-            print(f"    XGBoost R²: {r2_mature:.4f}")
+            print(f"    XGBoost R2: {r2_mature:.4f}")
         else:
             print("  警告: 成熟期样本不足，跳过XGBoost训练")
         

@@ -289,6 +289,10 @@ const triggerBookAudit = async () => {
     if (!book.value) return
     isAuditing.value = true
     
+    // 清空旧报告，确保重新审计时显示新内容
+    latestAuditReport.value = null
+    bookAuditLogs.value = []
+    
     // 初始化一个空的缓冲对象用于流式打字机效果
     latestAuditReport.value = {
         title: book.value.basic.title,
@@ -297,6 +301,14 @@ const triggerBookAudit = async () => {
         model_score: 0,
         data_sources: {}
     }
+    
+    // 滚动到审计区域顶部
+    setTimeout(() => {
+        const auditSection = document.querySelector('.audit-section, [data-tab="ai-audit"]')
+        if (auditSection) {
+            auditSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }
+    }, 100)
     
     try {
         const titleParam = encodeURIComponent(book.value.basic.title)
@@ -354,6 +366,8 @@ const triggerBookAudit = async () => {
                             } else if (data.type === 'done') {
                                 latestAuditReport.value.status = 'success'
                                 await fetchBookAuditLogs()
+                                // 审计完成，数据已刷新
+                                console.log('[Audit] 审计完成，数据已刷新')
                             } else if (data.type === 'error') {
                                 latestAuditReport.value.report += `\n\n[警报] ${data.message}`
                             }
@@ -384,6 +398,99 @@ const triggerBookAudit = async () => {
 // 最新审计报告缓存
 const latestAuditReport = ref<any>(null)
 
+// 审计日志列表
+const bookAuditLogs = ref<any[]>([])
+
+// 评级辅助函数
+const getGradeFromScore = (score: number | undefined) => {
+    if (!score) return '?'
+    if (score >= 95) return 'S'
+    if (score >= 85) return 'A'
+    if (score >= 75) return 'B'
+    if (score >= 60) return 'C'
+    return 'D'
+}
+
+const getGradeTitle = (score: number | undefined, riskType: string) => {
+    const grade = getGradeFromScore(score)
+    
+    // 特殊标签优先
+    if (riskType === 'GLOBAL_GEM') return '全球战略级作品'
+    if (riskType === 'POTENTIAL_GEM') {
+        if (grade === 'S') return 'S级潜力遗珠'
+        if (grade === 'A') return 'A级潜力遗珠'
+        return '商业化潜力遗珠'
+    }
+    
+    // 普通等级
+    if (grade === 'S') return '现象级爆款'
+    if (grade === 'A') return '头部优质作品'
+    if (grade === 'B') return '腰部精品作品'
+    if (grade === 'C') return '潜力待开发作品'
+    return '需持续观察'
+}
+
+const getGradeReason = (score: number | undefined, riskType: string, bookData?: any) => {
+    const grade = getGradeFromScore(score)
+    
+    // S级 - 现象级
+    if (grade === 'S') {
+        if (riskType === 'GLOBAL_GEM') {
+            return '【全球化适配】该作品在出海适配度、文化壁垒突破、全球市场潜力等维度表现优异，具备成为国际级IP的核心要素。AI模型综合评估其翻译适配度高、文化普适性强，建议优先布局海外版权运营。'
+        }
+        if (riskType === 'POTENTIAL_GEM') {
+            return '【顶级遗珠】该作品在月票、互动、粉丝粘性等核心商业指标上表现卓越，AI模型预测其具备现象级爆发潜力。内容质量与商业变现能力双高，是被市场低估的顶级遗珠，建议立即启动深度运营与IP开发。'
+        }
+        return '【现象级爆款】该作品在各项核心商业指标上均表现卓越，具备成为年度现象级IP的所有要素。内容质量、粉丝粘性、商业变现能力均处于顶尖水平，建议加大资源投入，打造平台标杆作品。'
+    }
+    
+    // A级 - 头部
+    if (grade === 'A') {
+        if (riskType === 'GLOBAL_GEM') {
+            return '【出海优选】该作品在海外市场适配度评估中表现优秀，具备较强的跨文化传播潜力。建议优先布局海外版权运营，有望成为国际市场受欢迎的华语IP。'
+        }
+        if (riskType === 'POTENTIAL_GEM') {
+            return '【优质遗珠】该作品在多项商业指标上表现优异，但可能因题材小众或运营不足未被充分发掘。AI模型识别其具备头部作品潜质，建议加大推广投入，有望突破至一线阵营。'
+        }
+        return '【头部优质】该作品已展现出稳定的市场竞争力，内容质量与商业变现能力均处于头部水平。粉丝基础扎实，IP开发价值高，建议持续投入资源巩固市场地位。'
+    }
+    
+    // B级 - 腰部
+    if (grade === 'B') {
+        if (riskType === 'POTENTIAL_GEM') {
+            return '【潜力遗珠】该作品在特定维度展现出不错的潜力，虽然目前月票表现一般，但AI模型识别其内容具备差异化优势。建议针对性运营，挖掘细分市场价值。'
+        }
+        return '【腰部精品】该作品展现出稳定的商业潜力，在特定细分市场具备竞争优势。内容质量稳定，粉丝粘性良好，建议针对性运营以释放更大价值，有望向头部阵营突破。'
+    }
+    
+    // C级 - 潜力
+    if (grade === 'C') {
+        return '【潜力待开发】该作品处于成长期或特定题材领域，目前商业指标一般，但AI模型识别出一定的内容潜力。建议持续观察作品发展趋势，适时介入运营，挖掘潜在价值。'
+    }
+    
+    // D级 - 观察
+    return '【需持续观察】该作品目前商业指标较低，或处于孵化早期阶段。建议持续关注其内容迭代和市场反馈，待数据积累后再进行深度评估。'
+}
+
+const getGradeRecommendation = (score: number | undefined, riskType: string) => {
+    const grade = getGradeFromScore(score)
+    
+    if (riskType === 'GLOBAL_GEM') {
+        return '建议：优先布局海外版权运营，多语言翻译，国际合作'
+    }
+    if (riskType === 'POTENTIAL_GEM') {
+        if (grade === 'S') return '建议：立即启动深度运营，重点资源倾斜，IP开发立项'
+        if (grade === 'A') return '建议：加大推广投入，精准营销，提升曝光'
+        return '建议：针对性运营，挖掘细分市场，差异化定位'
+    }
+    
+    if (grade === 'S') return '建议：持续加大资源投入，打造平台标杆，全渠道推广'
+    if (grade === 'A') return '建议：巩固市场地位，IP衍生开发，粉丝运营深化'
+    if (grade === 'B') return '建议：针对性内容优化，细分市场突破，稳定更新'
+    if (grade === 'C') return '建议：内容打磨，数据积累，适时运营介入'
+    return '建议：持续观察，积累口碑，等待时机'
+}
+
 // 导出审计报告为 Markdown 文件
 const exportAuditReport = (report: string, bookTitle: string, score?: number) => {
     const now = new Date().toISOString().split('T')[0]
@@ -403,8 +510,86 @@ const exportAuditReport = (report: string, bookTitle: string, score?: number) =>
     URL.revokeObjectURL(url)
 }
 
-// 审计日志获取 (用于风险评估 Tab)
-const bookAuditLogs = ref<any[]>([])
+// 等级样式配置
+const getGradeStyle = (score: number | undefined, riskType: string) => {
+    const grade = getGradeFromScore(score)
+    
+    // 出海优选 (紫)
+    if (riskType === 'GLOBAL_GEM') {
+        return {
+            bg: 'bg-gradient-to-r from-indigo-600 to-violet-600',
+            text: 'text-white',
+            badge: 'bg-white/20',
+            reasonBg: 'bg-indigo-50/50',
+            reasonText: 'text-indigo-700',
+            reasonSubText: 'text-indigo-600/80'
+        }
+    }
+    // 遗珠 (橙)
+    if (riskType === 'POTENTIAL_GEM') {
+        return {
+            bg: 'bg-gradient-to-r from-amber-500 to-orange-500',
+            text: 'text-white',
+            badge: 'bg-white/20',
+            reasonBg: 'bg-amber-50/50',
+            reasonText: 'text-amber-700',
+            reasonSubText: 'text-amber-600/80'
+        }
+    }
+    // S级 (紫)
+    if (grade === 'S') {
+        return {
+            bg: 'bg-gradient-to-r from-violet-600 to-fuchsia-600',
+            text: 'text-white',
+            badge: 'bg-white/20',
+            reasonBg: 'bg-violet-50/50',
+            reasonText: 'text-violet-700',
+            reasonSubText: 'text-violet-600/80'
+        }
+    }
+    // A级 (青)
+    if (grade === 'A') {
+        return {
+            bg: 'bg-gradient-to-r from-emerald-500 to-teal-500',
+            text: 'text-white',
+            badge: 'bg-white/20',
+            reasonBg: 'bg-emerald-50/50',
+            reasonText: 'text-emerald-700',
+            reasonSubText: 'text-emerald-600/80'
+        }
+    }
+    // B级 (蓝)
+    if (grade === 'B') {
+        return {
+            bg: 'bg-gradient-to-r from-blue-500 to-cyan-500',
+            text: 'text-white',
+            badge: 'bg-white/20',
+            reasonBg: 'bg-blue-50/50',
+            reasonText: 'text-blue-700',
+            reasonSubText: 'text-blue-600/80'
+        }
+    }
+    // C级 (灰)
+    if (grade === 'C') {
+        return {
+            bg: 'bg-gradient-to-r from-slate-500 to-slate-400',
+            text: 'text-white',
+            badge: 'bg-white/20',
+            reasonBg: 'bg-slate-50/50',
+            reasonText: 'text-slate-700',
+            reasonSubText: 'text-slate-600/80'
+        }
+    }
+    // D级 (红)
+    return {
+        bg: 'bg-gradient-to-r from-rose-500 to-pink-500',
+        text: 'text-white',
+        badge: 'bg-white/20',
+        reasonBg: 'bg-rose-50/50',
+        reasonText: 'text-rose-700',
+        reasonSubText: 'text-rose-600/80'
+    }
+}
 const isFetchingAudit = ref(false)
 const fetchBookAuditLogs = async () => {
     isFetchingAudit.value = true
@@ -753,7 +938,9 @@ const ticketLinePath = computed(() => {
     const points = ticketTrend.value?.points || []
     if (!points || points.length < 2) return ''
     
-    let d = `M${points[0].x},${points[0].y}`
+    const first = points[0]
+    if (!first) return ''
+    let d = `M${first.x},${first.y}`
     for (let i = 1; i < points.length; i++) {
         const prev = points[i - 1]
         const curr = points[i]
@@ -1716,60 +1903,79 @@ onMounted(() => {
                             </button>
                         </div>
 
-                        <div v-if="bookAuditLogs && bookAuditLogs.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div v-if="bookAuditLogs && bookAuditLogs.length > 0" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             <div 
                                 v-for="log in bookAuditLogs" 
                                 :key="log.id"
-                                class="bg-white rounded-[28px] p-7 shadow-[0_10px_40px_rgba(0,0,0,0.04)] border transition-all hover:-translate-y-1 hover:shadow-xl relative overflow-hidden group"
-                                :class="log.risk_type === 'GLOBAL_GEM' ? 'border-indigo-200 bg-gradient-to-br from-indigo-50/80 to-purple-50/50' : log.risk_type === 'POTENTIAL_GEM' ? 'border-amber-100 bg-gradient-to-br from-white to-amber-50/30' : log.risk_type === 'NORMAL' ? 'border-emerald-100 bg-gradient-to-br from-white to-emerald-50/30' : 'border-rose-100 bg-gradient-to-br from-white to-rose-50/30'"
+                                class="bg-white rounded-[28px] overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.04)] border transition-all hover:-translate-y-1 hover:shadow-xl relative"
+                                :class="getGradeStyle(log.score, log.risk_type).reasonBg.replace('bg-', 'border-').replace('/50', '-200')"
                             >
-                                <!-- Decorative BG -->
-                                <div class="absolute -right-6 -bottom-6 opacity-[0.05] group-hover:opacity-[0.1] transition-opacity pointer-events-none">
-                                    <Globe v-if="log.risk_type === 'GLOBAL_GEM'" class="w-32 h-32 text-indigo-700" />
-                                    <Award v-else-if="log.risk_type === 'POTENTIAL_GEM'" class="w-32 h-32 text-amber-600" />
-                                    <CheckCircle2 v-else-if="log.risk_type === 'NORMAL'" class="w-32 h-32 text-emerald-600" />
-                                    <ShieldAlert v-else class="w-32 h-32 text-rose-900" />
+                                <!-- 顶部评级横幅 - 使用等级样式 -->
+                                <div 
+                                    class="px-6 py-4 flex items-center justify-between"
+                                    :class="getGradeStyle(log.score, log.risk_type).bg"
+                                >
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-12 h-12 rounded-xl backdrop-blur flex items-center justify-center"
+                                             :class="getGradeStyle(log.score, log.risk_type).badge">
+                                            <span class="text-2xl font-black" :class="getGradeStyle(log.score, log.risk_type).text">{{ getGradeFromScore(log.score) }}</span>
+                                        </div>
+                                        <div>
+                                            <div class="text-white/80 text-xs font-medium">AI 评审等级</div>
+                                            <div class="text-white font-bold text-lg">{{ getGradeTitle(log.score, log.risk_type) }}</div>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="text-white/80 text-xs">模型评分</div>
+                                        <div class="text-white font-black text-2xl">{{ log.score?.toFixed(1) || '--' }}</div>
+                                    </div>
                                 </div>
 
-                                <div class="flex justify-between items-start mb-4 relative z-10">
-                                    <div 
-                                        class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border"
-                                        :class="log.risk_type === 'GLOBAL_GEM' ? 'bg-indigo-600 border-indigo-500 text-white shadow-md shadow-indigo-200' : log.risk_type === 'POTENTIAL_GEM' ? 'bg-amber-100 border-amber-200 text-amber-700' : log.risk_type === 'NORMAL' ? 'bg-emerald-50 border-emerald-100 text-emerald-600' : 'bg-rose-50 border-rose-100 text-rose-600'"
-                                    >
-                                        {{ log.risk_type === 'GLOBAL_GEM' ? '全球战略' : log.risk_type === 'POTENTIAL_GEM' ? '商业潜力' : log.risk_type === 'NORMAL' ? '健康状态' : '风险预警' }}
+                                <!-- 内容区域 -->
+                                <div class="p-6">
+                                    <!-- 为什么被评为X级 - 所有等级都显示 -->
+                                    <div class="mb-5 p-4 rounded-xl" :class="getGradeStyle(log.score, log.risk_type).reasonBg">
+                                        <div class="flex items-center gap-2 mb-2">
+                                            <Sparkles class="w-4 h-4" :class="getGradeStyle(log.score, log.risk_type).reasonText.replace('text-', 'text-').replace('-700', '-600')" />
+                                            <span class="text-sm font-bold" :class="getGradeStyle(log.score, log.risk_type).reasonText">为什么被评为{{ getGradeFromScore(log.score) }}级？</span>
+                                        </div>
+                                        <p class="text-sm leading-relaxed" :class="getGradeStyle(log.score, log.risk_type).reasonSubText">
+                                            {{ getGradeReason(log.score, log.risk_type, log.details) }}
+                                        </p>
+                                        <!-- 运营建议 -->
+                                        <div class="mt-3 pt-3 border-t border-current/10">
+                                            <p class="text-xs font-medium" :class="getGradeStyle(log.score, log.risk_type).reasonText">
+                                                {{ getGradeRecommendation(log.score, log.risk_type) }}
+                                            </p>
+                                        </div>
                                     </div>
-                                    <div class="flex items-center gap-1.5" :class="log.risk_type === 'GLOBAL_GEM' ? 'text-indigo-600' : log.risk_level === 'High' ? 'text-rose-500' : log.risk_level === 'Low' ? 'text-emerald-500' : 'text-amber-500'">
-                                        <div class="w-1.5 h-1.5 rounded-full bg-current animate-ping"></div>
-                                        <span class="text-[11px] font-black tracking-widest">{{ log.risk_level === 'High' ? '高风险' : log.risk_level === 'Medium' ? '中风险' : log.risk_level === 'Low' ? '低风险' : log.risk_level }}</span>
+
+                                    <!-- Markdown Report display -->
+                                    <div v-if="log.markdown_report" class="text-[13px] leading-relaxed mb-5 prose prose-sm max-w-none text-slate-600" 
+                                         v-html="formatMarkdown(log.markdown_report)">
                                     </div>
-                                </div>
+                                    
+                                    <p v-else class="text-[13px] leading-relaxed mb-5 line-clamp-4 font-medium italic text-slate-500">
+                                        "{{ log.content_snippet }}"
+                                    </p>
 
-                                <h4 class="text-lg font-bold mb-3 leading-snug relative z-10" :class="log.risk_type === 'GLOBAL_GEM' ? 'text-indigo-950' : 'text-slate-800'">
-                                    {{ log.risk_type === 'GLOBAL_GEM' ? '战略：S级出海潜力护航' : log.risk_type === 'POTENTIAL_GEM' ? '发掘：S级商业化潜力遗珠' : log.risk_type === 'NORMAL' ? '通报：作品运营指标健康' : '警示：检测到作品核心风险' }}
-                                </h4>
-
-                                <!-- Markdown Report display -->
-                                <div v-if="log.markdown_report" class="text-[13px] leading-relaxed mb-6 relative z-10 pb-4 border-b border-black/5" 
-                                     :class="log.risk_type === 'GLOBAL_GEM' ? 'text-indigo-900/80' : 'text-slate-600'"
-                                     v-html="formatMarkdown(log.markdown_report)">
-                                </div>
-                                
-                                <p v-else class="text-[13px] leading-relaxed mb-8 line-clamp-4 font-medium italic relative z-10"
-                                   :class="log.risk_type === 'GLOBAL_GEM' ? 'text-indigo-800/70' : 'text-slate-500'">
-                                    "{{ log.content_snippet }}"
-                                </p>
-
-                                <div class="flex items-center justify-between pt-6 border-t border-slate-50 relative z-10">
-                                    <div class="flex items-center gap-3 text-[11px] font-bold text-slate-400">
-                                        <div class="flex items-center gap-1"><Clock class="w-3 h-3" /> {{ log.created_at?.split('T')[0] }}</div>
-                                        <div class="flex items-center gap-1"><Star class="w-3 h-3 text-amber-400" /> {{ log.score }}pts</div>
-                                        <button v-if="log.markdown_report" @click.stop="exportAuditReport(log.markdown_report, book?.basic?.title || 'unknown', log.score)"
-                                                class="flex items-center gap-1 text-slate-400 hover:text-indigo-600 transition-colors">
-                                            <Download class="w-3 h-3" /> <span class="text-[10px] font-bold">导出</span>
-                                        </button>
-                                    </div>
-                                    <div class="text-[11px] font-black tracking-tighter" :class="log.status === 'RESOLVED' ? 'text-emerald-500' : 'text-indigo-600'">
-                                        {{ log.status === 'RESOLVED' ? 'COMPLETED' : 'PENDING REVIEW' }}
+                                    <!-- 底部操作栏 -->
+                                    <div class="flex items-center justify-between pt-4 border-t border-slate-100">
+                                        <div class="flex items-center gap-3 text-[11px] font-bold text-slate-400">
+                                            <div class="flex items-center gap-1"><Clock class="w-3 h-3" /> {{ log.created_at?.split('T')[0] }}</div>
+                                            <button v-if="log.markdown_report" @click.stop="exportAuditReport(log.markdown_report, book?.basic?.title || 'unknown', log.score)"
+                                                    class="flex items-center gap-1 text-slate-400 hover:text-indigo-600 transition-colors">
+                                                <Download class="w-3 h-3" /> <span class="text-[10px] font-bold">导出报告</span>
+                                            </button>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <span 
+                                                class="px-2.5 py-1 rounded-full text-[10px] font-bold"
+                                                :class="log.status === 'RESOLVED' ? 'bg-emerald-100 text-emerald-600' : 'bg-indigo-100 text-indigo-600'"
+                                            >
+                                                {{ log.status === 'RESOLVED' ? '已完成' : '待复核' }}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

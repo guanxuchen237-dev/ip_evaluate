@@ -10,7 +10,8 @@ import {
   Database,
   Shield,
   Settings,
-  BookOpen
+  BookOpen,
+  Ban
 } from 'lucide-vue-next'
 
 interface MenuItem {
@@ -26,6 +27,7 @@ const menuItems: MenuItem[] = [
   { title: "总览", titleEn: "Overview", url: "/admin?tab=overview", icon: LayoutDashboard },
   { title: "用户管理", titleEn: "Users", url: "/admin?tab=users", icon: Users },
   { title: "书籍管理", titleEn: "Books", url: "/admin?tab=books", icon: Library },
+  { title: "黑名单", titleEn: "Blacklist", url: "/admin/blacklist", icon: Ban },
   { title: "平台监控", titleEn: "Platform", url: "/admin?tab=platform", icon: Globe },
   { title: "数据采集", titleEn: "Pipeline", url: "/admin?tab=monitor", icon: Database },
   { title: "智能审计", titleEn: "Audit", url: "/admin?tab=audit", icon: Shield },
@@ -33,6 +35,14 @@ const menuItems: MenuItem[] = [
 ]
 
 function isActive(url: string) {
+  // 处理独立路由（如 /admin/blacklist）
+  if (!url.includes('tab=')) {
+    return route.path === url
+  }
+  // 如果当前在黑名单页面，不激活任何tab路由
+  if (route.path === '/admin/blacklist') {
+    return false
+  }
   const tab = url.split('tab=')[1]
   return route.query.tab === tab || (!route.query.tab && tab === 'overview')
 }

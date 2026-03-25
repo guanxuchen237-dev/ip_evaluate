@@ -680,6 +680,30 @@ def library_list():
         }
         
         result = data_manager.get_library_data(page, page_size, filters)
+        
+        # 过滤黑名单书籍
+        from auth import AUTH_DB_CONFIG
+        import pymysql
+        try:
+            conn = pymysql.connect(**AUTH_DB_CONFIG)
+            with conn.cursor() as cursor:
+                cursor.execute("SELECT novel_id FROM ip_blacklist WHERE status = 'active'")
+                blacklisted_ids = {row[0] for row in cursor.fetchall()}
+                
+                # 过滤黑名单书籍
+                if blacklisted_ids:
+                    original_count = len(result.get('items', []))
+                    result['items'] = [
+                        book for book in result.get('items', [])
+                        if f"{book.get('title', '')}_{book.get('author', '')}_{book.get('platform', '')}" not in blacklisted_ids
+                    ]
+                    result['filtered'] = original_count - len(result['items'])
+        except Exception as e:
+            print(f"[WARN] Filter blacklist error: {e}")
+        finally:
+            if 'conn' in locals():
+                conn.close()
+        
         return jsonify(result)
     except Exception as e:
         print(f"Library Error: {e}")
@@ -695,6 +719,23 @@ def library_detail():
         
         if not title:
             return jsonify({'error': 'Missing title parameter'}), 400
+        
+        # 检查是否在黑名单中
+        from auth import AUTH_DB_CONFIG
+        import pymysql
+        try:
+            conn = pymysql.connect(**AUTH_DB_CONFIG)
+            with conn.cursor() as cursor:
+                novel_id = f"{title}_{author or ''}_{platform or ''}"
+                cursor.execute("SELECT status FROM ip_blacklist WHERE novel_id = %s", (novel_id,))
+                result = cursor.fetchone()
+                if result and result[0] == 'active':
+                    return jsonify({'error': '该书籍已被下架，暂时无法查看'}), 403
+        except Exception as e:
+            print(f"[WARN] Check blacklist error: {e}")
+        finally:
+            if 'conn' in locals():
+                conn.close()
         
         result = data_manager.get_book_detail(title, author or None, platform or None)
         
@@ -2093,21 +2134,6 @@ def admin_trigger_spider():
         'message': f'Spider node task for {platform} dispatched.',
         'task_id': task_id
     })
-
-@api_bp.route('/admin/blacklist', methods=['POST'])
-def admin_add_blacklist():
-    """管理端接口：加入下架管控黑名单 (Mock)"""
-    data = request.json or {}
-    novel_id = data.get('novel_id', '')
-    title = data.get('title', '')
-    reason = data.get('reason', 'Admin manual enforcement')
-    
-    # TODO: 落库到 blacklist 数据表
-    return jsonify({
-        'success': True,
-        'message': f'《{title}》已被成功加入管控黑名单。'
-    })
-
 
 @api_bp.route('/admin/books')
 def admin_books():
@@ -3665,7 +3691,11 @@ def get_audit_logs():
     risk_level = request.args.get('risk_level')
     risk_type = request.args.get('risk_type')
     book_title = request.args.get('book_title')
+    search = request.args.get('search')  # 模糊搜索书名
     include_ignored = request.args.get('include_ignored', 'false').lower() == 'true'  # 是否包含已忽略的记录
+    
+    # 调试日志
+    print(f"[Audit Logs] Params: limit={limit}, offset={offset}, search={search}, status={status}, risk_level={risk_level}")
     
     query = "SELECT * FROM ip_audit_logs WHERE 1=1"
     params = []
@@ -3686,6 +3716,9 @@ def get_audit_logs():
     if book_title:
         query += " AND book_title = %s"
         params.append(book_title)
+    if search:
+        query += " AND book_title LIKE %s"
+        params.append(f"%{search}%")
         
     query += " ORDER BY created_at DESC LIMIT %s OFFSET %s"
     params.extend([limit, offset])
@@ -3705,29 +3738,63 @@ def get_audit_logs():
                 """, (book_title,))
                 logs = cursor.fetchall()
                 total = len(logs)
-            else:
-                # 如果没有指定书名，对每本书只返回最新的一条（排除已忽略的）
-                ignored_filter = " AND status != 'Ignored'"
+            elif search:
+                # 如果有搜索词，模糊匹配书名
                 cursor.execute("""
                     SELECT a.* FROM ip_audit_logs a
                     INNER JOIN (
                         SELECT book_title, MAX(created_at) as max_time 
                         FROM ip_audit_logs 
-                        WHERE 1=1""" + ignored_filter + 
+                        WHERE 1=1 AND status != 'Ignored' AND book_title LIKE %s
+                        GROUP BY book_title
+                    ) b ON a.book_title = b.book_title AND a.created_at = b.max_time
+                    WHERE a.status != 'Ignored' AND a.book_title LIKE %s
+                    ORDER BY a.created_at DESC 
+                    LIMIT %s OFFSET %s
+                """, (f"%{search}%", f"%{search}%", limit, offset))
+                logs = cursor.fetchall()
+                
+                # 统计总数
+                cursor.execute("""
+                    SELECT COUNT(DISTINCT book_title) as cnt FROM ip_audit_logs 
+                    WHERE status != 'Ignored' AND book_title LIKE %s
+                """, (f"%{search}%",))
+                total = cursor.fetchone().get('cnt', 0)
+            else:
+                # 如果没有指定书名，对每本书只返回最新的一条（排除已忽略的）
+                ignored_filter = " AND status != 'Ignored'"
+                search_filter = " AND book_title LIKE %s" if search else ""
+                # 构建参数列表
+                inner_params = [f"%{search}%"] if search else []
+                if status: inner_params.append(status)
+                if risk_level: inner_params.append(risk_level)
+                if risk_type: inner_params.append(risk_type)
+                
+                outer_params = [f"%{search}%"] if search else []
+                if status: outer_params.append(status)
+                if risk_level: outer_params.append(risk_level)
+                if risk_type: outer_params.append(risk_type)
+                
+                cursor.execute("""
+                    SELECT a.* FROM ip_audit_logs a
+                    INNER JOIN (
+                        SELECT book_title, MAX(created_at) as max_time 
+                        FROM ip_audit_logs 
+                        WHERE 1=1""" + ignored_filter + search_filter +
                         (" AND status = %s" if status else "") + 
                         (" AND risk_level = %s" if risk_level else "") +
                         (" AND risk_type = %s" if risk_type else "") + 
                         """
                         GROUP BY book_title
                     ) b ON a.book_title = b.book_title AND a.created_at = b.max_time
-                    WHERE 1=1""" + ignored_filter +
+                    WHERE 1=1""" + ignored_filter + search_filter +
                     (" AND a.status = %s" if status else "") + 
                     (" AND a.risk_level = %s" if risk_level else "") +
                     (" AND a.risk_type = %s" if risk_type else "") + 
                     """
                     ORDER BY a.created_at DESC 
                     LIMIT %s OFFSET %s
-                """, tuple([p for p in [status, risk_level, risk_type, status, risk_level, risk_type] if p] + [limit, offset]))
+                """, tuple(inner_params + outer_params + [limit, offset]))
                 logs = cursor.fetchall()
                 
                 # 统计总数（去重后的书籍数，排除已忽略的）
@@ -3736,6 +3803,9 @@ def get_audit_logs():
                     WHERE 1=1 AND status != 'Ignored'
                 """
                 count_params = []
+                if search:
+                    count_query += " AND book_title LIKE %s"
+                    count_params.append(f"%{search}%")
                 if status:
                     count_query += " AND status = %s"
                     count_params.append(status)
@@ -3750,10 +3820,16 @@ def get_audit_logs():
             
         conn.close()
         
-        # 序列化 datetime
+        # 序列化 datetime 并解析 details JSON
         for log in logs:
             if log.get('created_at'):
                 log['created_at'] = log['created_at'].isoformat()
+            # 解析 details JSON 字符串为对象
+            if log.get('details') and isinstance(log['details'], str):
+                try:
+                    log['details'] = json.loads(log['details'])
+                except:
+                    pass
                 
         return jsonify({
             'status': 'success',
@@ -4222,6 +4298,7 @@ def audit_deep_scan():
 def audit_deep_scan_stream():
     """单本书深度 AI 审计流式输出 (SSE)"""
     book_title = request.args.get('book_title', '').strip()
+    print(f"[AUDIT_STREAM_V2] Processing: {book_title}")  # 版本标记
     if not book_title:
         return jsonify({'error': '请提供书名 (book_title)'}), 400
     
@@ -4322,92 +4399,6 @@ def audit_deep_scan_stream():
              'commercial_value': round(commercial_value, 1), 'timeliness': round(timeliness, 1)
         }
 
-        def generate():
-            import json
-            yield f"data: {json.dumps({'type': 'meta', 'score': model_score, 'data_sources': {'ai_eval': bool(ai_eval_stats), 'vr_comments': bool(vr_comments), 'global_stats': bool(global_stats), 'xgboost': True, 'realtime_trend': bool(realtime_trend)}})}\n\n"
-            
-            full_report = []
-            try:
-                generator = ai_service.generate_comprehensive_audit_stream(
-                    title=book_title, author=base_stats.get('author', '未知'),
-                    base_stats=base_stats, ai_eval_stats=ai_eval_stats,
-                    vr_comments=vr_comments, global_stats=global_stats,
-                    model_score=model_score, realtime_trend=realtime_trend,
-                    market_analysis=market_analysis, book_status=book_status
-                )
-                for chunk in generator:
-                    full_report.append(chunk)
-                    yield f"data: {json.dumps({'type': 'chunk', 'content': chunk})}\n\n"
-                    
-                report_markdown = "".join(full_report)
-                
-                # 用户端审计结果同步到管理员审计日志
-                try:
-                    from auth import AUTH_DB_CONFIG
-                    conn = pymysql.connect(**AUTH_DB_CONFIG, cursorclass=pymysql.cursors.DictCursor)
-                    with conn.cursor() as cursor:
-                        # 删除旧的审计记录（保留历史但去重当天）
-                        cursor.execute("""
-                            DELETE FROM ip_audit_logs 
-                            WHERE book_title = %s AND trigger_source = 'user_audit'
-                            AND DATE(created_at) = CURDATE()
-                        """, (book_title,))
-                        
-                        # 根据 model_score 判定 risk_type
-                        if model_score >= 85:
-                            risk_type = 'POTENTIAL_GEM'
-                        elif model_score >= 70:
-                            risk_type = 'NORMAL'
-                        else:
-                            risk_type = 'DEEP_AUDIT'
-                        
-                        # 插入新的审计记录（标记为用户端审计）
-                        insert_sql = """
-                            INSERT INTO ip_audit_logs 
-                            (book_title, status, risk_level, risk_type, score, report, trigger_source, details)
-                            VALUES (%s, 'REVIEWED', 'MEDIUM', %s, %s, %s, 'user_audit', %s)
-                        """
-                        details_json = json.dumps({
-                            'author': base_stats.get('author', '未知'),
-                            'platform': base_stats.get('platform', '未知'),
-                            'category': base_stats.get('category', '未知'),
-                            'word_count': base_stats.get('word_count', 0),
-                            'finance': max_finance,
-                            'ai_eval': ai_eval_stats,
-                            'user_id': g.current_user_id if hasattr(g, 'current_user_id') else None
-                        }, ensure_ascii=False)
-                        cursor.execute(insert_sql, (book_title, risk_type, model_score, report_markdown, details_json))
-                        
-                        # 同步到 AI 评分表
-                        cursor.execute("DELETE FROM ip_ai_evaluation WHERE title = %s", (book_title,))
-                        base_overall = ai_eval_stats.get('overall', 60) if isinstance(ai_eval_stats, dict) else 60
-                        ratio = model_score / max(base_overall, 1)
-                        eval_sql = """
-                            INSERT INTO ip_ai_evaluation 
-                            (title, author, platform, overall_score, story_score, character_score, 
-                             world_score, commercial_score, adaptation_score, safety_score, grade)
-                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-                        """
-                        cursor.execute(eval_sql, (
-                            book_title, base_stats.get('author', '未知'), base_stats.get('platform', '未知'),
-                            model_score, 
-                            min(100, (ai_eval_stats.get('story', 70) if isinstance(ai_eval_stats, dict) else 70) * ratio),
-                            min(100, (ai_eval_stats.get('character', 70) if isinstance(ai_eval_stats, dict) else 70) * ratio),
-                            min(100, (ai_eval_stats.get('world', 70) if isinstance(ai_eval_stats, dict) else 70) * ratio),
-                            min(100, (ai_eval_stats.get('commercial', 70) if isinstance(ai_eval_stats, dict) else 70) * ratio),
-                            min(100, (ai_eval_stats.get('adaptation', 70) if isinstance(ai_eval_stats, dict) else 70) * ratio),
-                            85.2, 'S' if model_score >= 90 else 'A' if model_score >= 80 else 'B'
-                        ))
-                        conn.commit()
-                    conn.close()
-                    print(f"[User Audit] Saved '{book_title}' to admin audit logs (score: {model_score:.1f}, type: {risk_type})")
-                except Exception as e:
-                    print(f"[User Audit] Save error: {e}")
-                    
-                yield f"data: {json.dumps({'type': 'done'})}\n\n"
-            except Exception as e:
-                yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
-        
         from flask import stream_with_context, Response
         
         # 在生成器外部获取当前用户ID
@@ -4432,6 +4423,8 @@ def audit_deep_scan_stream():
                     
                 report_markdown = "".join(full_report)
                 
+                print(f"[DEBUG] Stream complete, report length: {len(report_markdown)}, will sync to admin logs...")
+                
                 # 用户端审计结果同步到管理员审计日志
                 try:
                     from auth import AUTH_DB_CONFIG
@@ -4444,18 +4437,79 @@ def audit_deep_scan_stream():
                             AND DATE(created_at) = CURDATE()
                         """, (book_title,))
                         
-                        # 根据 model_score 判定 risk_type
-                        if model_score >= 85:
+                        # 根据 model_score 和实际表现判定 risk_type
+                        # 遗珠判断：AI评分较高但实际数据表现一般（潜力被低估）
+                        
+                        # 获取实际表现指标
+                        actual_monthly_tickets = base_stats.get('monthly_tickets', 0) or 0
+                        actual_collection = base_stats.get('collection_count', 0) or 0
+                        actual_fan = base_stats.get('fan_count', 0) or 0
+                        
+                        # 计算AI评审信息
+                        def get_grade(score):
+                            if score >= 95: return 'S'
+                            if score >= 85: return 'A'
+                            if score >= 75: return 'B'
+                            if score >= 60: return 'C'
+                            return 'D'
+                        
+                        # 计算实际表现等级 (根据月票)
+                        def get_actual_performance_level(monthly_tickets):
+                            if monthly_tickets >= 50000: return 'top'      # 头部作品
+                            if monthly_tickets >= 20000: return 'high'     # 高表现
+                            if monthly_tickets >= 5000: return 'medium'    # 中等表现
+                            if monthly_tickets >= 1000: return 'low'       # 低表现
+                            return 'nascent'                                   # 孵化期
+                        
+                        actual_level = get_actual_performance_level(actual_monthly_tickets)
+                        ai_grade = get_grade(model_score)
+                        
+                        # 遗珠判定：AI评分较高 (B/A/S级) 但实际表现不高（非top/high）
+                        # B级及以上 + 月票<5000 = 潜力遗珠
+                        is_potential_gem = ai_grade in ['S', 'A', 'B'] and actual_level in ['low', 'nascent', 'medium']
+                        # 出海优选：A/S级 + 表现中等以上
+                        is_global_gem = ai_grade in ['S', 'A'] and actual_level in ['medium', 'high', 'top']
+                        
+                        if is_global_gem:
+                            risk_type = 'GLOBAL_GEM'
+                        elif is_potential_gem:
                             risk_type = 'POTENTIAL_GEM'
                         elif model_score >= 70:
                             risk_type = 'NORMAL'
                         else:
                             risk_type = 'DEEP_AUDIT'
                         
+                        def get_grade_title(score, rt):
+                            grade = get_grade(score)
+                            if rt == 'GLOBAL_GEM': return '全球战略级作品'
+                            if rt == 'POTENTIAL_GEM':
+                                return '商业化潜力遗珠' if grade in ['S', 'A'] else '潜力作品'
+                            if rt == 'NORMAL': return '运营指标健康'
+                            if rt == 'DEEP_AUDIT': return '需持续观察'
+                            return '需持续观察'
+                        
+                        def get_grade_reason(score, rt):
+                            grade = get_grade(score)
+                            if rt == 'GLOBAL_GEM':
+                                return '该作品在出海适配度、文化壁垒突破、全球市场潜力等维度表现优异，具备成为国际级IP的核心要素。AI模型综合评估其翻译适配度高、文化普适性强，建议优先布局海外版权运营。'
+                            if rt == 'POTENTIAL_GEM':
+                                if grade == 'S':
+                                    return '该作品在月票、互动、粉丝粘性等核心商业指标上表现卓越，AI模型预测其具备现象级爆发潜力。内容质量与商业变现能力双高，是被市场低估的顶级遗珠，建议立即启动深度运营与IP开发。'
+                                if grade == 'A':
+                                    return '该作品在多项商业指标上表现优异，但可能因题材小众或运营不足未被充分发掘。AI模型识别其具备头部作品潜质，建议加大推广投入，有望突破至一线阵营。'
+                                return '该作品展现出稳定的商业潜力，AI模型识别其在特定细分市场具备竞争优势，建议针对性运营以释放更大价值。'
+                            return ''
+                        
+                        grade = get_grade(model_score)
+                        grade_title = get_grade_title(model_score, risk_type)
+                        grade_reason = get_grade_reason(model_score, risk_type)
+                        
+                        print(f"[DEBUG] AI Review: grade={grade}, title={grade_title}, is_gem={risk_type in ['POTENTIAL_GEM', 'GLOBAL_GEM']}")
+                        
                         # 插入新的审计记录（标记为用户端审计）
                         insert_sql = """
                             INSERT INTO ip_audit_logs 
-                            (book_title, status, risk_level, risk_type, score, report, trigger_source, details)
+                            (book_title, status, risk_level, risk_type, score, markdown_report, trigger_source, details)
                             VALUES (%s, 'REVIEWED', 'MEDIUM', %s, %s, %s, 'user_audit', %s)
                         """
                         details_json = json.dumps({
@@ -4465,30 +4519,43 @@ def audit_deep_scan_stream():
                             'word_count': base_stats.get('word_count', 0),
                             'finance': max_finance,
                             'ai_eval': ai_eval_stats if isinstance(ai_eval_stats, dict) else {},
-                            'user_id': current_user_id
+                            'user_id': current_user_id,
+                            'ai_review': {
+                                'grade': grade,
+                                'grade_title': grade_title,
+                                'grade_reason': grade_reason,
+                                'is_gem': risk_type in ['POTENTIAL_GEM', 'GLOBAL_GEM']
+                            }
                         }, ensure_ascii=False)
                         cursor.execute(insert_sql, (book_title, risk_type, model_score, report_markdown, details_json))
                         
-                        # 同步到 AI 评分表
-                        cursor.execute("DELETE FROM ip_ai_evaluation WHERE title = %s", (book_title,))
-                        base_overall = ai_eval_stats.get('overall', 60) if isinstance(ai_eval_stats, dict) else 60
-                        ratio = model_score / max(base_overall, 1)
-                        eval_sql = """
-                            INSERT INTO ip_ai_evaluation 
-                            (title, author, platform, overall_score, story_score, character_score, 
-                             world_score, commercial_score, adaptation_score, safety_score, grade)
-                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-                        """
-                        cursor.execute(eval_sql, (
-                            book_title, base_stats.get('author', '未知'), base_stats.get('platform', '未知'),
-                            model_score, 
-                            min(100, (ai_eval_stats.get('story', 70) if isinstance(ai_eval_stats, dict) else 70) * ratio),
-                            min(100, (ai_eval_stats.get('character', 70) if isinstance(ai_eval_stats, dict) else 70) * ratio),
-                            min(100, (ai_eval_stats.get('world', 70) if isinstance(ai_eval_stats, dict) else 70) * ratio),
-                            min(100, (ai_eval_stats.get('commercial', 70) if isinstance(ai_eval_stats, dict) else 70) * ratio),
-                            min(100, (ai_eval_stats.get('adaptation', 70) if isinstance(ai_eval_stats, dict) else 70) * ratio),
-                            85.2, 'S' if model_score >= 90 else 'A' if model_score >= 80 else 'B'
-                        ))
+                        # 同步到 AI 评分表（使用ZONGHENG_CONFIG数据库）
+                        try:
+                            conn_z = pymysql.connect(**ZONGHENG_CONFIG, cursorclass=pymysql.cursors.DictCursor)
+                            with conn_z.cursor() as cur_z:
+                                cur_z.execute("DELETE FROM ip_ai_evaluation WHERE title = %s", (book_title,))
+                                base_overall = ai_eval_stats.get('overall', 60) if isinstance(ai_eval_stats, dict) else 60
+                                ratio = model_score / max(base_overall, 1)
+                                eval_sql = """
+                                    INSERT INTO ip_ai_evaluation 
+                                    (title, author, platform, overall_score, story_score, character_score, 
+                                     world_score, commercial_score, adaptation_score, safety_score, grade)
+                                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                                """
+                                cur_z.execute(eval_sql, (
+                                    book_title, base_stats.get('author', '未知'), base_stats.get('platform', '未知'),
+                                    model_score, 
+                                    min(100, (ai_eval_stats.get('story', 70) if isinstance(ai_eval_stats, dict) else 70) * ratio),
+                                    min(100, (ai_eval_stats.get('character', 70) if isinstance(ai_eval_stats, dict) else 70) * ratio),
+                                    min(100, (ai_eval_stats.get('world', 70) if isinstance(ai_eval_stats, dict) else 70) * ratio),
+                                    min(100, (ai_eval_stats.get('commercial', 70) if isinstance(ai_eval_stats, dict) else 70) * ratio),
+                                    min(100, (ai_eval_stats.get('adaptation', 70) if isinstance(ai_eval_stats, dict) else 70) * ratio),
+                                    85.2, 'S' if model_score >= 90 else 'A' if model_score >= 80 else 'B'
+                                ))
+                                conn_z.commit()
+                            conn_z.close()
+                        except Exception as e_eval:
+                            print(f"[User Audit] AI eval sync error: {e_eval}")
                         conn.commit()
                     conn.close()
                     print(f"[User Audit] Saved '{book_title}' to admin audit logs (score: {model_score:.1f}, type: {risk_type})")

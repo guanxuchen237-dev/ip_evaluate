@@ -12,11 +12,11 @@ import DataCollectionMonitor from "@/components/dashboard/DataCollectionMonitor.
         :enter="{ opacity: 1, y: 0, transition: { duration: 600 } }"
         class="text-center mb-8"
       >
-        <p class="text-sm uppercase tracking-[0.2em] text-chart-cyan mb-4">Real-time Pipeline</p>
-        <h2 class="editorial-headline text-4xl text-foreground">
+        <p class="text-sm uppercase tracking-[0.2em] text-chart-cyan mb-4 fangzheng-label">Real-time Pipeline</p>
+        <h2 class="editorial-headline text-4xl text-foreground fangzheng-title">
           数据采集监控
         </h2>
-        <p class="text-muted-foreground mt-3">
+        <p class="text-muted-foreground mt-3 fangzheng-text">
           混合爬虫策略实时采集多平台数据，突破反爬机制
         </p>
       </div>
@@ -30,3 +30,19 @@ import DataCollectionMonitor from "@/components/dashboard/DataCollectionMonitor.
     </section>
   </EditorialLayout>
 </template>
+
+<style scoped>
+/* 方正字体 */
+.fangzheng-label {
+  font-family: '方正兰亭黑', 'FZLanTingHei', '方正黑体', 'FZHei', 'Microsoft YaHei', sans-serif;
+}
+
+.fangzheng-title {
+  font-family: '方正兰亭黑', 'FZLanTingHei', '方正黑体', 'FZHei', 'Microsoft YaHei', sans-serif;
+  font-weight: 600;
+}
+
+.fangzheng-text {
+  font-family: '方正兰亭黑', 'FZLanTingHei', '方正黑体', 'FZHei', 'Microsoft YaHei', sans-serif;
+}
+</style>

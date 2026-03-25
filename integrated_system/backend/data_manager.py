@@ -1476,7 +1476,11 @@ class DataManager:
             updated_at_str = str(updated_at_val)
             
         # 构建返回数据
+        # 生成唯一ID（书名+作者+平台）
+        novel_id = f"{record.get('title', '')}_{record.get('author', '')}_{record.get('platform', '')}"
+        
         return {
+            'id': novel_id,
             'basic': {
                 'title': record.get('title', ''),
                 'author': record.get('author', ''),

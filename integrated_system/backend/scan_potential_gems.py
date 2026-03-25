@@ -285,6 +285,45 @@ def fetch_ai_eval(title):
     except: pass
     return stats
 
+def fetch_realtime_trend(title):
+    """获取作品的实时趋势数据"""
+    trend = {}
+    try:
+        conn = pymysql.connect(**ZONGHENG_CONFIG, cursorclass=pymysql.cursors.DictCursor)
+        with conn.cursor() as cur:
+            # 从月度数据计算趋势
+            cur.execute("""
+                SELECT monthly_ticket, year, month
+                FROM zongheng_book_ranks
+                WHERE title = %s
+                ORDER BY year DESC, month DESC
+                LIMIT 3
+            """, (title,))
+            rows = cur.fetchall()
+            if rows and len(rows) >= 1:
+                latest = rows[0]
+                trend['latest_tickets'] = latest['monthly_ticket'] or 0
+                trend['data_points'] = len(rows)
+                
+                if len(rows) >= 2:
+                    prev = rows[1]
+                    current_tickets = latest['monthly_ticket'] or 0
+                    prev_tickets = prev['monthly_ticket'] or 1
+                    if prev_tickets > 0:
+                        growth = ((current_tickets - prev_tickets) / prev_tickets) * 100
+                        trend['growth_rate'] = round(growth, 1)
+                        trend['direction'] = '上升' if growth > 5 else '下降' if growth < -5 else '稳定'
+                    else:
+                        trend['growth_rate'] = 0
+                        trend['direction'] = '稳定'
+                else:
+                    trend['growth_rate'] = 0
+                    trend['direction'] = '稳定'
+        conn.close()
+    except Exception as e:
+        print(f"Realtime Trend Error: {e}")
+    return trend
+
 def scan_and_trigger_gems(title_filter=None):
     """
     扫描潜力遗珠并触发深度AI审计。

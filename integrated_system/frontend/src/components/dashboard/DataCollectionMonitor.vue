@@ -250,7 +250,7 @@ const errorCount = computed(() => dataSources.value.filter(s => s.status === "er
 </script>
 
 <template>
-  <div class="editorial-card rounded-3xl p-8">
+  <div class="editorial-card rounded-3xl p-8 fangzheng-font">
     <!-- Header -->
     <div class="flex items-start justify-between mb-6">
       <div class="flex items-center gap-3">
@@ -258,8 +258,8 @@ const errorCount = computed(() => dataSources.value.filter(s => s.status === "er
           <Database class="w-5 h-5 text-chart-cyan" />
         </div>
         <div>
-          <h3 class="editorial-headline text-xl text-foreground">Data Pipeline</h3>
-          <p class="text-sm text-muted-foreground">实时数据采集监控</p>
+          <h3 class="editorial-headline text-xl text-foreground fangzheng-title">Data Pipeline</h3>
+          <p class="text-sm text-muted-foreground fangzheng-text">实时数据采集监控</p>
         </div>
       </div>
       
@@ -313,7 +313,7 @@ const errorCount = computed(() => dataSources.value.filter(s => s.status === "er
           <Wifi class="w-4 h-4 text-chart-green" />
           <span class="text-xs text-muted-foreground">在线数据源</span>
         </div>
-        <p class="text-2xl font-serif font-bold text-foreground">{{ activeCount }}/{{ dataSources.length }}</p>
+        <p class="text-2xl font-bold text-foreground fangzheng-number">{{ activeCount }}/{{ dataSources.length }}</p>
       </div>
       
       <div class="p-4 rounded-xl bg-gradient-to-br from-chart-blue/10 to-chart-blue/5 border border-chart-blue/20">
@@ -321,7 +321,7 @@ const errorCount = computed(() => dataSources.value.filter(s => s.status === "er
           <ArrowDownToLine class="w-4 h-4 text-chart-blue" />
           <span class="text-xs text-muted-foreground">今日采集</span>
         </div>
-        <p class="text-2xl font-serif font-bold text-foreground">{{ totalRecords.toLocaleString() }}</p>
+        <p class="text-2xl font-bold text-foreground fangzheng-number">{{ totalRecords.toLocaleString() }}</p>
       </div>
       
       <div class="p-4 rounded-xl bg-gradient-to-br from-chart-purple/10 to-chart-purple/5 border border-chart-purple/20">
@@ -329,7 +329,7 @@ const errorCount = computed(() => dataSources.value.filter(s => s.status === "er
           <Zap class="w-4 h-4 text-chart-purple" />
           <span class="text-xs text-muted-foreground">处理速率</span>
         </div>
-        <p class="text-2xl font-serif font-bold text-foreground">847/s</p>
+        <p class="text-2xl font-bold text-foreground fangzheng-number">847/s</p>
       </div>
       
       <div 
@@ -340,7 +340,7 @@ const errorCount = computed(() => dataSources.value.filter(s => s.status === "er
           <component :is="errorCount > 0 ? WifiOff : Server" class="w-4 h-4" :class="errorCount > 0 ? 'text-chart-red' : 'text-chart-green'" />
           <span class="text-xs text-muted-foreground">异常源</span>
         </div>
-        <p class="text-2xl font-serif font-bold" :class="errorCount > 0 ? 'text-chart-red' : 'text-chart-green'">{{ errorCount }}</p>
+        <p class="text-2xl font-bold fangzheng-number" :class="errorCount > 0 ? 'text-chart-red' : 'text-chart-green'">{{ errorCount }}</p>
       </div>
     </div>
 
@@ -400,3 +400,25 @@ const errorCount = computed(() => dataSources.value.filter(s => s.status === "er
     </div>
   </div>
 </template>
+
+<style scoped>
+/* 方正字体 */
+.fangzheng-font {
+  font-family: '方正兰亭黑', 'FZLanTingHei', '方正黑体', 'FZHei', 'Microsoft YaHei', sans-serif;
+}
+
+.fangzheng-title {
+  font-family: '方正兰亭黑', 'FZLanTingHei', '方正黑体', 'FZHei', 'Microsoft YaHei', sans-serif;
+  font-weight: 600;
+}
+
+.fangzheng-text {
+  font-family: '方正兰亭黑', 'FZLanTingHei', '方正黑体', 'FZHei', 'Microsoft YaHei', sans-serif;
+}
+
+.fangzheng-number {
+  font-family: '方正兰亭黑', 'FZLanTingHei', '方正黑体', 'FZHei', 'Microsoft YaHei', sans-serif;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+</style>
