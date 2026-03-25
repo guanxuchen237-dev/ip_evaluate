@@ -320,8 +320,10 @@ const navigateToReader = (book: any) => {
                     <div class="text-xs mt-0.5">
                       <span 
                         class="font-bold px-1.5 py-0.5 rounded"
-                        :class="(book.ai_grade || '').startsWith('A') ? 'bg-emerald-50 text-emerald-700' : (book.ai_grade || '').startsWith('B') ? 'bg-amber-50 text-amber-700' : 'bg-slate-50 text-slate-600'"
-                      >{{ book.ai_grade || '--' }}</span>
+                        :class="book.ip_score >= 85 ? 'bg-emerald-50 text-emerald-700' : 
+                                book.ip_score >= 75 ? 'bg-amber-50 text-amber-700' : 
+                                book.ip_score >= 60 ? 'bg-blue-50 text-blue-700' : 'bg-slate-50 text-slate-600'"
+                      >{{ book.ip_score >= 95 ? 'S' : book.ip_score >= 85 ? 'A' : book.ip_score >= 75 ? 'B' : book.ip_score >= 60 ? 'C' : 'D' }}</span>
                     </div>
                  </div>
               </div>
