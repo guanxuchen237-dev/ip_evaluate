@@ -3956,17 +3956,29 @@ def generate_audit_report(log_id):
         except:
             max_tickets_ref = 100000
         
-        # 市场热度：基于与头部作品的相对比例
-        if _fin >= max_tickets_ref * 0.8:
-            heat_score = 95.0
-        elif _fin >= max_tickets_ref * 0.5:
-            heat_score = 80.0 + 15 * (_fin - max_tickets_ref * 0.5) / (max_tickets_ref * 0.3)
-        elif _fin >= max_tickets_ref * 0.1:
-            heat_score = 60.0 + 20 * (_fin - max_tickets_ref * 0.1) / (max_tickets_ref * 0.4)
-        elif _fin >= max_tickets_ref * 0.01:
-            heat_score = 30.0 + 30 * (_fin - max_tickets_ref * 0.01) / (max_tickets_ref * 0.09)
-        else:
-            heat_score = min(30.0, 10 + _fin / (max_tickets_ref * 0.01) * 20)
+        # 【修复】市场热度：基于月票在全库的排名百分位
+        heat_score = 50.0
+        try:
+            conn_q = pymysql.connect(**QIDIAN_CONFIG, cursorclass=pymysql.cursors.DictCursor)
+            with conn_q.cursor() as cur:
+                cur.execute("SELECT COUNT(*) as total FROM novel_monthly_stats WHERE monthly_tickets_on_list > 0")
+                total_row = cur.fetchone()
+                total_books = total_row['total'] if total_row else 1000
+                
+                cur.execute("""
+                    SELECT COUNT(*) as rank FROM novel_monthly_stats 
+                    WHERE monthly_tickets_on_list <= %s AND monthly_tickets_on_list > 0
+                """, (_fin,))
+                rank_row = cur.fetchone()
+                rank = rank_row['rank'] if rank_row else (total_books // 2)
+                
+                percentile = rank / total_books if total_books > 0 else 0.5
+                heat_score = 10 + percentile * 85
+            conn_q.close()
+        except Exception as e:
+            print(f"[Heat Calc Error] {e}")
+            import math
+            heat_score = min(95, 10 + 30 * math.log10(max(_fin, 1) + 1))
         
         # 粉丝粘性
         if _fin > 0:
@@ -4495,20 +4507,38 @@ def audit_deep_scan_stream():
         _inter = float(base_stats.get('interaction', 0))
         _pop = _inter * 0.2
         
-        # 【修复】市场热度：基于与头部作品的相对比例（非对数压缩）
-        # 使用固定参考值10万月票作为头部标准，避免极端值扭曲
-        max_tickets_ref = 100000
-        
-        if _fin >= max_tickets_ref * 0.8:
-            heat_score = 95.0  # 头部爆款
-        elif _fin >= max_tickets_ref * 0.5:
-            heat_score = 80.0 + 15 * (_fin - max_tickets_ref * 0.5) / (max_tickets_ref * 0.3)
-        elif _fin >= max_tickets_ref * 0.1:
-            heat_score = 60.0 + 20 * (_fin - max_tickets_ref * 0.1) / (max_tickets_ref * 0.4)
-        elif _fin >= max_tickets_ref * 0.01:
-            heat_score = 30.0 + 30 * (_fin - max_tickets_ref * 0.01) / (max_tickets_ref * 0.09)
-        else:
-            heat_score = min(30.0, 10 + _fin / (max_tickets_ref * 0.01) * 20)
+        # 【修复】市场热度：基于月票在全库的排名百分位（更公平）
+        # 不是与头部作品比，而是看超过多少比例的其他作品
+        heat_score = 50.0  # 默认中等
+        try:
+            conn_q = pymysql.connect(**QIDIAN_CONFIG, cursorclass=pymysql.cursors.DictCursor)
+            with conn_q.cursor() as cur:
+                # 查询比当前作品月票少的作品数量
+                cur.execute("""
+                    SELECT COUNT(*) as total FROM novel_monthly_stats WHERE monthly_tickets_on_list > 0
+                """)
+                total_row = cur.fetchone()
+                total_books = total_row['total'] if total_row else 1000
+                
+                # 查询月票<=当前作品的排名
+                cur.execute("""
+                    SELECT COUNT(*) as rank FROM novel_monthly_stats 
+                    WHERE monthly_tickets_on_list <= %s AND monthly_tickets_on_list > 0
+                """, (_fin,))
+                rank_row = cur.fetchone()
+                rank = rank_row['rank'] if rank_row else (total_books // 2)
+                
+                # 热度 = 排名百分位 * 100（越高表示超过越多作品）
+                percentile = rank / total_books if total_books > 0 else 0.5
+                # 映射到10-95分，避免极端
+                heat_score = 10 + percentile * 85
+                
+            conn_q.close()
+        except Exception as e:
+            print(f"[Heat Calc Error] {e}")
+            # 降级为简单对数公式
+            import math
+            heat_score = min(95, 10 + 30 * math.log10(max(_fin, 1) + 1))
         
         # 【修复】粉丝粘性：基于互动/月票比例
         if _fin > 0:
