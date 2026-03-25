@@ -1142,7 +1142,12 @@ onMounted(() => {
                            
                             <p class="text-xs font-bold text-slate-400 mb-1 relative z-10 tracking-widest uppercase">AI 综合评估</p>
                             <div class="flex items-baseline gap-2 mb-1 relative z-10">
-                                <p class="text-7xl font-serif font-black text-emerald-600">{{ book.ip_evaluation.grade?.replace('+', '') || 'A' }}<span class="text-4xl text-emerald-500 align-top relative -top-3" v-if="(book.ip_evaluation.grade || '').includes('+')">+</span></p>
+                                <p class="text-7xl font-serif font-black text-emerald-600">{{ 
+                                    book.ip_evaluation.score >= 95 ? 'S' : 
+                                    book.ip_evaluation.score >= 85 ? 'A' : 
+                                    book.ip_evaluation.score >= 75 ? 'B' : 
+                                    book.ip_evaluation.score >= 60 ? 'C' : 'D'
+                                }}</p>
                             </div>
                             <p class="text-xs text-slate-500 mb-8 relative z-10 pb-4 border-b border-slate-100">Top <span class="font-bold text-slate-700">{{ (100 - (book.ip_evaluation.percentile || 50)).toFixed(1) }}%</span> in {{ book.basic.category || 'Fiction' }} Genre</p>
 
