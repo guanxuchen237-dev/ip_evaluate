@@ -3934,9 +3934,65 @@ def generate_audit_report(log_id):
         _pop = _inter * 0.2
         _score = float(model_score)
         
-        heat_score = min(100, 40 + 12 * np.log10(max(_fin, 1)) + 5 * np.log10(max(_pop, 1)))
-        fan_loyalty = min(100, 50 + 15 * np.log10(max(_inter / (_fin * 100), 0.01) + 1)) if _fin > 0 and _inter > 0 else 50.0
-        commercial_value = min(100, 35 + 14 * np.log10(max(_fin, 1)))
+        # 查询数据库获取月票分布参考值，用于相对评分
+        # 使用P90分位数作为"头部标准"，避免极端值扭曲评分
+        try:
+            max_tickets_ref = 100000  # 默认参考值
+            
+            # 从起点查月票P90分位数
+            conn_q = pymysql.connect(**QIDIAN_CONFIG, cursorclass=pymysql.cursors.DictCursor)
+            with conn_q.cursor() as cur:
+                cur.execute("""
+                    SELECT monthly_tickets_on_list 
+                    FROM novel_monthly_stats 
+                    WHERE monthly_tickets_on_list > 0 
+                    ORDER BY monthly_tickets_on_list DESC 
+                    LIMIT 1 OFFSET 100
+                """)
+                row = cur.fetchone()
+                if row and row.get('monthly_tickets_on_list'):
+                    max_tickets_ref = min(100000, max(50000, row['monthly_tickets_on_list']))
+            conn_q.close()
+        except:
+            max_tickets_ref = 100000
+        
+        # 市场热度：基于与头部作品的相对比例
+        if _fin >= max_tickets_ref * 0.8:
+            heat_score = 95.0
+        elif _fin >= max_tickets_ref * 0.5:
+            heat_score = 80.0 + 15 * (_fin - max_tickets_ref * 0.5) / (max_tickets_ref * 0.3)
+        elif _fin >= max_tickets_ref * 0.1:
+            heat_score = 60.0 + 20 * (_fin - max_tickets_ref * 0.1) / (max_tickets_ref * 0.4)
+        elif _fin >= max_tickets_ref * 0.01:
+            heat_score = 30.0 + 30 * (_fin - max_tickets_ref * 0.01) / (max_tickets_ref * 0.09)
+        else:
+            heat_score = min(30.0, 10 + _fin / (max_tickets_ref * 0.01) * 20)
+        
+        # 粉丝粘性
+        if _fin > 0:
+            interaction_ratio = _inter / _fin
+            if interaction_ratio >= 500:
+                fan_loyalty = 90.0
+            elif interaction_ratio >= 200:
+                fan_loyalty = 75.0 + 15 * (interaction_ratio - 200) / 300
+            elif interaction_ratio >= 50:
+                fan_loyalty = 55.0 + 20 * (interaction_ratio - 50) / 150
+            else:
+                fan_loyalty = 30.0 + 25 * interaction_ratio / 50
+        else:
+            fan_loyalty = 20.0
+        
+        # 商业变现
+        if _fin >= 50000:
+            commercial_value = 85.0 + 15 * min(1.0, (_fin - 50000) / 50000)
+        elif _fin >= 20000:
+            commercial_value = 70.0 + 15 * (_fin - 20000) / 30000
+        elif _fin >= 5000:
+            commercial_value = 50.0 + 20 * (_fin - 5000) / 15000
+        elif _fin >= 1000:
+            commercial_value = 30.0 + 20 * (_fin - 1000) / 4000
+        else:
+            commercial_value = min(30.0, 5 + _fin / 1000 * 25)
         
         dims = ai_eval_stats if isinstance(ai_eval_stats, dict) else {}
         if dims.get('story') and dims.get('character') and dims.get('world'):
@@ -4165,9 +4221,68 @@ def audit_deep_scan():
         _pop = _inter * 0.2
         _score = float(model_score)
         
-        heat_score = min(100, 40 + 12 * np.log10(max(_fin, 1)) + 5 * np.log10(max(_pop, 1)))
-        fan_loyalty = min(100, 50 + 15 * np.log10(max(_inter / (_fin * 100), 0.01) + 1)) if _fin > 0 and _inter > 0 else 50.0
-        commercial_value = min(100, 35 + 14 * np.log10(max(_fin, 1)))
+        # 查询数据库获取月票分布参考值，用于相对评分
+        # 使用P90分位数作为"头部标准"，避免极端值扭曲评分
+        try:
+            from data_manager import ZONGHENG_CONFIG, QIDIAN_CONFIG
+            max_tickets_ref = 100000  # 默认参考值（头部作品典型月票）
+            
+            # 从起点查月票P90分位数（前10%作品的门槛）
+            conn_q = pymysql.connect(**QIDIAN_CONFIG, cursorclass=pymysql.cursors.DictCursor)
+            with conn_q.cursor() as cur:
+                cur.execute("""
+                    SELECT monthly_tickets_on_list 
+                    FROM novel_monthly_stats 
+                    WHERE monthly_tickets_on_list > 0 
+                    ORDER BY monthly_tickets_on_list DESC 
+                    LIMIT 1 OFFSET 100
+                """)
+                row = cur.fetchone()
+                if row and row.get('monthly_tickets_on_list'):
+                    # 使用P90或默认值，取较小者（避免极端值）
+                    max_tickets_ref = min(100000, max(50000, row['monthly_tickets_on_list']))
+            conn_q.close()
+        except:
+            max_tickets_ref = 100000  # 失败时使用默认值
+        
+        # 市场热度：基于实际月票与头部作品的相对比例（非对数压缩）
+        # 头部作品(10万月票)=100分，普通作品按比例计算
+        if _fin >= max_tickets_ref * 0.8:
+            heat_score = 95.0  # 头部爆款
+        elif _fin >= max_tickets_ref * 0.5:
+            heat_score = 80.0 + 15 * (_fin - max_tickets_ref * 0.5) / (max_tickets_ref * 0.3)  # 80-95分
+        elif _fin >= max_tickets_ref * 0.1:
+            heat_score = 60.0 + 20 * (_fin - max_tickets_ref * 0.1) / (max_tickets_ref * 0.4)  # 60-80分
+        elif _fin >= max_tickets_ref * 0.01:
+            heat_score = 30.0 + 30 * (_fin - max_tickets_ref * 0.01) / (max_tickets_ref * 0.09)  # 30-60分
+        else:
+            heat_score = min(30.0, 10 + _fin / (max_tickets_ref * 0.01) * 20)  # 10-30分
+        
+        # 粉丝粘性：互动量/月票的比例（如果月票低但互动高，说明粘性强）
+        if _fin > 0:
+            interaction_ratio = _inter / _fin
+            if interaction_ratio >= 500:  # 每月票500互动
+                fan_loyalty = 90.0
+            elif interaction_ratio >= 200:
+                fan_loyalty = 75.0 + 15 * (interaction_ratio - 200) / 300
+            elif interaction_ratio >= 50:
+                fan_loyalty = 55.0 + 20 * (interaction_ratio - 50) / 150
+            else:
+                fan_loyalty = 30.0 + 25 * interaction_ratio / 50
+        else:
+            fan_loyalty = 20.0
+        
+        # 商业变现：基于绝对月票数量的阶梯评分（更严格的标准）
+        if _fin >= 50000:  # 5万月票以上
+            commercial_value = 85.0 + 15 * min(1.0, (_fin - 50000) / 50000)  # 85-100
+        elif _fin >= 20000:  # 2-5万
+            commercial_value = 70.0 + 15 * (_fin - 20000) / 30000  # 70-85
+        elif _fin >= 5000:  # 5千-2万
+            commercial_value = 50.0 + 20 * (_fin - 5000) / 15000  # 50-70
+        elif _fin >= 1000:  # 1千-5千
+            commercial_value = 30.0 + 20 * (_fin - 1000) / 4000  # 30-50
+        else:
+            commercial_value = min(30.0, 5 + _fin / 1000 * 25)  # 5-30
         
         dims = ai_eval_stats if isinstance(ai_eval_stats, dict) else {}
         if dims.get('story') and dims.get('character') and dims.get('world'):
@@ -4380,9 +4495,46 @@ def audit_deep_scan_stream():
         _inter = float(base_stats.get('interaction', 0))
         _pop = _inter * 0.2
         
-        heat_score = min(100, 40 + 12 * np.log10(max(_fin, 1)) + 5 * np.log10(max(_pop, 1)))
-        fan_loyalty = min(100, 50 + 15 * np.log10(max(_inter / (_fin * 100), 0.01) + 1)) if _fin > 0 and _inter > 0 else 50.0
-        commercial_value = min(100, 35 + 14 * np.log10(max(_fin, 1)))
+        # 【修复】市场热度：基于与头部作品的相对比例（非对数压缩）
+        # 使用固定参考值10万月票作为头部标准，避免极端值扭曲
+        max_tickets_ref = 100000
+        
+        if _fin >= max_tickets_ref * 0.8:
+            heat_score = 95.0  # 头部爆款
+        elif _fin >= max_tickets_ref * 0.5:
+            heat_score = 80.0 + 15 * (_fin - max_tickets_ref * 0.5) / (max_tickets_ref * 0.3)
+        elif _fin >= max_tickets_ref * 0.1:
+            heat_score = 60.0 + 20 * (_fin - max_tickets_ref * 0.1) / (max_tickets_ref * 0.4)
+        elif _fin >= max_tickets_ref * 0.01:
+            heat_score = 30.0 + 30 * (_fin - max_tickets_ref * 0.01) / (max_tickets_ref * 0.09)
+        else:
+            heat_score = min(30.0, 10 + _fin / (max_tickets_ref * 0.01) * 20)
+        
+        # 【修复】粉丝粘性：基于互动/月票比例
+        if _fin > 0:
+            interaction_ratio = _inter / _fin
+            if interaction_ratio >= 500:
+                fan_loyalty = 90.0
+            elif interaction_ratio >= 200:
+                fan_loyalty = 75.0 + 15 * (interaction_ratio - 200) / 300
+            elif interaction_ratio >= 50:
+                fan_loyalty = 55.0 + 20 * (interaction_ratio - 50) / 150
+            else:
+                fan_loyalty = 30.0 + 25 * interaction_ratio / 50
+        else:
+            fan_loyalty = 20.0
+        
+        # 【修复】商业变现：基于绝对月票的阶梯评分
+        if _fin >= 50000:
+            commercial_value = 85.0 + 15 * min(1.0, (_fin - 50000) / 50000)
+        elif _fin >= 20000:
+            commercial_value = 70.0 + 15 * (_fin - 20000) / 30000
+        elif _fin >= 5000:
+            commercial_value = 50.0 + 20 * (_fin - 5000) / 15000
+        elif _fin >= 1000:
+            commercial_value = 30.0 + 20 * (_fin - 1000) / 4000
+        else:
+            commercial_value = min(30.0, 5 + _fin / 1000 * 25)
         
         dims = ai_eval_stats if isinstance(ai_eval_stats, dict) else {}
         if dims.get('story') and dims.get('character') and dims.get('world'):
