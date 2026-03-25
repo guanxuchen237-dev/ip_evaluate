@@ -4375,7 +4375,7 @@ def audit_deep_scan():
                 global_potential = int(world_score * 0.5 + commercial_score * 0.5)
                 
                 # 3. 根据分数和全球化潜力判定风险类型
-                if global_potential >= 60:
+                if global_potential >= 90:
                     risk_type = "GLOBAL_GEM"
                     risk_level = "Low"
                 elif model_score >= 90:
@@ -4701,14 +4701,14 @@ def audit_deep_scan_stream():
                         actual_level = get_actual_performance_level(actual_monthly_tickets)
                         ai_grade = get_grade(model_score)
                         
-                        # 【修复】获取全球化潜力，优先判定出海标签（阈值降为60）
+                        # 【修复】获取全球化潜力，只根据此值判定出海标签
                         global_potential = ai_eval_stats.get('global_potential', 0) if isinstance(ai_eval_stats, dict) else 0
                         
                         # 遗珠判定：AI评分较高 (B/A/S级) 但实际表现不高（非top/high）
                         # B级及以上 + 月票<5000 = 潜力遗珠
                         is_potential_gem = ai_grade in ['S', 'A', 'B'] and actual_level in ['low', 'nascent', 'medium']
-                        # 出海优选：全球化潜力≥60 或 (A/S级 + 表现中等以上)
-                        is_global_gem = global_potential >= 60 or (ai_grade in ['S', 'A'] and actual_level in ['medium', 'high', 'top'])
+                        # 出海优选：仅根据全球化潜力判定，不再考虑等级
+                        is_global_gem = global_potential >= 90
                         
                         if is_global_gem:
                             risk_type = 'GLOBAL_GEM'
