@@ -3956,29 +3956,53 @@ def generate_audit_report(log_id):
         except:
             max_tickets_ref = 100000
         
-        # 【修复】市场热度：基于月票在全库的排名百分位
-        heat_score = 50.0
-        try:
-            conn_q = pymysql.connect(**QIDIAN_CONFIG, cursorclass=pymysql.cursors.DictCursor)
-            with conn_q.cursor() as cur:
-                cur.execute("SELECT COUNT(*) as total FROM novel_monthly_stats WHERE monthly_tickets_on_list > 0")
-                total_row = cur.fetchone()
-                total_books = total_row['total'] if total_row else 1000
-                
-                cur.execute("""
-                    SELECT COUNT(*) as rank FROM novel_monthly_stats 
-                    WHERE monthly_tickets_on_list <= %s AND monthly_tickets_on_list > 0
-                """, (_fin,))
-                rank_row = cur.fetchone()
-                rank = rank_row['rank'] if rank_row else (total_books // 2)
-                
-                percentile = rank / total_books if total_books > 0 else 0.5
-                heat_score = 10 + percentile * 85
-            conn_q.close()
-        except Exception as e:
-            print(f"[Heat Calc Error] {e}")
-            import math
-            heat_score = min(95, 10 + 30 * math.log10(max(_fin, 1) + 1))
+        # 【修复】市场热度：根据平台类型使用不同阈值
+        platform = base_stats.get('platform', 'Qidian')
+        
+        if platform == 'Zongheng':
+            # 纵横阈值（约为起点的1/10）
+            if _fin >= 5000:
+                heat_score = 90.0 + min(5, (_fin - 5000) / 1000)
+            elif _fin >= 3000:
+                heat_score = 80.0 + (_fin - 3000) / 2000 * 10
+            elif _fin >= 1000:
+                heat_score = 70.0 + (_fin - 1000) / 2000 * 10
+            elif _fin >= 500:
+                heat_score = 60.0 + (_fin - 500) / 500 * 10
+            elif _fin >= 300:
+                heat_score = 50.0 + (_fin - 300) / 200 * 10
+            elif _fin >= 100:
+                heat_score = 40.0 + (_fin - 100) / 200 * 10
+            elif _fin >= 50:
+                heat_score = 30.0 + (_fin - 50) / 50 * 10
+            elif _fin >= 10:
+                heat_score = 20.0 + (_fin - 10) / 40 * 10
+            elif _fin >= 1:
+                heat_score = 15.0 + (_fin - 1) / 9 * 5
+            else:
+                heat_score = 10.0
+        else:
+            # 起点阈值（标准）
+            if _fin >= 50000:
+                heat_score = 90.0 + min(5, (_fin - 50000) / 10000)
+            elif _fin >= 30000:
+                heat_score = 80.0 + (_fin - 30000) / 20000 * 10
+            elif _fin >= 10000:
+                heat_score = 70.0 + (_fin - 10000) / 20000 * 10
+            elif _fin >= 5000:
+                heat_score = 60.0 + (_fin - 5000) / 5000 * 10
+            elif _fin >= 3000:
+                heat_score = 50.0 + (_fin - 3000) / 2000 * 10
+            elif _fin >= 1000:
+                heat_score = 40.0 + (_fin - 1000) / 2000 * 10
+            elif _fin >= 500:
+                heat_score = 30.0 + (_fin - 500) / 500 * 10
+            elif _fin >= 100:
+                heat_score = 20.0 + (_fin - 100) / 400 * 10
+            elif _fin >= 10:
+                heat_score = 15.0 + (_fin - 10) / 90 * 5
+            else:
+                heat_score = max(10.0, 10 + _fin * 0.5)
         
         # 粉丝粘性
         if _fin > 0:
@@ -4343,9 +4367,18 @@ def audit_deep_scan():
                    cursor.execute(delete_sql_eval, (book_title,))
                    print(f"[CLEANUP] Force cleared old scores for {book_title} in both Logs and Eval tables")
 
-                # 2. 插入最新的报告
-                # （根据分数准确判定风险类型和等级）
-                if model_score >= 90:
+                # 2. 【修复】先计算 global_potential，再判定 risk_type
+                base_overall = ai_eval_stats.get('overall', 60)
+                ratio = model_score / max(base_overall, 1)
+                world_score = min(100, ai_eval_stats.get('world', 70) * ratio)
+                commercial_score = min(100, ai_eval_stats.get('commercial', 70) * ratio)
+                global_potential = int(world_score * 0.5 + commercial_score * 0.5)
+                
+                # 3. 根据分数和全球化潜力判定风险类型
+                if global_potential >= 60:
+                    risk_type = "GLOBAL_GEM"
+                    risk_level = "Low"
+                elif model_score >= 90:
                     risk_type = "POTENTIAL_GEM"
                     risk_level = "Low"
                 elif model_score < 40:
@@ -4355,16 +4388,14 @@ def audit_deep_scan():
                     risk_type = "NORMAL"
                     risk_level = "Low"
 
-                # 🚀 核心加固：同步更新基础评价表
+                # 4. 同步更新基础评价表
                 try:
+                    print(f"[DEBUG] Inserting ip_ai_evaluation: title={book_title}, global_potential={global_potential}")
                     eval_sql = """
                     INSERT INTO ip_ai_evaluation 
-                    (title, author, platform, overall_score, story_score, character_score, world_score, commercial_score, adaptation_score, safety_score, grade)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    (title, author, platform, overall_score, story_score, character_score, world_score, commercial_score, adaptation_score, safety_score, grade, global_potential)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                     """
-                    # 计算维度分映射比率
-                    base_overall = ai_eval_stats.get('overall', 60)
-                    ratio = model_score / max(base_overall, 1)
                     
                     cursor.execute(eval_sql, (
                         book_title,
@@ -4373,14 +4404,18 @@ def audit_deep_scan():
                         model_score,
                         min(100, ai_eval_stats.get('story', 70) * ratio),
                         min(100, ai_eval_stats.get('character', 70) * ratio),
-                        min(100, ai_eval_stats.get('world', 70) * ratio),
-                        min(100, ai_eval_stats.get('commercial', 70) * ratio),
+                        world_score,
+                        commercial_score,
                         min(100, ai_eval_stats.get('adaptation', 70) * ratio),
                         min(100, ai_eval_stats.get('safety', 80) * ratio),
-                        'S' if model_score >= 90 else 'A' if model_score >= 80 else 'B'
+                        'S' if model_score >= 90 else 'A' if model_score >= 80 else 'B',
+                        global_potential
                     ))
+                    print(f"[DEBUG] Insert successful, rows affected: {cursor.rowcount}")
                 except Exception as e_sync:
                     print(f"[SYNC ERROR] {e_sync}")
+                    import traceback
+                    traceback.print_exc()
 
                 # 插入最新的审计日志记录
                 sql = """
@@ -4478,6 +4513,9 @@ def audit_deep_scan_stream():
             model_score = float(base_overall)
             book_status = '连载'
             
+            # 【修复】先从数据库获取 global_potential，再覆盖其他字段
+            db_global_potential = ai_eval_stats.get('global_potential', 0) if isinstance(ai_eval_stats, dict) else 0
+            
             # 使用真实传来的六维填入 ai_eval_stats，防止大模型编造假分
             ai_eval_stats = {
                 'overall': model_score,
@@ -4487,7 +4525,8 @@ def audit_deep_scan_stream():
                 'commercial': float(request.args.get('base_commercial', 75)),
                 'adaptation': float(request.args.get('base_adaptation', 75)),
                 'safety': float(request.args.get('base_safety', 75)),
-                'grade': 'S' if model_score >= 95 else 'A' if model_score >= 85 else 'B' if model_score >= 70 else 'C' if model_score >= 55 else 'D'
+                'grade': 'S' if model_score >= 95 else 'A' if model_score >= 85 else 'B' if model_score >= 70 else 'C' if model_score >= 55 else 'D',
+                'global_potential': db_global_potential  # 保留数据库中的全球化潜力值
             }
         else:
             # 兼容老前端：若未传参则退回原预测逻辑
@@ -4507,38 +4546,54 @@ def audit_deep_scan_stream():
         _inter = float(base_stats.get('interaction', 0))
         _pop = _inter * 0.2
         
-        # 【修复】市场热度：基于月票在全库的排名百分位（更公平）
-        # 不是与头部作品比，而是看超过多少比例的其他作品
-        heat_score = 50.0  # 默认中等
-        try:
-            conn_q = pymysql.connect(**QIDIAN_CONFIG, cursorclass=pymysql.cursors.DictCursor)
-            with conn_q.cursor() as cur:
-                # 查询比当前作品月票少的作品数量
-                cur.execute("""
-                    SELECT COUNT(*) as total FROM novel_monthly_stats WHERE monthly_tickets_on_list > 0
-                """)
-                total_row = cur.fetchone()
-                total_books = total_row['total'] if total_row else 1000
-                
-                # 查询月票<=当前作品的排名
-                cur.execute("""
-                    SELECT COUNT(*) as rank FROM novel_monthly_stats 
-                    WHERE monthly_tickets_on_list <= %s AND monthly_tickets_on_list > 0
-                """, (_fin,))
-                rank_row = cur.fetchone()
-                rank = rank_row['rank'] if rank_row else (total_books // 2)
-                
-                # 热度 = 排名百分位 * 100（越高表示超过越多作品）
-                percentile = rank / total_books if total_books > 0 else 0.5
-                # 映射到10-95分，避免极端
-                heat_score = 10 + percentile * 85
-                
-            conn_q.close()
-        except Exception as e:
-            print(f"[Heat Calc Error] {e}")
-            # 降级为简单对数公式
-            import math
-            heat_score = min(95, 10 + 30 * math.log10(max(_fin, 1) + 1))
+        # 【修复】市场热度：根据平台类型使用不同阈值
+        # 纵横月票普遍比起点低，需要调整阈值
+        platform = base_stats.get('platform', 'Qidian')
+        
+        if platform == 'Zongheng':
+            # 纵横阈值（约为起点的1/10）
+            if _fin >= 5000:
+                heat_score = 90.0 + min(5, (_fin - 5000) / 1000)
+            elif _fin >= 3000:
+                heat_score = 80.0 + (_fin - 3000) / 2000 * 10
+            elif _fin >= 1000:
+                heat_score = 70.0 + (_fin - 1000) / 2000 * 10
+            elif _fin >= 500:
+                heat_score = 60.0 + (_fin - 500) / 500 * 10
+            elif _fin >= 300:
+                heat_score = 50.0 + (_fin - 300) / 200 * 10
+            elif _fin >= 100:
+                heat_score = 40.0 + (_fin - 100) / 200 * 10
+            elif _fin >= 50:
+                heat_score = 30.0 + (_fin - 50) / 50 * 10
+            elif _fin >= 10:
+                heat_score = 20.0 + (_fin - 10) / 40 * 10
+            elif _fin >= 1:
+                heat_score = 15.0 + (_fin - 1) / 9 * 5
+            else:
+                heat_score = 10.0
+        else:
+            # 起点阈值（标准）
+            if _fin >= 50000:
+                heat_score = 90.0 + min(5, (_fin - 50000) / 10000)
+            elif _fin >= 30000:
+                heat_score = 80.0 + (_fin - 30000) / 20000 * 10
+            elif _fin >= 10000:
+                heat_score = 70.0 + (_fin - 10000) / 20000 * 10
+            elif _fin >= 5000:
+                heat_score = 60.0 + (_fin - 5000) / 5000 * 10
+            elif _fin >= 3000:
+                heat_score = 50.0 + (_fin - 3000) / 2000 * 10
+            elif _fin >= 1000:
+                heat_score = 40.0 + (_fin - 1000) / 2000 * 10
+            elif _fin >= 500:
+                heat_score = 30.0 + (_fin - 500) / 500 * 10
+            elif _fin >= 100:
+                heat_score = 20.0 + (_fin - 100) / 400 * 10
+            elif _fin >= 10:
+                heat_score = 15.0 + (_fin - 10) / 90 * 5
+            else:
+                heat_score = max(10.0, 10 + _fin * 0.5)
         
         # 【修复】粉丝粘性：基于互动/月票比例
         if _fin > 0:
@@ -4646,11 +4701,14 @@ def audit_deep_scan_stream():
                         actual_level = get_actual_performance_level(actual_monthly_tickets)
                         ai_grade = get_grade(model_score)
                         
+                        # 【修复】获取全球化潜力，优先判定出海标签（阈值降为60）
+                        global_potential = ai_eval_stats.get('global_potential', 0) if isinstance(ai_eval_stats, dict) else 0
+                        
                         # 遗珠判定：AI评分较高 (B/A/S级) 但实际表现不高（非top/high）
                         # B级及以上 + 月票<5000 = 潜力遗珠
                         is_potential_gem = ai_grade in ['S', 'A', 'B'] and actual_level in ['low', 'nascent', 'medium']
-                        # 出海优选：A/S级 + 表现中等以上
-                        is_global_gem = ai_grade in ['S', 'A'] and actual_level in ['medium', 'high', 'top']
+                        # 出海优选：全球化潜力≥60 或 (A/S级 + 表现中等以上)
+                        is_global_gem = global_potential >= 60 or (ai_grade in ['S', 'A'] and actual_level in ['medium', 'high', 'top'])
                         
                         if is_global_gem:
                             risk_type = 'GLOBAL_GEM'
@@ -4718,26 +4776,36 @@ def audit_deep_scan_stream():
                                 cur_z.execute("DELETE FROM ip_ai_evaluation WHERE title = %s", (book_title,))
                                 base_overall = ai_eval_stats.get('overall', 60) if isinstance(ai_eval_stats, dict) else 60
                                 ratio = model_score / max(base_overall, 1)
+                                
+                                # 【修复】计算 global_potential
+                                world_score = min(100, (ai_eval_stats.get('world', 70) if isinstance(ai_eval_stats, dict) else 70) * ratio)
+                                commercial_score = min(100, (ai_eval_stats.get('commercial', 70) if isinstance(ai_eval_stats, dict) else 70) * ratio)
+                                global_potential = int(world_score * 0.5 + commercial_score * 0.5)
+                                
                                 eval_sql = """
                                     INSERT INTO ip_ai_evaluation 
                                     (title, author, platform, overall_score, story_score, character_score, 
-                                     world_score, commercial_score, adaptation_score, safety_score, grade)
-                                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                                     world_score, commercial_score, adaptation_score, safety_score, grade, global_potential)
+                                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                                 """
                                 cur_z.execute(eval_sql, (
                                     book_title, base_stats.get('author', '未知'), base_stats.get('platform', '未知'),
                                     model_score, 
                                     min(100, (ai_eval_stats.get('story', 70) if isinstance(ai_eval_stats, dict) else 70) * ratio),
                                     min(100, (ai_eval_stats.get('character', 70) if isinstance(ai_eval_stats, dict) else 70) * ratio),
-                                    min(100, (ai_eval_stats.get('world', 70) if isinstance(ai_eval_stats, dict) else 70) * ratio),
-                                    min(100, (ai_eval_stats.get('commercial', 70) if isinstance(ai_eval_stats, dict) else 70) * ratio),
+                                    world_score,
+                                    commercial_score,
                                     min(100, (ai_eval_stats.get('adaptation', 70) if isinstance(ai_eval_stats, dict) else 70) * ratio),
-                                    85.2, 'S' if model_score >= 90 else 'A' if model_score >= 80 else 'B'
+                                    85.2,
+                                    'S' if model_score >= 90 else 'A' if model_score >= 80 else 'B',
+                                    global_potential
                                 ))
                                 conn_z.commit()
                             conn_z.close()
                         except Exception as e_eval:
                             print(f"[User Audit] AI eval sync error: {e_eval}")
+                            import traceback
+                            traceback.print_exc()
                         conn.commit()
                     conn.close()
                     print(f"[User Audit] Saved '{book_title}' to admin audit logs (score: {model_score:.1f}, type: {risk_type})")

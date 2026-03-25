@@ -1609,9 +1609,10 @@ class DataManager:
         try:
             conn = pymysql.connect(**ZONGHENG_CONFIG, cursorclass=pymysql.cursors.DictCursor)
             with conn.cursor() as cur:
+                # 【修复】只用书名查询，因为平台名称格式不一致（起点/Qidian）
                 cur.execute(
-                    "SELECT * FROM ip_ai_evaluation WHERE title=%s AND platform=%s LIMIT 1",
-                    (title, platform)
+                    "SELECT * FROM ip_ai_evaluation WHERE title=%s LIMIT 1",
+                    (title,)
                 )
                 row = cur.fetchone()
             conn.close()

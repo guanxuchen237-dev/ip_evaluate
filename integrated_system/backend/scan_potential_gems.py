@@ -264,7 +264,7 @@ def fetch_ai_eval(title):
         conn = pymysql.connect(**ZONGHENG_CONFIG, cursorclass=pymysql.cursors.DictCursor)
         with conn.cursor() as cur:
             cur.execute("""
-                SELECT overall_score, story_score, character_score, world_score, commercial_score, adaptation_score, safety_score, grade, risk_factor
+                SELECT overall_score, story_score, character_score, world_score, commercial_score, adaptation_score, safety_score, grade, risk_factor, global_potential
                 FROM ip_ai_evaluation
                 WHERE title = %s LIMIT 1
             """, (title,))
@@ -279,7 +279,8 @@ def fetch_ai_eval(title):
                     'adaptation': row['adaptation_score'],
                     'safety': row['safety_score'],
                     'grade': row['grade'],
-                    'risk_factor': row['risk_factor']
+                    'risk_factor': row['risk_factor'],
+                    'global_potential': row['global_potential']  # 【添加】出海标签判定需要
                 }
         conn.close()
     except: pass
