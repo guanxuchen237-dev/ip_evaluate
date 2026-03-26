@@ -17,7 +17,7 @@ CORS(app, resources={r"/api/*": {"origins": "*"}, r"/uploads/*": {"origins": "*"
 app.register_blueprint(api_bp, url_prefix='/api')
 app.register_blueprint(auth_bp, url_prefix='/api/auth')
 app.register_blueprint(blacklist_bp, url_prefix='/api')
-app.register_blueprint(messages_bp, url_prefix='/api')
+app.register_blueprint(messages_bp, url_prefix='/api/messages')
 
 # 初始化黑名单数据表
 init_blacklist_table()

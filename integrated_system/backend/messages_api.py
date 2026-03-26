@@ -7,7 +7,7 @@ import pymysql
 from datetime import datetime
 from auth import login_required, get_auth_db, AUTH_DB_CONFIG
 
-messages_bp = Blueprint('messages', __name__, url_prefix='/messages')
+messages_bp = Blueprint('messages', __name__)
 
 def init_messages_table():
     """创建留言板相关表"""
