@@ -189,6 +189,28 @@ const deleteMessage = async (messageId: number) => {
   }
 }
 
+// 展平消息列表（用于微信聊天样式）
+const flattenMessages = (messages: any[]) => {
+  const result: any[] = []
+  messages.forEach(msg => {
+    // 用户留言
+    result.push({
+      ...msg,
+      isAdmin: false
+    })
+    // 管理员回复
+    if (msg.replies?.length > 0) {
+      msg.replies.forEach((reply: any) => {
+        result.push({
+          ...reply,
+          isAdmin: true
+        })
+      })
+    }
+  })
+  return result
+}
+
 // 展开/收起
 const toggleExpand = (messageId: number) => {
   if (expandedMessages.value.has(messageId)) {
@@ -417,121 +439,80 @@ const adminDockItems = [
               </div>
             </div>
 
-            <!-- 展开的对话内容 -->
-            <div v-if="selectedUser === userGroup.user.id" class="p-4">
-              <!-- 留言时间线 -->
-              <div class="space-y-4 mb-6">
+            <!-- 展开的微信聊天式对话内容 -->
+            <div v-if="selectedUser === userGroup.user.id" class="bg-[#f5f5f5]">
+              <!-- 聊天消息区域 -->
+              <div class="h-[400px] overflow-y-auto p-4 space-y-3">
                 <div
-                  v-for="message in userGroup.messages"
-                  :key="message.id"
-                  class="relative"
+                  v-for="(item, index) in flattenMessages(userGroup.messages)"
+                  :key="item.id + '-' + index"
+                  class="flex"
+                  :class="item.isAdmin ? 'flex-row' : 'flex-row-reverse'"
                 >
-                  <!-- 用户留言 -->
-                  <div class="flex gap-3 mb-3">
-                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center flex-shrink-0">
-                      <User class="w-4 h-4 text-indigo-600" />
-                    </div>
-                    <div class="flex-1">
-                      <div class="flex items-center gap-2 mb-1">
-                        <span class="font-medium text-sm text-slate-900">{{ message.username }}</span>
-                        <span class="text-xs text-slate-400">{{ formatTime(message.created_at) }}</span>
-                        <button
-                          @click="deleteMessage(message.id)"
-                          class="p-1 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded transition-all"
-                          title="删除"
-                        >
-                          <Trash2 class="w-3 h-3" />
-                        </button>
-                      </div>
-                      <div class="bg-slate-50 rounded-xl p-3 text-slate-700 text-sm whitespace-pre-wrap">
-                        {{ message.content }}
-                      </div>
-                    </div>
+                  <!-- 头像 -->
+                  <div 
+                    class="w-10 h-10 rounded-lg flex-shrink-0 flex items-center justify-center"
+                    :class="item.isAdmin ? 'bg-gradient-to-br from-amber-400 to-orange-500 mr-3' : 'bg-gradient-to-br from-indigo-400 to-purple-500 ml-3'"
+                  >
+                    <User class="w-5 h-5 text-white" />
                   </div>
-
-                  <!-- 管理员回复 -->
-                  <div v-if="message.replies?.length > 0" class="ml-11 space-y-2">
-                    <div
-                      v-for="reply in message.replies"
-                      :key="reply.id"
-                      class="flex gap-3"
+                  
+                  <!-- 消息内容 -->
+                  <div class="max-w-[70%]">
+                    <!-- 用户名和时间 -->
+                    <div 
+                      class="flex items-center gap-2 mb-1 text-xs"
+                      :class="item.isAdmin ? '' : 'justify-end'"
                     >
-                      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center flex-shrink-0">
-                        <User class="w-4 h-4 text-white" />
-                      </div>
-                      <div class="flex-1">
-                        <div class="flex items-center gap-2 mb-1">
-                          <span class="font-medium text-sm text-amber-700">{{ reply.admin_name || '管理员' }}</span>
-                          <span class="px-1.5 py-0.5 bg-amber-100 text-amber-600 rounded text-xs font-medium">官方</span>
-                          <span class="text-xs text-slate-400">{{ formatTime(reply.created_at) }}</span>
-                          <span v-if="!reply.is_read" class="px-1.5 py-0.5 bg-red-100 text-red-600 rounded text-xs">用户未读</span>
-                        </div>
-                        <div class="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-100 rounded-xl p-3 text-slate-700 text-sm">
-                          {{ reply.content }}
-                        </div>
-                      </div>
+                      <span class="text-slate-500">{{ item.isAdmin ? (item.admin_name || '管理员') : item.username }}</span>
+                      <span class="text-slate-400">{{ formatTime(item.created_at) }}</span>
+                      <span v-if="item.isAdmin && !item.is_read" class="px-1.5 py-0.5 bg-red-100 text-red-600 rounded text-[10px]">未读</span>
                     </div>
-                  </div>
-
-                  <!-- 该留言的回复输入（仅待回复的显示） -->
-                  <div v-if="message.reply_count === 0" class="ml-11 mt-3">
-                    <div class="flex items-start gap-3">
-                      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center flex-shrink-0">
-                        <User class="w-4 h-4 text-white" />
-                      </div>
-                      <div class="flex-1">
-                        <textarea
-                          v-model="replyContent[message.id]"
-                          placeholder="输入回复内容..."
-                          class="w-full h-20 p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
-                          maxlength="1000"
-                        />
-                        <div class="flex items-center justify-between mt-2">
-                          <span class="text-xs text-slate-400">
-                            {{ (replyContent[message.id] || '').length }}/1000
-                          </span>
-                          <button
-                            @click="replyMessage(message.id)"
-                            :disabled="!replyContent[message.id]?.trim() || submittingReply[message.id]"
-                            class="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg text-sm font-medium hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                          >
-                            <Send class="w-4 h-4" />
-                            {{ submittingReply[message.id] ? '发送中...' : '回复' }}
-                          </button>
-                        </div>
-                      </div>
+                    
+                    <!-- 气泡 -->
+                    <div 
+                      class="px-4 py-2.5 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap relative"
+                      :class="item.isAdmin 
+                        ? 'bg-white border border-slate-200 rounded-tl-none' 
+                        : 'bg-[#95ec69] text-slate-800 rounded-tr-none'"
+                    >
+                      {{ item.content }}
+                      <!-- 删除按钮 -->
+                      <button
+                        v-if="!item.isAdmin"
+                        @click="deleteMessage(item.id)"
+                        class="absolute -right-6 top-1/2 -translate-y-1/2 p-1 text-slate-300 hover:text-red-500 transition-all opacity-0 group-hover:opacity-100"
+                        title="删除"
+                      >
+                        <Trash2 class="w-3 h-3" />
+                      </button>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <!-- 底部统一回复框（回复最后一条留言） -->
-              <div v-if="userGroup.messages[userGroup.messages.length - 1]?.reply_count > 0" class="border-t border-slate-100 pt-4">
-                <div class="flex items-start gap-3">
-                  <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center flex-shrink-0">
-                    <User class="w-4 h-4 text-white" />
-                  </div>
-                  <div class="flex-1">
-                    <textarea
-                      v-model="currentReply"
-                      placeholder="继续对话..."
-                      class="w-full h-20 p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
-                      maxlength="1000"
-                    />
-                    <div class="flex items-center justify-between mt-2">
-                      <span class="text-xs text-slate-400">
-                        {{ currentReply.length }}/1000
-                      </span>
-                      <button
-                        @click="replyUser()"
-                        :disabled="!currentReply.trim() || submittingReply[userGroup.user.id]"
-                        class="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg text-sm font-medium hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                      >
-                        <Send class="w-4 h-4" />
-                        {{ submittingReply[userGroup.user.id] ? '发送中...' : '发送' }}
-                      </button>
-                    </div>
-                  </div>
+              <!-- 底部输入框 -->
+              <div class="bg-white border-t border-slate-200 p-3">
+                <div class="flex items-end gap-3">
+                  <textarea
+                    v-model="currentReply"
+                    placeholder="输入消息..."
+                    class="flex-1 h-12 max-h-24 p-3 bg-slate-100 rounded-xl text-sm resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:bg-white transition-all"
+                    maxlength="1000"
+                    @keydown.enter.prevent="replyUser()"
+                  />
+                  <button
+                    @click="replyUser()"
+                    :disabled="!currentReply.trim() || submittingReply[userGroup.user.id]"
+                    class="px-6 py-3 bg-[#07c160] text-white rounded-xl text-sm font-medium hover:bg-[#06ad56] disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2"
+                  >
+                    <Send class="w-4 h-4" />
+                    {{ submittingReply[userGroup.user.id] ? '发送中' : '发送' }}
+                  </button>
+                </div>
+                <div class="flex justify-between items-center mt-2">
+                  <span class="text-xs text-slate-400">按 Enter 发送</span>
+                  <span class="text-xs text-slate-400">{{ currentReply.length }}/1000</span>
                 </div>
               </div>
             </div>
