@@ -1181,7 +1181,7 @@ function exportAuditReport(report: string, bookTitle: string, score?: number) {
 
 // === Settings Tab 数据与逻辑 ===
 const settingsLoading = ref(false)
-const settingsSaving = ref(false)
+const settingsSaving = ref<{ [key: string]: boolean }>({})
 const settingsToast = ref({ show: false, message: '', type: 'success' as 'success' | 'error' })
 
 // 卡片详情弹窗状态
@@ -1260,12 +1260,12 @@ async function fetchSettings() {
 }
 
 async function saveSettings(section: string) {
-  settingsSaving.value = true
+  settingsSaving.value[section] = true
   try {
     const values = (settingsData.value as any)[section]
     const res = await fetch(`${API_BASE}/admin/settings`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` },
       body: JSON.stringify({ section, values })
     })
     const data = await res.json()
@@ -1277,7 +1277,6 @@ async function saveSettings(section: string) {
           message: data.message || 'AI 配置已更新，模型重新初始化中...',
           type: 'info',
           confirmText: '我知道了',
-          cancelText: '',
           onConfirm: () => closeConfirmDialog()
         })
       } else {
@@ -1291,7 +1290,6 @@ async function saveSettings(section: string) {
           message: data.detail || data.error || '请检查您的 API Key 和配置',
           type: 'warning',
           confirmText: '我知道了',
-          cancelText: '',
           onConfirm: () => closeConfirmDialog()
         })
       } else {
@@ -1301,7 +1299,7 @@ async function saveSettings(section: string) {
   } catch (e) {
     showSettingsToast('网络错误', 'error')
   } finally {
-    settingsSaving.value = false
+    settingsSaving.value[section] = false
   }
 }
 
@@ -3419,7 +3417,7 @@ const formatPeriod = (period: string) => {
                 <p class="text-xs text-slate-400">管理推理服务接入参数</p>
               </div>
             </div>
-            <button @click="saveSettings('ai')" :disabled="settingsSaving"
+            <button @click="saveSettings('ai')" :disabled="!!settingsSaving['ai']"
                     class="flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50">
               <Save class="w-4 h-4" /> 保存
             </button>
@@ -3484,7 +3482,7 @@ const formatPeriod = (period: string) => {
                 <span class="w-2 h-2 rounded-full" :class="settingsData.spider.is_running ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'"></span>
                 {{ settingsData.spider.is_running ? '运行中' : '已停止' }}
               </span>
-              <button @click="saveSettings('spider')" :disabled="settingsSaving" 
+              <button @click="saveSettings('spider')" :disabled="!!settingsSaving['spider']" 
                       class="flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50">
                 <Save class="w-4 h-4" /> 保存
               </button>
@@ -3573,7 +3571,7 @@ const formatPeriod = (period: string) => {
                 <p class="text-xs text-slate-400">调整全局运行参数</p>
               </div>
             </div>
-            <button @click="saveSettings('system')" :disabled="settingsSaving" 
+            <button @click="saveSettings('system')" :disabled="!!settingsSaving['system']" 
                     class="flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50">
               <Save class="w-4 h-4" /> 保存
             </button>
