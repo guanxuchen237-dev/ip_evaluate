@@ -222,6 +222,7 @@ const flattenMessages = (messages: any[]) => {
       sortedReplies.forEach((reply: any) => {
         result.push({
           ...reply,
+          user_avatar: msg.user_avatar,  // 传递用户头像用于显示
           isMe: true  // 管理员回复，是"我自己"
         })
       })
