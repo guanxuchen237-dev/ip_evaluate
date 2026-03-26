@@ -55,6 +55,9 @@ const sendMessage = async () => {
   errorMessage.value = ''
   try {
     const token = localStorage.getItem('auth_token')
+    console.log('Sending message to:', `${API_BASE}/messages/send`)
+    console.log('Token:', token?.substring(0, 20) + '...')
+    
     const res = await fetch(`${API_BASE}/messages/send`, {
       method: 'POST',
       headers: {
@@ -63,16 +66,27 @@ const sendMessage = async () => {
       },
       body: JSON.stringify({ content: newMessage.value })
     })
-    const data = await res.json()
+    
+    console.log('Response status:', res.status)
+    const text = await res.text()
+    console.log('Response body:', text)
+    
+    let data
+    try {
+      data = JSON.parse(text)
+    } catch {
+      data = { error: 'Invalid JSON response: ' + text.substring(0, 100) }
+    }
+    
     if (data.success) {
       newMessage.value = ''
       await fetchMessages()
     } else {
-      errorMessage.value = data.error || '发送失败'
+      errorMessage.value = data.error || `发送失败 (HTTP ${res.status})`
     }
-  } catch (e) {
+  } catch (e: any) {
     console.error('发送留言失败:', e)
-    errorMessage.value = '网络错误，请检查后端服务是否运行'
+    errorMessage.value = `网络错误: ${e.message || '请检查后端服务是否运行'}`
   } finally {
     submitting.value = false
   }

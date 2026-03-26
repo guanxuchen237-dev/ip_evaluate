@@ -11,7 +11,14 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = SECRET_KEY
 
 # 允许跨域请求（Vite 开发服务器）
-CORS(app, resources={r"/api/*": {"origins": "*"}, r"/uploads/*": {"origins": "*"}})
+CORS(app, resources={
+    r"/api/*": {
+        "origins": "*",
+        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization"]
+    },
+    r"/uploads/*": {"origins": "*"}
+})
 
 # 注册蓝图
 app.register_blueprint(api_bp, url_prefix='/api')

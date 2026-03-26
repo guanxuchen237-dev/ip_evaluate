@@ -51,7 +51,7 @@ def init_messages_table():
 def get_user_messages():
     """获取当前用户的留言列表（包含管理员回复）"""
     try:
-        user_id = g.user_id
+        user_id = g.current_user_id
         page = int(request.args.get('page', 1))
         page_size = int(request.args.get('page_size', 20))
         
@@ -115,7 +115,7 @@ def send_message():
         if len(content) > 1000:
             return jsonify({'error': '留言内容不能超过1000字'}), 400
         
-        user_id = g.user_id
+        user_id = g.current_user_id
         username = g.user.get('username', 'Unknown')
         
         conn = get_auth_db()
@@ -145,7 +145,7 @@ def send_message():
 def get_unread_count():
     """获取用户未读的管理员回复数量"""
     try:
-        user_id = g.user_id
+        user_id = g.current_user_id
         
         conn = get_auth_db()
         with conn.cursor() as cursor:
@@ -185,7 +185,7 @@ def get_unread_count():
 def mark_as_read(message_id):
     """将管理员回复标记为已读"""
     try:
-        user_id = g.user_id
+        user_id = g.current_user_id
         
         conn = get_auth_db()
         with conn.cursor() as cursor:
@@ -316,7 +316,7 @@ def admin_reply():
         if len(content) > 1000:
             return jsonify({'error': '回复内容不能超过1000字'}), 400
         
-        admin_id = g.user_id
+        admin_id = g.current_user_id
         admin_name = g.user.get('username', 'Admin')
         
         conn = get_auth_db()
