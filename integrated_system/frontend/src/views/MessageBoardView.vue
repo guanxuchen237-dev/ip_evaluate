@@ -5,6 +5,13 @@ import { MessageSquare, Send, Clock, User, AlertCircle, CheckCircle2, ChevronDow
 
 const API_BASE = 'http://localhost:5000/api'
 
+// 获取完整头像URL
+const getAvatarUrl = (avatarPath: string | null | undefined): string | null => {
+  if (!avatarPath) return null
+  if (avatarPath.startsWith('http')) return avatarPath
+  return `${API_BASE.replace('/api', '')}${avatarPath}`
+}
+
 // 状态
 const messages = ref<any[]>([])
 const newMessage = ref('')
@@ -225,8 +232,8 @@ onUnmounted(() => {
               :class="item.isMe ? 'ml-3' : 'mr-3'"
             >
               <img 
-                v-if="item.isMe ? item.user_avatar : item.admin_avatar" 
-                :src="item.isMe ? item.user_avatar : item.admin_avatar" 
+                v-if="getAvatarUrl(item.isMe ? item.user_avatar : item.admin_avatar)" 
+                :src="getAvatarUrl(item.isMe ? item.user_avatar : item.admin_avatar) || ''" 
                 class="w-full h-full object-cover"
                 alt="头像"
               />

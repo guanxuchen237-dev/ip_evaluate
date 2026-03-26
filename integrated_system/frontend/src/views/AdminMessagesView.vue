@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import AdminSidebar from '@/components/layout/AdminSidebar.vue'
 import { 
   MessageSquare, Send, Clock, User, CheckCircle2, 
@@ -8,6 +9,15 @@ import {
 } from 'lucide-vue-next'
 
 const API_BASE = 'http://localhost:5000/api'
+
+const router = useRouter()
+
+// 获取完整头像URL
+const getAvatarUrl = (avatarPath: string | null | undefined): string | null => {
+  if (!avatarPath) return null
+  if (avatarPath.startsWith('http')) return avatarPath
+  return `${API_BASE.replace('/api', '')}${avatarPath}`
+}
 
 // 状态
 const messages = ref<any[]>([])
@@ -71,7 +81,8 @@ const groupedByUser = computed(() => {
         user: {
           id: msg.user_id,
           username: msg.username,
-          email: msg.user_email || ''
+          email: msg.user_email || '',
+          avatar: msg.user_avatar || ''
         },
         messages: [],
         unreadCount: 0
@@ -406,8 +417,14 @@ const adminDockItems = [
               @click="selectedUser = selectedUser === userGroup.user.id ? null : userGroup.user.id"
             >
               <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center">
-                  <User class="w-6 h-6 text-indigo-600" />
+                <div class="w-12 h-12 rounded-xl overflow-hidden flex items-center justify-center bg-gradient-to-br from-indigo-100 to-purple-100">
+                  <img 
+                    v-if="getAvatarUrl(userGroup.user.avatar)" 
+                    :src="getAvatarUrl(userGroup.user.avatar) || ''" 
+                    class="w-full h-full object-cover"
+                    alt="头像"
+                  />
+                  <User v-else class="w-6 h-6 text-indigo-600" />
                 </div>
                 <div>
                   <div class="flex items-center gap-2">
@@ -463,8 +480,8 @@ const adminDockItems = [
                     :class="item.isMe ? 'ml-3' : 'mr-3'"
                   >
                     <img 
-                      v-if="item.isMe ? item.admin_avatar : item.user_avatar" 
-                      :src="item.isMe ? item.admin_avatar : item.user_avatar" 
+                      v-if="getAvatarUrl(item.isMe ? item.admin_avatar : item.user_avatar)" 
+                      :src="getAvatarUrl(item.isMe ? item.admin_avatar : item.user_avatar) || ''" 
                       class="w-full h-full object-cover"
                       alt="头像"
                     />
