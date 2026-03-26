@@ -12,6 +12,7 @@ const loading = ref(false)
 const submitting = ref(false)
 const unreadCount = ref(0)
 const expandedMessages = ref<Set<number>>(new Set())
+const errorMessage = ref('')
 
 // 获取留言列表
 const fetchMessages = async () => {
@@ -51,6 +52,7 @@ const sendMessage = async () => {
   if (!newMessage.value.trim()) return
   
   submitting.value = true
+  errorMessage.value = ''
   try {
     const token = localStorage.getItem('auth_token')
     const res = await fetch(`${API_BASE}/messages/send`, {
@@ -65,9 +67,12 @@ const sendMessage = async () => {
     if (data.success) {
       newMessage.value = ''
       await fetchMessages()
+    } else {
+      errorMessage.value = data.error || '发送失败'
     }
   } catch (e) {
     console.error('发送留言失败:', e)
+    errorMessage.value = '网络错误，请检查后端服务是否运行'
   } finally {
     submitting.value = false
   }
@@ -144,6 +149,11 @@ onMounted(() => {
 
       <!-- 发送留言区域 -->
       <div class="bg-white/80 backdrop-blur-xl rounded-2xl p-6 shadow-sm border border-slate-200/60 mb-8">
+        <!-- 错误提示 -->
+        <div v-if="errorMessage" class="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm">
+          {{ errorMessage }}
+        </div>
+        
         <div class="flex items-start gap-4">
           <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center flex-shrink-0">
             <User class="w-5 h-5 text-slate-500" />
