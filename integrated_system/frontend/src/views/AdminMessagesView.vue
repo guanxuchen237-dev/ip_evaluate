@@ -189,21 +189,29 @@ const deleteMessage = async (messageId: number) => {
   }
 }
 
-// 展平消息列表（用于微信聊天样式）
+// 展平消息列表（用于微信聊天样式）- 按时间正序排列
 const flattenMessages = (messages: any[]) => {
   const result: any[] = []
-  messages.forEach(msg => {
+  // 先按时间正序排序消息（旧的在前面）
+  const sortedMessages = [...messages].sort((a, b) => 
+    new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+  )
+  sortedMessages.forEach(msg => {
     // 用户留言
     result.push({
       ...msg,
-      isAdmin: false
+      isMe: false  // 用户消息，管理员视角是"对方"
     })
     // 管理员回复
     if (msg.replies?.length > 0) {
-      msg.replies.forEach((reply: any) => {
+      // 回复也按时间排序
+      const sortedReplies = [...msg.replies].sort((a, b) => 
+        new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+      )
+      sortedReplies.forEach((reply: any) => {
         result.push({
           ...reply,
-          isAdmin: true
+          isMe: true  // 管理员回复，是"我自己"
         })
       })
     }
@@ -447,12 +455,12 @@ const adminDockItems = [
                   v-for="(item, index) in flattenMessages(userGroup.messages)"
                   :key="item.id + '-' + index"
                   class="flex"
-                  :class="item.isAdmin ? 'flex-row' : 'flex-row-reverse'"
+                  :class="item.isMe ? 'flex-row-reverse' : 'flex-row'"
                 >
                   <!-- 头像 -->
                   <div 
                     class="w-10 h-10 rounded-lg flex-shrink-0 flex items-center justify-center"
-                    :class="item.isAdmin ? 'bg-gradient-to-br from-amber-400 to-orange-500 mr-3' : 'bg-gradient-to-br from-indigo-400 to-purple-500 ml-3'"
+                    :class="item.isMe ? 'bg-gradient-to-br from-amber-400 to-orange-500 ml-3' : 'bg-gradient-to-br from-indigo-400 to-purple-500 mr-3'"
                   >
                     <User class="w-5 h-5 text-white" />
                   </div>
@@ -462,26 +470,26 @@ const adminDockItems = [
                     <!-- 用户名和时间 -->
                     <div 
                       class="flex items-center gap-2 mb-1 text-xs"
-                      :class="item.isAdmin ? '' : 'justify-end'"
+                      :class="item.isMe ? 'justify-end' : ''"
                     >
-                      <span class="text-slate-500">{{ item.isAdmin ? (item.admin_name || '管理员') : item.username }}</span>
+                      <span class="text-slate-500">{{ item.isMe ? (item.admin_name || '我') : item.username }}</span>
                       <span class="text-slate-400">{{ formatTime(item.created_at) }}</span>
-                      <span v-if="item.isAdmin && !item.is_read" class="px-1.5 py-0.5 bg-red-100 text-red-600 rounded text-[10px]">未读</span>
+                      <span v-if="item.isMe && !item.is_read" class="px-1.5 py-0.5 bg-red-100 text-red-600 rounded text-[10px]">未读</span>
                     </div>
                     
                     <!-- 气泡 -->
                     <div 
                       class="px-4 py-2.5 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap relative"
-                      :class="item.isAdmin 
-                        ? 'bg-white border border-slate-200 rounded-tl-none' 
-                        : 'bg-[#95ec69] text-slate-800 rounded-tr-none'"
+                      :class="item.isMe 
+                        ? 'bg-[#95ec69] text-slate-800 rounded-tr-none' 
+                        : 'bg-white border border-slate-200 rounded-tl-none'"
                     >
                       {{ item.content }}
                       <!-- 删除按钮 -->
                       <button
-                        v-if="!item.isAdmin"
+                        v-if="!item.isMe"
                         @click="deleteMessage(item.id)"
-                        class="absolute -right-6 top-1/2 -translate-y-1/2 p-1 text-slate-300 hover:text-red-500 transition-all opacity-0 group-hover:opacity-100"
+                        class="absolute -left-6 top-1/2 -translate-y-1/2 p-1 text-slate-300 hover:text-red-500 transition-all opacity-0 group-hover:opacity-100"
                         title="删除"
                       >
                         <Trash2 class="w-3 h-3" />
