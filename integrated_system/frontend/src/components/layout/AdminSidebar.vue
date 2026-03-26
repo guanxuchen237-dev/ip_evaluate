@@ -11,7 +11,8 @@ import {
   Shield,
   Settings,
   BookOpen,
-  Ban
+  Ban,
+  MessageSquare
 } from 'lucide-vue-next'
 
 interface MenuItem {
@@ -27,6 +28,7 @@ const menuItems: MenuItem[] = [
   { title: "总览", titleEn: "Overview", url: "/admin?tab=overview", icon: LayoutDashboard },
   { title: "用户管理", titleEn: "Users", url: "/admin?tab=users", icon: Users },
   { title: "书籍管理", titleEn: "Books", url: "/admin?tab=books", icon: Library },
+  { title: "留言管理", titleEn: "Messages", url: "/admin/messages", icon: MessageSquare },
   { title: "黑名单", titleEn: "Blacklist", url: "/admin/blacklist", icon: Ban },
   { title: "平台监控", titleEn: "Platform", url: "/admin?tab=platform", icon: Globe },
   { title: "数据采集", titleEn: "Pipeline", url: "/admin?tab=monitor", icon: Database },
