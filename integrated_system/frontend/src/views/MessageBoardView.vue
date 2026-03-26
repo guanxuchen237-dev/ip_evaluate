@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 import EditorialLayout from '@/components/layout/EditorialLayout.vue'
 import { MessageSquare, Send, Clock, User, AlertCircle, CheckCircle2, ChevronDown, ChevronUp } from 'lucide-vue-next'
 
@@ -13,10 +13,11 @@ const submitting = ref(false)
 const unreadCount = ref(0)
 const expandedMessages = ref<Set<number>>(new Set())
 const errorMessage = ref('')
+let refreshInterval: number | null = null
 
 // 获取留言列表
-const fetchMessages = async () => {
-  loading.value = true
+const fetchMessages = async (silent = false) => {
+  if (!silent) loading.value = true
   try {
     const token = localStorage.getItem('auth_token')
     const res = await fetch(`${API_BASE}/messages/list`, {
@@ -29,7 +30,7 @@ const fetchMessages = async () => {
   } catch (e) {
     console.error('获取留言失败:', e)
   } finally {
-    loading.value = false
+    if (!silent) loading.value = false
   }
 }
 
@@ -139,6 +140,17 @@ const formatTime = (time: string) => {
 onMounted(() => {
   fetchMessages()
   fetchUnreadCount()
+  // 每10秒静默刷新一次
+  refreshInterval = window.setInterval(() => {
+    fetchMessages(true)
+    fetchUnreadCount()
+  }, 10000)
+})
+
+onUnmounted(() => {
+  if (refreshInterval) {
+    clearInterval(refreshInterval)
+  }
 })
 </script>
 
