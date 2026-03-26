@@ -76,6 +76,12 @@ const router = createRouter({
             component: () => import('../views/ProfileView.vue'),
             meta: { requiresAuth: true }
         },
+        {
+            path: '/messages',
+            name: 'messages',
+            component: () => import('../views/MessageBoardView.vue'),
+            meta: { requiresAuth: true }
+        },
 
         // ============================================
         //  管理员路由（需管理员权限）
@@ -114,6 +120,12 @@ const router = createRouter({
             path: '/admin/blacklist',
             name: 'admin-blacklist',
             component: () => import('../views/BlacklistManageView.vue'),
+            meta: { requiresAuth: true, requiresAdmin: true }
+        },
+        {
+            path: '/admin/messages',
+            name: 'admin-messages',
+            component: () => import('../views/AdminMessagesView.vue'),
             meta: { requiresAuth: true, requiresAdmin: true }
         },
         {

@@ -16,7 +16,8 @@ import {
   Settings,
   User,
   LogOut,
-  ChevronUp
+  ChevronUp,
+  MessageSquare
 } from "lucide-vue-next";
 import { ref, computed } from "vue";
 import { useAuth } from '@/composables/useAuth'
@@ -46,6 +47,7 @@ const userMenuItems: MenuItem[] = [
   { title: "AI预测", titleEn: "Prediction", url: "/prediction", icon: Brain },
   { title: "作品库", titleEn: "Library", url: "/library", icon: Library },
   { title: "虚拟读者", titleEn: "Reader Space", url: "/reader-space", icon: Users },
+  { title: "留言板", titleEn: "Messages", url: "/messages", icon: MessageSquare },
 ];
 
 // 根据角色合并菜单，或者使用传入的自定义菜单

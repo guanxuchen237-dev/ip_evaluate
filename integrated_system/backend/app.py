@@ -3,6 +3,7 @@ from flask_cors import CORS
 from api import api_bp
 from auth import auth_bp, init_auth_database, SECRET_KEY, AUTH_DB_CONFIG
 from blacklist import blacklist_bp, init_blacklist_table
+from messages_api import messages_bp, init_messages_table
 import os
 import pymysql
 
@@ -16,9 +17,13 @@ CORS(app, resources={r"/api/*": {"origins": "*"}, r"/uploads/*": {"origins": "*"
 app.register_blueprint(api_bp, url_prefix='/api')
 app.register_blueprint(auth_bp, url_prefix='/api/auth')
 app.register_blueprint(blacklist_bp, url_prefix='/api')
+app.register_blueprint(messages_bp, url_prefix='/api')
 
 # 初始化黑名单数据表
 init_blacklist_table()
+
+# 初始化留言板数据表
+init_messages_table()
 
 from flask import request
 import traceback
