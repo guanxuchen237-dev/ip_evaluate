@@ -18,6 +18,7 @@ const filterStatus = ref('all') // all, unread, replied, unreplied
 const searchQuery = ref('')
 const expandedMessages = ref<Set<number>>(new Set())
 const replyContent = ref<{ [key: number]: string }>({})
+const submittingReply = ref<{ [key: number]: boolean }>({})
 let refreshInterval: number | null = null
 
 // 统计
@@ -79,7 +80,7 @@ const replyMessage = async (messageId: number) => {
   const content = replyContent.value[messageId]?.trim()
   if (!content) return
   
-  submitting.value = true
+  submittingReply.value[messageId] = true
   try {
     const token = localStorage.getItem('auth_token')
     const res = await fetch(`${API_BASE}/messages/admin/reply`, {
@@ -99,7 +100,7 @@ const replyMessage = async (messageId: number) => {
   } catch (e) {
     console.error('回复失败:', e)
   } finally {
-    submitting.value = false
+    submittingReply.value[messageId] = false
   }
 }
 
@@ -416,11 +417,11 @@ const adminDockItems = [
                   </span>
                   <button
                     @click="replyMessage(message.id)"
-                    :disabled="!replyContent[message.id]?.trim() || submitting"
+                    :disabled="!replyContent[message.id]?.trim() || submittingReply[message.id]"
                     class="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg text-sm font-medium hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                   >
                     <Send class="w-4 h-4" />
-                    {{ submitting ? '发送中...' : '回复' }}
+                    {{ submittingReply[message.id] ? '发送中...' : '回复' }}
                   </button>
                 </div>
               </div>
