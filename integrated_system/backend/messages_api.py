@@ -5,9 +5,42 @@
 from flask import Blueprint, request, jsonify, g
 import pymysql
 from datetime import datetime
-from auth import login_required, get_auth_db
+from auth import login_required, get_auth_db, AUTH_DB_CONFIG
 
 messages_bp = Blueprint('messages', __name__, url_prefix='/messages')
+
+def init_messages_table():
+    """创建留言板相关表"""
+    try:
+        conn = pymysql.connect(**AUTH_DB_CONFIG, cursorclass=pymysql.cursors.DictCursor)
+        with conn.cursor() as cursor:
+            # 创建留言表
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS messages (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    user_id INT NOT NULL,
+                    username VARCHAR(100) NOT NULL,
+                    content TEXT NOT NULL,
+                    is_admin_reply BOOLEAN DEFAULT FALSE,
+                    admin_id INT NULL,
+                    admin_name VARCHAR(100) NULL,
+                    parent_id INT NULL,
+                    is_read BOOLEAN DEFAULT FALSE,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                    INDEX idx_user_id (user_id),
+                    INDEX idx_created_at (created_at),
+                    INDEX idx_is_read (is_read),
+                    FOREIGN KEY (parent_id) REFERENCES messages(id) ON DELETE CASCADE
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+            """)
+            conn.commit()
+            print("[OK] messages 表创建成功或已存在")
+        conn.close()
+        return True
+    except Exception as e:
+        print(f"[ERROR] 创建 messages 表失败: {e}")
+        return False
 
 # ============================================================
 #  用户端API
