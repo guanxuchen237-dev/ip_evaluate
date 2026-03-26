@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch } from 'vue'
+import { ref, onMounted, onUnmounted, watch, computed } from 'vue'
 import EditorialLayout from '@/components/layout/EditorialLayout.vue'
 import { MessageSquare, Send, Clock, User, AlertCircle, CheckCircle2, ChevronDown, ChevronUp } from 'lucide-vue-next'
 
@@ -108,7 +108,31 @@ const markAsRead = async (replyId: number) => {
   }
 }
 
-// 展开/收起回复
+// 展平所有消息（用于微信聊天样式）
+const allMessages = computed(() => {
+  const result: any[] = []
+  messages.value.forEach(msg => {
+    // 用户留言
+    result.push({
+      ...msg,
+      isMe: true,
+      type: 'message'
+    })
+    // 管理员回复
+    if (msg.replies?.length > 0) {
+      msg.replies.forEach((reply: any) => {
+        result.push({
+          ...reply,
+          isMe: false,
+          type: 'reply',
+          parentId: msg.id
+        })
+      })
+    }
+  })
+  // 按时间排序
+  return result.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
+})
 const toggleExpand = (messageId: number) => {
   if (expandedMessages.value.has(messageId)) {
     expandedMessages.value.delete(messageId)
@@ -173,130 +197,91 @@ onUnmounted(() => {
         </div>
       </div>
 
-      <!-- 发送留言区域 -->
-      <div class="bg-white/80 backdrop-blur-xl rounded-2xl p-6 shadow-sm border border-slate-200/60 mb-8">
-        <!-- 错误提示 -->
-        <div v-if="errorMessage" class="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm">
-          {{ errorMessage }}
-        </div>
-        
-        <div class="flex items-start gap-4">
-          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center flex-shrink-0">
-            <User class="w-5 h-5 text-slate-500" />
+      <!-- 微信聊天式留言区域 -->
+      <div class="bg-[#f5f5f5] rounded-2xl overflow-hidden shadow-sm border border-slate-200/60 mb-8">
+        <!-- 聊天消息区域 -->
+        <div class="h-[500px] overflow-y-auto p-4 space-y-3" ref="chatContainer">
+          <div v-if="loading" class="flex items-center justify-center h-full">
+            <div class="w-8 h-8 border-4 border-indigo-200 border-t-indigo-500 rounded-full animate-spin" />
           </div>
-          <div class="flex-1">
+          
+          <div v-else-if="allMessages.length === 0" class="flex flex-col items-center justify-center h-full text-center">
+            <div class="w-20 h-20 rounded-full bg-slate-200 flex items-center justify-center mb-4">
+              <MessageSquare class="w-10 h-10 text-slate-400" />
+            </div>
+            <p class="text-slate-500">暂无消息</p>
+            <p class="text-slate-400 text-sm mt-1">有问题或建议？发送第一条消息吧！</p>
+          </div>
+
+          <div
+            v-for="(item, index) in allMessages"
+            :key="item.id + '-' + index"
+            class="flex"
+            :class="item.isMe ? 'flex-row-reverse' : 'flex-row'"
+          >
+            <!-- 头像 -->
+            <div 
+              class="w-10 h-10 rounded-lg flex-shrink-0 flex items-center justify-center"
+              :class="item.isMe ? 'bg-gradient-to-br from-indigo-400 to-purple-500 ml-3' : 'bg-gradient-to-br from-amber-400 to-orange-500 mr-3'"
+            >
+              <User class="w-5 h-5 text-white" />
+            </div>
+            
+            <!-- 消息内容 -->
+            <div class="max-w-[70%]">
+              <!-- 时间和标签 -->
+              <div 
+                class="flex items-center gap-2 mb-1 text-xs"
+                :class="item.isMe ? 'justify-end' : ''"
+              >
+                <span class="text-slate-500">{{ item.isMe ? '我' : (item.admin_name || '管理员') }}</span>
+                <span v-if="!item.isMe" class="px-1.5 py-0.5 bg-amber-100 text-amber-600 rounded text-[10px] font-medium">官方</span>
+                <span class="text-slate-400">{{ formatTime(item.created_at) }}</span>
+              </div>
+              
+              <!-- 气泡 -->
+              <div 
+                class="px-4 py-2.5 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap"
+                :class="item.isMe 
+                  ? 'bg-[#95ec69] text-slate-800 rounded-tr-none' 
+                  : 'bg-white border border-slate-200 rounded-tl-none'"
+              >
+                {{ item.content }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 底部输入框 -->
+        <div class="bg-white border-t border-slate-200 p-4">
+          <div class="flex items-end gap-3">
             <textarea
               v-model="newMessage"
-              placeholder="请输入您的问题或建议...（Token有限制时，可通过此方式沟通）"
-              class="w-full h-32 p-4 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 resize-none transition-all"
+              placeholder="输入消息..."
+              class="flex-1 h-12 max-h-24 p-3 bg-slate-100 rounded-xl text-sm resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:bg-white transition-all"
               maxlength="1000"
+              @keydown.enter.prevent="sendMessage"
             />
-            <div class="flex items-center justify-between mt-3">
-              <span class="text-xs text-slate-400">{{ newMessage.length }}/1000</span>
-              <button
-                @click="sendMessage"
-                :disabled="!newMessage.trim() || submitting"
-                class="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl font-medium hover:shadow-lg hover:shadow-indigo-500/25 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-              >
-                <Send class="w-4 h-4" />
-                {{ submitting ? '发送中...' : '发送留言' }}
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 留言列表 -->
-      <div class="space-y-4">
-        <div v-if="loading" class="flex items-center justify-center py-12">
-          <div class="w-8 h-8 border-4 border-indigo-200 border-t-indigo-500 rounded-full animate-spin" />
-        </div>
-
-        <div v-else-if="messages.length === 0" class="text-center py-16">
-          <div class="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-4">
-            <MessageSquare class="w-10 h-10 text-slate-300" />
-          </div>
-          <p class="text-slate-500">暂无留言</p>
-          <p class="text-slate-400 text-sm mt-1">有问题或建议？发送第一条留言吧！</p>
-        </div>
-
-        <div
-          v-for="message in messages"
-          :key="message.id"
-          class="bg-white/80 backdrop-blur-xl rounded-2xl p-5 shadow-sm border border-slate-200/60 transition-all hover:shadow-md"
-          :class="{ 'ring-2 ring-indigo-500/20': message.reply_count > 0 && expandedMessages.has(message.id) }"
-        >
-          <!-- 留言头部 -->
-          <div class="flex items-start gap-4">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center flex-shrink-0">
-              <User class="w-5 h-5 text-indigo-600" />
-            </div>
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-2 mb-1">
-                <span class="font-medium text-slate-900">{{ message.username }}</span>
-                <span class="text-xs text-slate-400 flex items-center gap-1">
-                  <Clock class="w-3 h-3" />
-                  {{ formatTime(message.created_at) }}
-                </span>
-              </div>
-              <p class="text-slate-700 leading-relaxed whitespace-pre-wrap">{{ message.content }}</p>
-              
-              <!-- 展开回复按钮 -->
-              <div v-if="message.reply_count > 0" class="mt-3">
-                <button
-                  @click="toggleExpand(message.id)"
-                  class="flex items-center gap-1 text-sm text-indigo-600 hover:text-indigo-700 font-medium"
-                >
-                  <CheckCircle2 class="w-4 h-4" />
-                  {{ message.reply_count }} 条回复
-                  <ChevronDown v-if="!expandedMessages.has(message.id)" class="w-4 h-4" />
-                  <ChevronUp v-else class="w-4 h-4" />
-                  <span
-                    v-if="message.unread_reply_count > 0 && !expandedMessages.has(message.id)"
-                    class="ml-1 px-1.5 py-0.5 bg-red-100 text-red-600 rounded text-xs"
-                  >
-                    {{ message.unread_reply_count }} 未读
-                  </span>
-                </button>
-              </div>
-              <div v-else class="mt-3 flex items-center gap-1 text-sm text-slate-400">
-                <AlertCircle class="w-4 h-4" />
-                等待管理员回复
-              </div>
-            </div>
-          </div>
-
-          <!-- 回复列表 -->
-          <div v-if="expandedMessages.has(message.id) && message.replies?.length > 0" class="mt-4 pl-14 space-y-3">
-            <div
-              v-for="reply in message.replies"
-              :key="reply.id"
-              class="flex items-start gap-3 p-4 rounded-xl"
-              :class="reply.is_admin_reply ? 'bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-100' : 'bg-slate-50'"
+            <button
+              @click="sendMessage"
+              :disabled="!newMessage.trim() || submitting"
+              class="px-6 py-3 bg-[#07c160] text-white rounded-xl text-sm font-medium hover:bg-[#06ad56] disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2"
             >
-              <div
-                class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-                :class="reply.is_admin_reply ? 'bg-gradient-to-br from-amber-400 to-orange-500' : 'bg-slate-200'"
-              >
-                <User class="w-4 h-4 text-white" v-if="reply.is_admin_reply" />
-                <User class="w-4 h-4 text-slate-500" v-else />
-              </div>
-              <div class="flex-1">
-                <div class="flex items-center gap-2 mb-1">
-                  <span class="font-medium text-sm" :class="reply.is_admin_reply ? 'text-amber-700' : 'text-slate-700'">
-                    {{ reply.is_admin_reply ? (reply.admin_name || '管理员') : reply.username }}
-                  </span>
-                  <span v-if="reply.is_admin_reply" class="px-1.5 py-0.5 bg-amber-100 text-amber-600 rounded text-xs font-medium">
-                    官方
-                  </span>
-                  <span class="text-xs text-slate-400">{{ formatTime(reply.created_at) }}</span>
-                </div>
-                <p class="text-slate-700 text-sm leading-relaxed">{{ reply.content }}</p>
-              </div>
-            </div>
+              <Send class="w-4 h-4" />
+              {{ submitting ? '发送中' : '发送' }}
+            </button>
+          </div>
+          <div class="flex justify-between items-center mt-2">
+            <span class="text-xs text-slate-400">按 Enter 发送</span>
+            <span class="text-xs text-slate-400">{{ newMessage.length }}/1000</span>
+          </div>
+          <!-- 错误提示 -->
+          <div v-if="errorMessage" class="mt-3 p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm">
+            {{ errorMessage }}
           </div>
         </div>
       </div>
+
     </div>
   </EditorialLayout>
 </template>
