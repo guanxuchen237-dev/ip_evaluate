@@ -61,21 +61,89 @@ const fetchMessages = async () => {
   }
 }
 
-// 过滤后的留言
-const filteredMessages = computed(() => {
-  let result = messages.value
-  if (searchQuery.value.trim()) {
-    const query = searchQuery.value.toLowerCase()
-    result = result.filter(m => 
-      m.content.toLowerCase().includes(query) ||
-      m.username.toLowerCase().includes(query) ||
-      m.user_email?.toLowerCase().includes(query)
-    )
-  }
-  return result
+// 按用户分组的留言
+const groupedByUser = computed(() => {
+  const groups: { [key: number]: { user: any, messages: any[], unreadCount: number } } = {}
+  
+  messages.value.forEach(msg => {
+    if (!groups[msg.user_id]) {
+      groups[msg.user_id] = {
+        user: {
+          id: msg.user_id,
+          username: msg.username,
+          email: msg.user_email || ''
+        },
+        messages: [],
+        unreadCount: 0
+      }
+    }
+    groups[msg.user_id]!.messages.push(msg)
+    // 计算该用户未读的回复数
+    if (msg.unread_reply_count > 0) {
+      groups[msg.user_id]!.unreadCount += msg.unread_reply_count
+    }
+  })
+  
+  // 转换为数组并按最后消息时间排序
+  return Object.values(groups).sort((a, b) => {
+    const aLast = a.messages[a.messages.length - 1]?.created_at || ''
+    const bLast = b.messages[b.messages.length - 1]?.created_at || ''
+    return new Date(bLast).getTime() - new Date(aLast).getTime()
+  })
 })
 
-// 回复留言
+// 过滤后的用户列表
+const filteredUsers = computed(() => {
+  if (!searchQuery.value.trim()) return groupedByUser.value
+  const query = searchQuery.value.toLowerCase()
+  return groupedByUser.value.filter(u => 
+    u.user.username.toLowerCase().includes(query) ||
+    u.user.email?.toLowerCase().includes(query) ||
+    u.messages.some(m => m.content.toLowerCase().includes(query))
+  )
+})
+
+// 当前选中的用户
+const selectedUser = ref<number | null>(null)
+const currentReply = ref('')
+
+// 回复用户
+const replyUser = async () => {
+  if (!selectedUser.value || !currentReply.value.trim()) return
+  
+  const userMessages = groupedByUser.value.find(u => u.user.id === selectedUser.value)?.messages
+  if (!userMessages || userMessages.length === 0) return
+  
+  // 回复最后一条留言
+  const lastMessage = userMessages[userMessages.length - 1]
+  
+  submittingReply.value[selectedUser.value] = true
+  try {
+    const token = localStorage.getItem('auth_token')
+    const res = await fetch(`${API_BASE}/messages/admin/reply`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ parent_id: lastMessage.id, content: currentReply.value })
+    })
+    const data = await res.json()
+    if (data.success) {
+      currentReply.value = ''
+      await fetchMessages()
+      await fetchStats()
+    }
+  } catch (e) {
+    console.error('回复失败:', e)
+  } finally {
+    if (selectedUser.value) {
+      submittingReply.value[selectedUser.value] = false
+    }
+  }
+}
+
+// 回复单个留言
 const replyMessage = async (messageId: number) => {
   const content = replyContent.value[messageId]?.trim()
   if (!content) return
@@ -277,63 +345,64 @@ const adminDockItems = [
             <Search class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
               v-model="searchQuery"
-              placeholder="搜索留言内容、用户名..."
+              placeholder="搜索用户或留言内容..."
               class="w-full pl-11 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
             />
           </div>
         </div>
 
-        <!-- 留言列表 -->
+        <!-- 加载状态 -->
         <div v-if="loading" class="flex items-center justify-center py-16">
           <div class="w-10 h-10 border-4 border-indigo-200 border-t-indigo-500 rounded-full animate-spin" />
         </div>
 
-        <div v-else-if="filteredMessages.length === 0" class="text-center py-16 bg-white rounded-2xl border border-slate-200">
+        <!-- 空状态 -->
+        <div v-else-if="filteredUsers.length === 0" class="text-center py-16 bg-white rounded-2xl border border-slate-200">
           <MessageSquare class="w-16 h-16 text-slate-200 mx-auto mb-4" />
           <p class="text-slate-500">暂无留言</p>
         </div>
 
-        <div v-else class="space-y-4">
+        <!-- 用户对话框列表 -->
+        <div v-else class="space-y-6">
           <div
-            v-for="message in filteredMessages"
-            :key="message.id"
-            class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 transition-all"
-            :class="{ 
-              'ring-2 ring-amber-500/30': message.unread_reply_count > 0,
-              'ring-2 ring-indigo-500/20': !message.reply_count 
-            }"
+            v-for="userGroup in filteredUsers"
+            :key="userGroup.user.id"
+            class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden"
+            :class="{ 'ring-2 ring-indigo-500/20': selectedUser === userGroup.user.id }"
           >
-            <!-- 留言头部 -->
-            <div class="flex items-start justify-between mb-4">
+            <!-- 用户头部 -->
+            <div 
+              class="p-4 bg-gradient-to-r from-slate-50 to-white border-b border-slate-100 cursor-pointer flex items-center justify-between"
+              @click="selectedUser = selectedUser === userGroup.user.id ? null : userGroup.user.id"
+            >
               <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center">
-                  <User class="w-5 h-5 text-indigo-600" />
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center">
+                  <User class="w-6 h-6 text-indigo-600" />
                 </div>
                 <div>
                   <div class="flex items-center gap-2">
-                    <span class="font-medium text-slate-900">{{ message.username }}</span>
-                    <span class="text-xs text-slate-400">{{ message.user_email }}</span>
+                    <span class="font-medium text-slate-900">{{ userGroup.user.username }}</span>
+                    <span class="text-xs text-slate-400">{{ userGroup.user.email }}</span>
                   </div>
-                  <div class="flex items-center gap-2 text-xs text-slate-400">
-                    <Clock class="w-3 h-3" />
-                    {{ formatTime(message.created_at) }}
+                  <div class="flex items-center gap-2 text-xs text-slate-500">
+                    <span>{{ userGroup.messages.length }} 条留言</span>
                     <span class="text-slate-300">|</span>
-                    {{ relativeTime(message.created_at) }}
+                    <span>最后活跃: {{ relativeTime(userGroup.messages[userGroup.messages.length - 1]?.created_at) }}</span>
                   </div>
                 </div>
               </div>
-              <div class="flex items-center gap-2">
+              <div class="flex items-center gap-3">
                 <span
-                  v-if="message.reply_count === 0"
+                  v-if="userGroup.messages.some(m => m.reply_count === 0)"
                   class="px-2 py-1 bg-amber-100 text-amber-600 rounded-lg text-xs font-medium"
                 >
                   待回复
                 </span>
                 <span
-                  v-else-if="message.unread_reply_count > 0"
+                  v-else-if="userGroup.unreadCount > 0"
                   class="px-2 py-1 bg-red-100 text-red-600 rounded-lg text-xs font-medium"
                 >
-                  {{ message.unread_reply_count }} 未读
+                  {{ userGroup.unreadCount }} 未读
                 </span>
                 <span
                   v-else
@@ -341,88 +410,128 @@ const adminDockItems = [
                 >
                   已回复
                 </span>
-                <button
-                  @click="deleteMessage(message.id)"
-                  class="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
-                  title="删除"
-                >
-                  <Trash2 class="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-
-            <!-- 留言内容 -->
-            <p class="text-slate-700 leading-relaxed mb-4 whitespace-pre-wrap">{{ message.content }}</p>
-
-            <!-- 展开/收起回复 -->
-            <div v-if="message.reply_count > 0" class="mb-4">
-              <button
-                @click="toggleExpand(message.id)"
-                class="flex items-center gap-1 text-sm text-indigo-600 hover:text-indigo-700 font-medium"
-              >
-                <CheckCircle2 class="w-4 h-4" />
-                {{ message.reply_count }} 条回复
-                <ChevronDown v-if="!expandedMessages.has(message.id)" class="w-4 h-4" />
-                <ChevronUp v-else class="w-4 h-4" />
-              </button>
-            </div>
-
-            <!-- 回复列表 -->
-            <div v-if="expandedMessages.has(message.id) && message.replies?.length > 0" class="mb-4 space-y-3">
-              <div
-                v-for="reply in message.replies"
-                :key="reply.id"
-                class="flex items-start gap-3 p-4 rounded-xl"
-                :class="reply.is_admin_reply ? 'bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-100' : 'bg-slate-50'"
-              >
-                <div
-                  class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-                  :class="reply.is_admin_reply ? 'bg-gradient-to-br from-amber-400 to-orange-500' : 'bg-slate-200'"
-                >
-                  <User class="w-4 h-4 text-white" />
-                </div>
-                <div class="flex-1">
-                  <div class="flex items-center gap-2 mb-1">
-                    <span class="font-medium text-sm" :class="reply.is_admin_reply ? 'text-amber-700' : 'text-slate-700'">
-                      {{ reply.is_admin_reply ? (reply.admin_name || '管理员') : reply.username }}
-                    </span>
-                    <span v-if="reply.is_admin_reply" class="px-1.5 py-0.5 bg-amber-100 text-amber-600 rounded text-xs font-medium">
-                      官方
-                    </span>
-                    <span class="text-xs text-slate-400">{{ formatTime(reply.created_at) }}</span>
-                    <span v-if="reply.is_admin_reply && !reply.is_read" class="px-1.5 py-0.5 bg-red-100 text-red-600 rounded text-xs">
-                      用户未读
-                    </span>
-                  </div>
-                  <p class="text-slate-700 text-sm">{{ reply.content }}</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- 回复输入框 -->
-            <div class="flex items-start gap-3 pt-4 border-t border-slate-100">
-              <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center flex-shrink-0">
-                <User class="w-4 h-4 text-white" />
-              </div>
-              <div class="flex-1">
-                <textarea
-                  v-model="replyContent[message.id]"
-                  placeholder="输入回复内容..."
-                  class="w-full h-24 p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
-                  maxlength="1000"
+                <ChevronDown 
+                  class="w-5 h-5 text-slate-400 transition-transform" 
+                  :class="{ 'rotate-180': selectedUser === userGroup.user.id }"
                 />
-                <div class="flex items-center justify-between mt-2">
-                  <span class="text-xs text-slate-400">
-                    {{ (replyContent[message.id] || '').length }}/1000
-                  </span>
-                  <button
-                    @click="replyMessage(message.id)"
-                    :disabled="!replyContent[message.id]?.trim() || submittingReply[message.id]"
-                    class="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg text-sm font-medium hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                  >
-                    <Send class="w-4 h-4" />
-                    {{ submittingReply[message.id] ? '发送中...' : '回复' }}
-                  </button>
+              </div>
+            </div>
+
+            <!-- 展开的对话内容 -->
+            <div v-if="selectedUser === userGroup.user.id" class="p-4">
+              <!-- 留言时间线 -->
+              <div class="space-y-4 mb-6">
+                <div
+                  v-for="message in userGroup.messages"
+                  :key="message.id"
+                  class="relative"
+                >
+                  <!-- 用户留言 -->
+                  <div class="flex gap-3 mb-3">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center flex-shrink-0">
+                      <User class="w-4 h-4 text-indigo-600" />
+                    </div>
+                    <div class="flex-1">
+                      <div class="flex items-center gap-2 mb-1">
+                        <span class="font-medium text-sm text-slate-900">{{ message.username }}</span>
+                        <span class="text-xs text-slate-400">{{ formatTime(message.created_at) }}</span>
+                        <button
+                          @click="deleteMessage(message.id)"
+                          class="p-1 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded transition-all"
+                          title="删除"
+                        >
+                          <Trash2 class="w-3 h-3" />
+                        </button>
+                      </div>
+                      <div class="bg-slate-50 rounded-xl p-3 text-slate-700 text-sm whitespace-pre-wrap">
+                        {{ message.content }}
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 管理员回复 -->
+                  <div v-if="message.replies?.length > 0" class="ml-11 space-y-2">
+                    <div
+                      v-for="reply in message.replies"
+                      :key="reply.id"
+                      class="flex gap-3"
+                    >
+                      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center flex-shrink-0">
+                        <User class="w-4 h-4 text-white" />
+                      </div>
+                      <div class="flex-1">
+                        <div class="flex items-center gap-2 mb-1">
+                          <span class="font-medium text-sm text-amber-700">{{ reply.admin_name || '管理员' }}</span>
+                          <span class="px-1.5 py-0.5 bg-amber-100 text-amber-600 rounded text-xs font-medium">官方</span>
+                          <span class="text-xs text-slate-400">{{ formatTime(reply.created_at) }}</span>
+                          <span v-if="!reply.is_read" class="px-1.5 py-0.5 bg-red-100 text-red-600 rounded text-xs">用户未读</span>
+                        </div>
+                        <div class="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-100 rounded-xl p-3 text-slate-700 text-sm">
+                          {{ reply.content }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 该留言的回复输入（仅待回复的显示） -->
+                  <div v-if="message.reply_count === 0" class="ml-11 mt-3">
+                    <div class="flex items-start gap-3">
+                      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center flex-shrink-0">
+                        <User class="w-4 h-4 text-white" />
+                      </div>
+                      <div class="flex-1">
+                        <textarea
+                          v-model="replyContent[message.id]"
+                          placeholder="输入回复内容..."
+                          class="w-full h-20 p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                          maxlength="1000"
+                        />
+                        <div class="flex items-center justify-between mt-2">
+                          <span class="text-xs text-slate-400">
+                            {{ (replyContent[message.id] || '').length }}/1000
+                          </span>
+                          <button
+                            @click="replyMessage(message.id)"
+                            :disabled="!replyContent[message.id]?.trim() || submittingReply[message.id]"
+                            class="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg text-sm font-medium hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                          >
+                            <Send class="w-4 h-4" />
+                            {{ submittingReply[message.id] ? '发送中...' : '回复' }}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 底部统一回复框（回复最后一条留言） -->
+              <div v-if="userGroup.messages[userGroup.messages.length - 1]?.reply_count > 0" class="border-t border-slate-100 pt-4">
+                <div class="flex items-start gap-3">
+                  <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center flex-shrink-0">
+                    <User class="w-4 h-4 text-white" />
+                  </div>
+                  <div class="flex-1">
+                    <textarea
+                      v-model="currentReply"
+                      placeholder="继续对话..."
+                      class="w-full h-20 p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                      maxlength="1000"
+                    />
+                    <div class="flex items-center justify-between mt-2">
+                      <span class="text-xs text-slate-400">
+                        {{ currentReply.length }}/1000
+                      </span>
+                      <button
+                        @click="replyUser()"
+                        :disabled="!currentReply.trim() || submittingReply[userGroup.user.id]"
+                        class="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg text-sm font-medium hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                      >
+                        <Send class="w-4 h-4" />
+                        {{ submittingReply[userGroup.user.id] ? '发送中...' : '发送' }}
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
