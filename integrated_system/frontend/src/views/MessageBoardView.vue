@@ -231,19 +231,28 @@ onUnmounted(() => {
               class="w-10 h-10 rounded-lg flex-shrink-0 flex items-center justify-center overflow-hidden"
               :class="item.isMe ? 'ml-3' : 'mr-3'"
             >
-              <img 
-                v-if="getAvatarUrl(item.isMe ? item.user_avatar : item.admin_avatar)" 
-                :src="getAvatarUrl(item.isMe ? item.user_avatar : item.admin_avatar) || ''" 
-                class="w-full h-full object-cover"
-                alt="头像"
-              />
-              <div 
-                v-else
-                class="w-full h-full flex items-center justify-center"
-                :class="item.isMe ? 'bg-gradient-to-br from-indigo-400 to-purple-500' : 'bg-gradient-to-br from-amber-400 to-orange-500'"
-              >
-                <User class="w-5 h-5 text-white" />
-              </div>
+              <template v-if="item.isMe">
+                <img 
+                  v-if="getAvatarUrl(item.user_avatar)" 
+                  :src="getAvatarUrl(item.user_avatar) || ''" 
+                  class="w-full h-full object-cover"
+                  alt="头像"
+                />
+                <div v-else class="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-400 to-purple-500">
+                  <User class="w-5 h-5 text-white" />
+                </div>
+              </template>
+              <template v-else>
+                <img 
+                  v-if="getAvatarUrl(item.admin_avatar)" 
+                  :src="getAvatarUrl(item.admin_avatar) || ''" 
+                  class="w-full h-full object-cover"
+                  alt="头像"
+                />
+                <div v-else class="w-full h-full flex items-center justify-center bg-gradient-to-br from-amber-400 to-orange-500">
+                  <User class="w-5 h-5 text-white" />
+                </div>
+              </template>
             </div>
             
             <!-- 消息内容 -->
