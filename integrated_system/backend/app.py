@@ -171,7 +171,12 @@ UPLOAD_DIR = os.path.join(os.path.dirname(__file__), 'uploads')
 
 @app.route('/uploads/<path:filename>')
 def serve_upload(filename):
-    return send_from_directory(UPLOAD_DIR, filename)
+    from flask import send_file
+    import os
+    filepath = os.path.join(UPLOAD_DIR, filename)
+    if os.path.exists(filepath):
+        return send_file(filepath)
+    return {'error': 'File not found'}, 404
 
 @app.route('/')
 def index():
