@@ -865,7 +865,7 @@ const businessMetrics = computed(() => {
     
     // 影视改编难度 (反向计算：改编潜力越高，难度越低)
     const adaptationScore = eval_?.dimensions?.adaptation || 70
-    const adaptDifficulty = Math.max(10, 100 - adaptationScore)
+    const adaptDifficulty = Math.round(Math.max(10, 100 - adaptationScore))
     
     // 同题材排名
     const percentile = eval_?.percentile || 50

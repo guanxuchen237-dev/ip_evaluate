@@ -152,7 +152,12 @@ class AIService:
         try:
             import pymysql
             from datetime import datetime
-            from auth import AUTH_DB_CONFIG
+            
+            # 直接使用数据库配置，避免从auth导入时依赖Flask
+            AUTH_DB_CONFIG = {
+                'host': 'localhost', 'port': 3306, 'user': 'root',
+                'password': 'root', 'database': 'ip_lumina_auth', 'charset': 'utf8mb4'
+            }
             
             conn = pymysql.connect(**AUTH_DB_CONFIG)
             with conn.cursor() as cursor:
@@ -167,6 +172,7 @@ class AIService:
                 cursor.execute(sql, (hour_time, token_count, token_count))
                 conn.commit()
             conn.close()
+            print(f"[METRICS] Recorded {token_count} AI tokens")
         except Exception as e:
             print(f"[METRICS ERROR] Failed to record AI tokens: {e}")
 

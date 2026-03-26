@@ -430,19 +430,36 @@ def chart_ip_score_distribution():
         from data_manager import ZONGHENG_CONFIG
         import pymysql
         
+        # 书库等级标准：S>=95, A>=85, B>=75, C>=60, D<60
+        # 数据来源：ip_ai_evaluation 表的 overall_score 字段
         conn = pymysql.connect(**ZONGHENG_CONFIG, cursorclass=pymysql.cursors.DictCursor)
         with conn.cursor() as cur:
-            # 统计ip_ai_evaluation表各等级数量
             cur.execute("""
-                SELECT grade, COUNT(*) as count
+                SELECT 
+                    CASE 
+                        WHEN overall_score >= 95 THEN 'S'
+                        WHEN overall_score >= 85 THEN 'A'
+                        WHEN overall_score >= 75 THEN 'B'
+                        WHEN overall_score >= 60 THEN 'C'
+                        ELSE 'D'
+                    END as grade,
+                    COUNT(*) as count
                 FROM ip_ai_evaluation
-                GROUP BY grade
+                WHERE overall_score IS NOT NULL
+                GROUP BY 
+                    CASE 
+                        WHEN overall_score >= 95 THEN 'S'
+                        WHEN overall_score >= 85 THEN 'A'
+                        WHEN overall_score >= 75 THEN 'B'
+                        WHEN overall_score >= 60 THEN 'C'
+                        ELSE 'D'
+                    END
             """)
             grade_counts = {row['grade']: row['count'] for row in cur.fetchall()}
         conn.close()
         
-        # 等级定义（按顺序，书库最低等级是D）
-        ranges = ['S级 (90-100)', 'A级 (80-89)', 'B级 (60-79)', 'C级 (40-59)', 'D级 (0-39)']
+        # 等级定义（按overall_score分级，与书库一致）
+        ranges = ['S级 (95-100)', 'A级 (85-94)', 'B级 (75-84)', 'C级 (60-74)', 'D级 (0-59)']
         counts = [
             grade_counts.get('S', 0),
             grade_counts.get('A', 0),
@@ -2261,12 +2278,17 @@ def admin_dashboard_metrics():
             
             cursor.execute("""
                 SELECT SUM(pv_count) as total_pv, SUM(uv_count) as total_uv, 
-                       SUM(api_calls) as total_api, SUM(ai_tokens_consumed) as total_tokens,
+                       SUM(api_calls) as total_api,
                        SUM(mobile_pv) as total_mobile, SUM(desktop_pv) as total_desktop, SUM(api_pv) as total_api_pv
                 FROM hourly_metrics 
                 WHERE record_time >= %s
             """, (start_time,))
             summary_stats = cursor.fetchone()
+            
+            # 使用users表的ai_tokens_used总和（与用户列表显示一致）
+            cursor.execute("SELECT SUM(ai_tokens_used) as total_user_tokens FROM users")
+            user_tokens_result = cursor.fetchone()
+            total_user_tokens = user_tokens_result.get('total_user_tokens', 0) if user_tokens_result else 0
 
             metrics = {
                 'total_users': total_users,
@@ -2274,7 +2296,7 @@ def admin_dashboard_metrics():
                 'total_pv': summary_stats.get('total_pv', 0) if summary_stats else 0,
                 'total_uv': summary_stats.get('total_uv', 0) if summary_stats else 0,
                 'total_api_calls': summary_stats.get('total_api', 0) if summary_stats else 0,
-                'total_ai_tokens': summary_stats.get('total_tokens', 0) if summary_stats else 0
+                'total_ai_tokens': total_user_tokens or 0
             }
 
             # 3. 提取图表用的时序流量数组
@@ -6287,6 +6309,7 @@ def admin_six_dimensions_radar():
         conn = pymysql.connect(**ZONGHENG_CONFIG, cursorclass=pymysql.cursors.DictCursor)
         with conn.cursor() as cur:
             # 从ip_ai_evaluation表获取大模型评分数据
+            # 【修复】使用正确的 eval_method 'v5.0_multi_dim'
             cur.execute("""
                 SELECT 
                     platform,
@@ -6298,7 +6321,7 @@ def admin_six_dimensions_radar():
                     AVG(safety_score) as safety,
                     COUNT(*) as total
                 FROM ip_ai_evaluation
-                WHERE eval_method = 'ai_llm_v1'
+                WHERE eval_method = 'v5.0_multi_dim'
                   AND story_score IS NOT NULL
                 GROUP BY platform
             """)
