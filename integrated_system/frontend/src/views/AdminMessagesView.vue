@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 import AdminSidebar from '@/components/layout/AdminSidebar.vue'
 import { 
   MessageSquare, Send, Clock, User, CheckCircle2, 
@@ -18,6 +18,7 @@ const filterStatus = ref('all') // all, unread, replied, unreplied
 const searchQuery = ref('')
 const expandedMessages = ref<Set<number>>(new Set())
 const replyContent = ref<{ [key: number]: string }>({})
+let refreshInterval: number | null = null
 
 // 统计
 const fetchStats = async () => {
@@ -159,6 +160,16 @@ const relativeTime = (time: string) => {
 onMounted(() => {
   fetchStats()
   fetchMessages()
+  // 每10秒自动刷新统计数据
+  refreshInterval = window.setInterval(() => {
+    fetchStats()
+  }, 10000)
+})
+
+onUnmounted(() => {
+  if (refreshInterval) {
+    clearInterval(refreshInterval)
+  }
 })
 
 // 菜单项
