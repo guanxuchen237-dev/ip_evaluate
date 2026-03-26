@@ -37,12 +37,12 @@ const menuItems: MenuItem[] = [
 ]
 
 function isActive(url: string) {
-  // 处理独立路由（如 /admin/blacklist）
+  // 处理独立路由（如 /admin/blacklist, /admin/messages）
   if (!url.includes('tab=')) {
     return route.path === url
   }
-  // 如果当前在黑名单页面，不激活任何tab路由
-  if (route.path === '/admin/blacklist') {
+  // 只在 /admin 主路径下才激活 tab 路由
+  if (route.path !== '/admin') {
     return false
   }
   const tab = url.split('tab=')[1]
