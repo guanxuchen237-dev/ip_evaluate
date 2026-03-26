@@ -66,10 +66,11 @@ def get_user_messages():
             
             # 获取留言列表（包含回复）
             cursor.execute("""
-                SELECT m.*, 
+                SELECT m.*, u.avatar as user_avatar,
                        (SELECT COUNT(*) FROM messages replies 
                         WHERE replies.parent_id = m.id AND replies.is_admin_reply = TRUE) as reply_count
                 FROM messages m
+                LEFT JOIN users u ON m.user_id = u.id
                 WHERE m.user_id = %s AND m.parent_id IS NULL
                 ORDER BY m.created_at DESC
                 LIMIT %s OFFSET %s
@@ -79,10 +80,12 @@ def get_user_messages():
             # 为每条留言获取回复
             for msg in messages:
                 cursor.execute("""
-                    SELECT id, content, is_admin_reply, admin_name, created_at
-                    FROM messages
-                    WHERE parent_id = %s
-                    ORDER BY created_at ASC
+                    SELECT r.id, r.content, r.is_admin_reply, r.admin_name, r.created_at,
+                           a.avatar as admin_avatar
+                    FROM messages r
+                    LEFT JOIN users a ON r.admin_id = a.id
+                    WHERE r.parent_id = %s
+                    ORDER BY r.created_at ASC
                 """, (msg['id'],))
                 msg['replies'] = cursor.fetchall()
                 
@@ -260,7 +263,7 @@ def get_all_messages():
             
             # 获取留言列表
             cursor.execute(f"""
-                SELECT m.*, u.email as user_email,
+                SELECT m.*, u.email as user_email, u.avatar as user_avatar,
                        (SELECT COUNT(*) FROM messages replies 
                         WHERE replies.parent_id = m.id AND replies.is_admin_reply = TRUE) as reply_count,
                        (SELECT COUNT(*) FROM messages replies 
@@ -276,10 +279,12 @@ def get_all_messages():
             # 为每条留言获取回复
             for msg in messages:
                 cursor.execute("""
-                    SELECT id, content, is_admin_reply, admin_name, created_at, is_read
-                    FROM messages
-                    WHERE parent_id = %s
-                    ORDER BY created_at ASC
+                    SELECT r.id, r.content, r.is_admin_reply, r.admin_name, r.created_at, r.is_read,
+                           a.avatar as admin_avatar
+                    FROM messages r
+                    LEFT JOIN users a ON r.admin_id = a.id
+                    WHERE r.parent_id = %s
+                    ORDER BY r.created_at ASC
                 """, (msg['id'],))
                 msg['replies'] = cursor.fetchall()
                 

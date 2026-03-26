@@ -221,10 +221,22 @@ onUnmounted(() => {
           >
             <!-- 头像 -->
             <div 
-              class="w-10 h-10 rounded-lg flex-shrink-0 flex items-center justify-center"
-              :class="item.isMe ? 'bg-gradient-to-br from-indigo-400 to-purple-500 ml-3' : 'bg-gradient-to-br from-amber-400 to-orange-500 mr-3'"
+              class="w-10 h-10 rounded-lg flex-shrink-0 flex items-center justify-center overflow-hidden"
+              :class="item.isMe ? 'ml-3' : 'mr-3'"
             >
-              <User class="w-5 h-5 text-white" />
+              <img 
+                v-if="item.isMe ? item.user_avatar : item.admin_avatar" 
+                :src="item.isMe ? item.user_avatar : item.admin_avatar" 
+                class="w-full h-full object-cover"
+                alt="头像"
+              />
+              <div 
+                v-else
+                class="w-full h-full flex items-center justify-center"
+                :class="item.isMe ? 'bg-gradient-to-br from-indigo-400 to-purple-500' : 'bg-gradient-to-br from-amber-400 to-orange-500'"
+              >
+                <User class="w-5 h-5 text-white" />
+              </div>
             </div>
             
             <!-- 消息内容 -->
